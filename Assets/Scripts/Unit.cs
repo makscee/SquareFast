@@ -28,9 +28,10 @@ public class Unit : MonoBehaviour
         }
     }
 
-    public void TakeDmg(Unit source, int dmg = 1)
+    public virtual void TakeDmg(Unit source, int dmg = 1)
     {
         HP -= dmg;
+        HitEffect.Create(transform.position, this);
         if (HP <= 0)
         {
             Die();
@@ -47,7 +48,7 @@ public class Unit : MonoBehaviour
     {
     }
 
-    public void Die()
+    public virtual void Die()
     {
         Destroy(gameObject);
     }

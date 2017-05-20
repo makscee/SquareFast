@@ -5,6 +5,7 @@
     private int _moveT = MovePeriod;
     public override void TickUpdate()
     {
+        if (HP <= 0) return;
         if (_moveT > 0)
         {
             _moveT--;
@@ -13,6 +14,12 @@
         var dir = Player.Instance.Position - Position;
         dir = dir > 0 ? 1 : -1;
         MoveOrAttack(dir);
+        _moveT = MovePeriod;
+    }
+
+    public override void TakeDmg(Unit source, int dmg = 1)
+    {
+        base.TakeDmg(source, dmg);
         _moveT = MovePeriod;
     }
 }
