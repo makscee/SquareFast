@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 public class Grid
 {
@@ -28,5 +30,10 @@ public class Grid
     {
         pos += _gridOffset;
         return _units[pos];
+    }
+
+    public List<Unit> GetAllUnits()
+    {
+        return _units.Where(unit => unit != null).ToList();
     }
 }

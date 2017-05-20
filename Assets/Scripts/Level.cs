@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Level : MonoBehaviour
 {
@@ -21,6 +20,16 @@ public class Level : MonoBehaviour
 		if (Move(pos, unit)) return true;
 		_grid.Get(pos).TakeDmg(unit);
 		return false;
+	}
+
+	public void TickUpdate()
+	{
+		var units = _grid.GetAllUnits();
+		foreach (var unit in units)
+		{
+			if (unit is Player) continue;
+			unit.TickUpdate();
+		}
 	}
 
 	public void InitPos(Unit unit)

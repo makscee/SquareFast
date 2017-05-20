@@ -26,7 +26,6 @@ public class Unit : MonoBehaviour
             Position += relDir;
             transform.position = new Vector3(Position, 0, 0);
         }
-
     }
 
     public void TakeDmg(Unit source, int dmg = 1)
@@ -42,6 +41,10 @@ public class Unit : MonoBehaviour
             dir = dir > 0 ? 1 : -1;
             Move(dir);
         }
+    }
+
+    public virtual void TickUpdate()
+    {
     }
 
     public void Die()
