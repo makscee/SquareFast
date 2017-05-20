@@ -1,19 +1,27 @@
-﻿public class Grid
-{
-    readonly Unit[] _units = new Unit[100];
-    private readonly int _gridOffset = 50;
+﻿using UnityEngine;
 
-    public void SetOrReplace(int pos, Unit unit)
+public class Grid
+{
+    private readonly Unit[] _units;
+    private readonly int _gridOffset;
+
+    public Grid(int size)
+    {
+        _units = new Unit[size];
+        _gridOffset = size / 2;
+    }
+
+    public bool TrySet(int pos, Unit unit)
     {
         var prevPos = unit.Position + _gridOffset;
         pos += _gridOffset;
         if (_units[pos] != null && _units[pos] != unit)
         {
-            _units[pos].Kill();
+            return false;
         }
         _units[prevPos] = null;
         _units[pos] = unit;
-        unit.Move(pos - _gridOffset);
+        return true;
     }
 
     public Unit Get(int pos)

@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class Player : Unit {
 
-	private void FixedUpdate()
+	private void Update()
 	{
 		if (Input.GetButtonDown("Right"))
 		{
-			Level.Instance.Move(1, this);
+			MoveOrAttack(1);
 		}
 		if (Input.GetButtonDown("Left"))
 		{
-			Level.Instance.Move(-1, this);
+			MoveOrAttack(-1);
 		}
 	}
 }
