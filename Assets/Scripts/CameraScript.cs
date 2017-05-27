@@ -26,6 +26,7 @@ public class CameraScript : MonoBehaviour
 
     private void Update()
     {
+        if (Player.Instance == null) return;
         var dir = Player.Instance.transform.position - transform.position;
         dir.z = 0;
         transform.position += dir * _followSpeed;

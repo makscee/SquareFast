@@ -19,7 +19,7 @@ public class Unit : MonoBehaviour
         }
     }
 
-    protected void Move(int relDir)
+    public void Move(int relDir)
     {
         if (Level.Instance.Move(Position + relDir, this))
         {
@@ -30,6 +30,7 @@ public class Unit : MonoBehaviour
 
     public virtual void TakeDmg(Unit source, int dmg = 1)
     {
+        Debug.Log("take dmg " + this.name + " " + source.name);
         HP -= dmg;
         HitEffect.Create(transform.position, this);
         if (HP <= 0)
@@ -40,6 +41,7 @@ public class Unit : MonoBehaviour
         {
             var dir = Position - source.Position;
             dir = dir > 0 ? 1 : -1;
+            Level.Instance.Attack(Position + dir, this);
             Move(dir);
         }
     }
@@ -50,6 +52,7 @@ public class Unit : MonoBehaviour
 
     public virtual void Die()
     {
+        Level.Instance.Clear(Position);
         Destroy(gameObject);
     }
 }

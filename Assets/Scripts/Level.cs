@@ -15,11 +15,24 @@ public class Level : MonoBehaviour
 		return _grid.TrySet(pos, unit);
 	}
 
+	public bool Attack(int pos, Unit unit)
+	{
+		if (_grid.Get(pos) == null) return false;
+		if (_grid.Get(pos) == unit) return false;
+		_grid.Get(pos).TakeDmg(unit);
+		return true;
+	}
+
 	public bool MoveOrAttack(int pos, Unit unit)
 	{
 		if (Move(pos, unit)) return true;
 		_grid.Get(pos).TakeDmg(unit);
 		return false;
+	}
+
+	public void Clear(int pos)
+	{
+		_grid.Set(pos, null);
 	}
 
 	public void TickUpdate()

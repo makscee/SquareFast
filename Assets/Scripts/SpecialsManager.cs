@@ -51,8 +51,8 @@ internal class SpecialsTree
     public SpecialsTree()
     {
         _root = new SpecialsNode();
-        _root.AddLeft().AddLeft().AddLeft(new DashL());
-        _root.AddRight().AddRight().AddRight(new DashR());
+        _root.AddLeft().AddLeft().AddLeft(new Dash(-1));
+        _root.AddRight().AddRight().AddRight(new Dash(1));
         _cur = _root;
     }
 

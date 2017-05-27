@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.VR.WSA;
 
 public class Grid
 {
@@ -30,6 +31,12 @@ public class Grid
     {
         pos += _gridOffset;
         return _units[pos];
+    }
+
+    public void Set(int pos, Unit unit)
+    {
+        pos += _gridOffset;
+        _units[pos] = unit;
     }
 
     public List<Unit> GetAllUnits()
