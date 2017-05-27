@@ -6,6 +6,7 @@ using UnityEngine;
 public class Player : Unit
 {
 	public static Player Instance;
+	private SpecialsManager _specialsManager = new SpecialsManager();
 
 	private void Awake()
 	{
@@ -14,15 +15,25 @@ public class Player : Unit
 
 	private void Update()
 	{
-		if (Input.GetButtonDown("Right"))
+		bool left = Input.GetButtonDown("Left"), right = Input.GetButtonDown("Right");
+		if (left && Input.GetButton("Right") || right && Input.GetButtonDown("Left"))
 		{
-			MoveOrAttack(1);
-			Level.Instance.TickUpdate();
+			_specialsManager.Start();
+			return;
 		}
-		if (Input.GetButtonDown("Left"))
+		var dir = right ? 1 : (left ? -1 : 0);
+		if (dir == 0) return;
+		if (_specialsManager.IsStarted())
 		{
-			MoveOrAttack(-1);
-			Level.Instance.TickUpdate();
+			var ability = _specialsManager.Add(dir);
+			if (ability != null)
+			{
+				ability.Use();
+				_specialsManager.Reset();
+			}
+			return;
 		}
+		MoveOrAttack(dir);
+		Level.Instance.TickUpdate();
 	}
 }
