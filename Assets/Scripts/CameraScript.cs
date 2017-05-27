@@ -5,6 +5,7 @@ using UnityEngine;
 public class CameraScript : MonoBehaviour
 {
     public static CameraScript Instance;
+    private float _followSpeed = 0.05f;
 
     private void Awake()
     {
@@ -21,5 +22,12 @@ public class CameraScript : MonoBehaviour
     {
         var cam = GetComponent<Camera>();
         cam.backgroundColor = Color.black;
+    }
+
+    private void Update()
+    {
+        var dir = Player.Instance.transform.position - transform.position;
+        dir.z = 0;
+        transform.position += dir * _followSpeed;
     }
 }

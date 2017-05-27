@@ -90,14 +90,20 @@ internal class SpecialsTree
 
         public SpecialsNode AddLeft(ISpecialAbility ability = null)
         {
-            Left = new SpecialsNode();
+            if (Left == null)
+            {
+                Left = new SpecialsNode();
+            }
             Left.Ability = ability;
             return Left;
         }
         
         public SpecialsNode AddRight(ISpecialAbility ability = null)
         {
-            Right = new SpecialsNode();
+            if (Right == null)
+            {
+                Right = new SpecialsNode();
+            }
             Right.Ability = ability;
             return Right;
         }
