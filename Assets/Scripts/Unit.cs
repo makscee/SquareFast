@@ -46,8 +46,9 @@ public class Unit : MonoBehaviour
         }
     }
 
-    public virtual void TickUpdate()
+    public virtual bool TickUpdate()
     {
+        return true;
     }
 
     public virtual void Die()

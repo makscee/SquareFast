@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Level : MonoBehaviour
 {
@@ -30,6 +31,11 @@ public class Level : MonoBehaviour
 		return false;
 	}
 
+	public Unit Get(int pos)
+	{
+		return _grid.Get(pos);
+	}
+
 	public void Clear(int pos)
 	{
 		_grid.Set(pos, null);
@@ -38,10 +44,27 @@ public class Level : MonoBehaviour
 	public void TickUpdate()
 	{
 		var units = _grid.GetAllUnits();
-		foreach (var unit in units)
+		var ticked = false;
+		while (true)
 		{
-			if (unit is Player) continue;
-			unit.TickUpdate();
+			var filtered = new List<Unit>();
+			foreach (var unit in units)
+			{
+				if (unit is Player)
+				{
+					continue;
+				}
+				var result = unit.TickUpdate();
+				if (result)
+				{
+					ticked = true;
+					continue;
+				}
+				filtered.Add(unit);
+			}
+			if (filtered.Count == 0 || !ticked) break;
+			ticked = false;
+			units = filtered;
 		}
 	}
 
