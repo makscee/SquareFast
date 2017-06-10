@@ -1,30 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.VR.WSA;
 
 public class Grid
 {
     private readonly Unit[] _units;
+    private readonly List<Unit>[] _pushed;
     private readonly int _gridOffset;
 
     public Grid(int size)
     {
         _units = new Unit[size];
+        _pushed = new List<Unit>[size];
         _gridOffset = size / 2;
-    }
-
-    public bool TrySet(int pos, Unit unit)
-    {
-        var prevPos = unit.Position + _gridOffset;
-        pos += _gridOffset;
-        if (_units[pos] != null && _units[pos] != unit)
-        {
-            return false;
-        }
-        _units[prevPos] = null;
-        _units[pos] = unit;
-        return true;
     }
 
     public Unit Get(int pos)
@@ -33,9 +22,56 @@ public class Grid
         return _units[pos];
     }
 
-    public void Set(int pos, Unit unit)
+    public void Clear(int pos)
     {
         pos += _gridOffset;
+        _units[pos] = Pop(pos);
+    }
+
+    private Unit Pop(int pos)
+    {
+        if (_pushed[pos] == null || _pushed[pos].Count == 0) return null;
+        var popped = _pushed[pos][0];
+        _pushed[pos].RemoveAt(0);
+        for (var i = 0; i < _pushed[pos].Count; i++)
+        {
+            var unit = _pushed[pos][i];
+            unit.transform.position = new Vector3(unit.Position, i + 1, 0);
+        }
+        popped.transform.position = new Vector3(popped.Position, 0, 0);
+        return popped;
+    }
+
+    private void Push(int pos, Unit unit)
+    {
+        if (_pushed[pos] == null)
+        {
+            _pushed[pos] = new List<Unit>();
+        }
+        _pushed[pos].Add(unit);
+        unit.transform.position = new Vector3(unit.Position, _pushed[pos].Count);
+    }
+
+    public void Set(int pos, Unit unit)
+    {
+        var prevPos = unit.Position + _gridOffset;
+        pos += _gridOffset;
+
+        if (prevPos != pos)
+        {
+            _units[prevPos] = Pop(prevPos);
+        }
+        
+        if (_units[pos] != null)
+        {
+            if (unit is Player)
+            {
+                throw new Exception("Can't push player!");
+            }
+            Push(pos, unit);
+            return;
+        }
+
         _units[pos] = unit;
     }
 

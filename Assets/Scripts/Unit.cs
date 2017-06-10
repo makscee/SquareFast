@@ -10,22 +10,33 @@ public class Unit : MonoBehaviour
         Level.Instance.InitPos(this);
     }
 
-    protected void MoveOrAttack(int relDir)
+    protected bool MoveOrAttack(int relDir)
     {
-        if (Level.Instance.MoveOrAttack(Position + relDir, this))
+        var pos = relDir + Position;
+        var atPos = Level.Instance.Get(pos);
+        if (atPos != null)
         {
-            Position += relDir;
-            transform.position = new Vector3(Position, 0, 0);
+            bool class1 = atPos is Player, class2 = this is Player;
+            if (class1 != class2)
+            {
+                atPos.TakeDmg(this);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
+
+        Move(relDir);
+        return true;
     }
 
     public void Move(int relDir)
     {
-        if (Level.Instance.Move(Position + relDir, this))
-        {
-            Position += relDir;
-            transform.position = new Vector3(Position, 0, 0);
-        }
+        Level.Instance.Move(Position + relDir, this);
+        Position += relDir;
+        transform.position = new Vector3(Position, transform.position.y, 0);
     }
 
     public virtual void TakeDmg(Unit source, int dmg = 1)
@@ -41,7 +52,6 @@ public class Unit : MonoBehaviour
         {
             var dir = Position - source.Position;
             dir = dir > 0 ? 1 : -1;
-            Level.Instance.Attack(Position + dir, this);
             Move(dir);
         }
     }

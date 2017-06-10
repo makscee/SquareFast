@@ -11,9 +11,9 @@ public class Level : MonoBehaviour
 		Instance = this;
 	}
 
-	public bool Move(int pos, Unit unit)
+	public void Move(int pos, Unit unit)
 	{
-		return _grid.TrySet(pos, unit);
+		_grid.Set(pos, unit);
 	}
 
 	public bool Attack(int pos, Unit unit)
@@ -24,13 +24,6 @@ public class Level : MonoBehaviour
 		return true;
 	}
 
-	public bool MoveOrAttack(int pos, Unit unit)
-	{
-		if (Move(pos, unit)) return true;
-		_grid.Get(pos).TakeDmg(unit);
-		return false;
-	}
-
 	public Unit Get(int pos)
 	{
 		return _grid.Get(pos);
@@ -38,7 +31,7 @@ public class Level : MonoBehaviour
 
 	public void Clear(int pos)
 	{
-		_grid.Set(pos, null);
+		_grid.Clear(pos);
 	}
 
 	public void TickUpdate()
@@ -70,11 +63,7 @@ public class Level : MonoBehaviour
 
 	public void InitPos(Unit unit)
 	{
-		while (!_grid.TrySet(unit.Position, unit))
-		{
-			var dir = unit.Position > 0 ? 1 : -1;
-			unit.Position += dir;
-		}
-		unit.transform.position = new Vector3(unit.Position, 0, 0);
+		_grid.Set(unit.Position, unit);
+		unit.transform.position = new Vector3(unit.Position, unit.transform.position.y, 0);
 	}
 }
