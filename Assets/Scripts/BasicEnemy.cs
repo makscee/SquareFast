@@ -16,6 +16,12 @@ public class BasicEnemy : Unit
     public override bool TickUpdate()
     {
         if (HP <= 0) return true;
+        if (JustPopped)
+        {
+            _moveT--;
+            JustPopped = false;
+            return true;
+        }
         if (_moveT > 0)
         {
             _moveT--;

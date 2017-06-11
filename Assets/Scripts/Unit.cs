@@ -4,6 +4,7 @@ public class Unit : MonoBehaviour
 {
     public int Position;
     public int HP = 1;
+    public bool JustPopped = false;
 
     private void Start()
     {

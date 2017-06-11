@@ -43,10 +43,6 @@ public class Level : MonoBehaviour
 			var filtered = new List<Unit>();
 			foreach (var unit in units)
 			{
-				if (unit is Player)
-				{
-					continue;
-				}
 				var result = unit.TickUpdate();
 				if (result)
 				{

@@ -39,6 +39,7 @@ public class Grid
             unit.transform.position = new Vector3(unit.Position, i + 1, 0);
         }
         popped.transform.position = new Vector3(popped.Position, 0, 0);
+        popped.JustPopped = true;
         return popped;
     }
 
@@ -50,6 +51,20 @@ public class Grid
         }
         _pushed[pos].Add(unit);
         unit.transform.position = new Vector3(unit.Position, _pushed[pos].Count);
+    }
+
+    private void PushFront(int pos, Unit unit)
+    {
+        if (_pushed[pos] == null)
+        {
+            _pushed[pos] = new List<Unit>();
+        }
+        _pushed[pos].Insert(0, unit);
+        for (var i = 0; i < _pushed[pos].Count; i++)
+        {
+            var u = _pushed[pos][i];
+            u.transform.position = new Vector3(u.Position, i + 1, 0);
+        }
     }
 
     public void Set(int pos, Unit unit)
@@ -66,9 +81,12 @@ public class Grid
         {
             if (unit is Player)
             {
-                throw new Exception("Can't push player!");
+                PushFront(pos, _units[pos]);
             }
-            Push(pos, unit);
+            else
+            {
+                Push(pos, unit);
+            }
             return;
         }
 
