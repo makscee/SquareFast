@@ -40,6 +40,7 @@ public class Grid
         }
         popped.transform.position = new Vector3(popped.Position, 0, 0);
         popped.JustPopped = true;
+        popped.SetPushedVisuals(false);
         return popped;
     }
 
@@ -51,6 +52,7 @@ public class Grid
         }
         _pushed[pos].Add(unit);
         unit.transform.position = new Vector3(unit.Position, _pushed[pos].Count);
+        unit.SetPushedVisuals(true);
     }
 
     private void PushFront(int pos, Unit unit)

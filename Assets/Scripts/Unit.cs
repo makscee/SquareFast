@@ -57,6 +57,31 @@ public class Unit : MonoBehaviour
         }
     }
 
+    private GameObject _pe;
+    public void SetPushedVisuals(bool v)
+    {
+        var sr = GetComponent<SpriteRenderer>();
+        var c = sr.color;
+        c.a = v ? 0.3f : 1f;
+        sr.color = c;
+
+        if (v)
+        {
+            if (_pe == null)
+            {
+                _pe = PushedEffect.Create();
+                _pe.transform.parent = transform;
+                _pe.transform.position = transform.position;
+            }
+        }
+        else
+        {
+            Destroy(_pe);
+        }
+
+        transform.localScale = v ? new Vector3(0.7f, 0.7f, 1f) : new Vector3(1f, 1f, 1f);
+    }
+
     public virtual bool TickUpdate()
     {
         return true;
