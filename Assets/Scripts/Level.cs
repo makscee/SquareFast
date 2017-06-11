@@ -55,11 +55,14 @@ public class Level : MonoBehaviour
 			ticked = false;
 			units = filtered;
 		}
+		foreach (var unit in _grid.GetAllUnitsWithPushed())
+		{
+			unit.PlayAnimations();
+		}
 	}
 
 	public void InitPos(Unit unit)
 	{
-		_grid.Set(unit.Position, unit);
-		unit.transform.position = new Vector3(unit.Position, unit.transform.position.y, 0);
+		_grid.Set(unit.Position.IntX(), unit);
 	}
 }

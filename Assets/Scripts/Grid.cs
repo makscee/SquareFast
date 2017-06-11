@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -36,9 +35,9 @@ public class Grid
         for (var i = 0; i < _pushed[pos].Count; i++)
         {
             var unit = _pushed[pos][i];
-            unit.transform.position = new Vector3(unit.Position, i + 1, 0);
+            unit.Position = new Vector3(unit.Position.x, i + 1, 0);
         }
-        popped.transform.position = new Vector3(popped.Position, 0, 0);
+        popped.Position = new Vector3(popped.Position.x, 0, 0);
         popped.JustPopped = true;
         popped.SetPushedVisuals(false);
         return popped;
@@ -51,7 +50,7 @@ public class Grid
             _pushed[pos] = new List<Unit>();
         }
         _pushed[pos].Add(unit);
-        unit.transform.position = new Vector3(unit.Position, _pushed[pos].Count);
+        unit.Position = new Vector3(unit.Position.x, _pushed[pos].Count);
         unit.SetPushedVisuals(true);
     }
 
@@ -65,13 +64,13 @@ public class Grid
         for (var i = 0; i < _pushed[pos].Count; i++)
         {
             var u = _pushed[pos][i];
-            u.transform.position = new Vector3(u.Position, i + 1, 0);
+            u.Position = new Vector3(u.Position.x, i + 1, 0);
         }
     }
 
     public void Set(int pos, Unit unit)
     {
-        var prevPos = unit.Position + _gridOffset;
+        var prevPos = unit.Position.IntX() + _gridOffset;
         pos += _gridOffset;
 
         if (prevPos != pos)
@@ -98,5 +97,19 @@ public class Grid
     public List<Unit> GetAllUnits()
     {
         return _units.Where(unit => unit != null).ToList();
+    }
+
+    public List<Unit> GetAllUnitsWithPushed()
+    {
+        var result = GetAllUnits();
+        foreach (var list in _pushed)
+        {
+            if (list == null || list.Count <= 0) continue;
+            foreach (var unit in list)
+            {
+                result.Add(unit);
+            }
+        }
+        return result;
     }
 }

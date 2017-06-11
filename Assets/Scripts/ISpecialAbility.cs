@@ -16,7 +16,7 @@ public class Dash : ISpecialAbility
     }
     public void Use()
     {
-        var oldPos = Player.Instance.Position;
+        var oldPos = Player.Instance.Position.IntX();
         var pos = oldPos + _dir * Dist;
         Level.Instance.Attack(pos, Player.Instance);
         Player.Instance.Move(_dir * Dist);
