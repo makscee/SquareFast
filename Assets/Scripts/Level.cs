@@ -4,11 +4,19 @@ using UnityEngine;
 public class Level : MonoBehaviour
 {
 	public static Level Instance { get; private set; }
-	private readonly Grid _grid = new Grid(100);
+	private const int Size = 100;
+	private readonly Grid _grid = new Grid(Size);
+	private static readonly Prefab _gridSquare = new Prefab("GridSquare");
 
 	private void Awake()
 	{
 		Instance = this;
+		const int offset = Size / 2;
+		for (var i = -offset; i < offset; i++)
+		{
+			var square = _gridSquare.Instantiate();
+			square.transform.position = new Vector3(i, -0.7f, 0);
+		}
 	}
 
 	public void Move(int pos, Unit unit)

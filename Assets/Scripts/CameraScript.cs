@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Net.NetworkInformation;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CameraScript : MonoBehaviour
 {
@@ -26,6 +27,10 @@ public class CameraScript : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(0);
+        }
         if (Player.Instance == null) return;
         var dir = Player.Instance.transform.position - transform.position;
         dir.z = 0;

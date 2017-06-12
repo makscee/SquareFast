@@ -16,6 +16,10 @@ public class BasicEnemy : Unit
     public override bool TickUpdate()
     {
         if (HP <= 0) return true;
+        if (_moveT == 1)
+        {
+            Scale = 0.5f;
+        }
         if (JustPopped)
         {
             _moveT--;
@@ -32,6 +36,7 @@ public class BasicEnemy : Unit
 
         if (!MoveOrAttack(dir)) return false;
         _moveT = MovePeriod;
+        Scale = 1f;
         return true;
     }
 
