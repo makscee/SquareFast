@@ -10,14 +10,11 @@ public static class Utils
 
     public static float Interpolate(float from, float to, float over, float t)
     {
-        if (t > over)
+        var delta = Time.deltaTime;
+        if (t + delta > over)
         {
-            return to;
+            delta = Math.Max(0, over - t);
         }
-        if (Math.Abs(from - to) < 0.001f)
-        {
-            return to;
-        }
-        return from + (to - from) * (t / over);
+        return (to - from) / over * delta;
     }
 }

@@ -18,7 +18,7 @@ public class BasicEnemy : Unit
         if (HP <= 0) return true;
         if (_moveT == 1)
         {
-            Scale = 0.5f;
+            Scale = new Vector3(0.8f, 0.8f, 1f);
         }
         if (JustPopped)
         {
@@ -36,7 +36,7 @@ public class BasicEnemy : Unit
 
         if (!MoveOrAttack(dir)) return false;
         _moveT = MovePeriod;
-        Scale = 1f;
+        Scale = Vector3.one;
         return true;
     }
 

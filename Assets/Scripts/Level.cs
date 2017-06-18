@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class Level : MonoBehaviour
@@ -7,6 +8,7 @@ public class Level : MonoBehaviour
 	private const int Size = 100;
 	private readonly Grid _grid = new Grid(Size);
 	private static readonly Prefab _gridSquare = new Prefab("GridSquare");
+	private const float TickTime = 0.3f;
 
 	private void Awake()
 	{
@@ -17,6 +19,7 @@ public class Level : MonoBehaviour
 			var square = _gridSquare.Instantiate();
 			square.transform.position = new Vector3(i, -0.7f, 0);
 		}
+		InvokeRepeating("TickUpdate", TickTime, TickTime);
 	}
 
 	public void Move(int pos, Unit unit)
@@ -62,10 +65,6 @@ public class Level : MonoBehaviour
 			if (filtered.Count == 0 || !ticked) break;
 			ticked = false;
 			units = filtered;
-		}
-		foreach (var unit in _grid.GetAllUnitsWithPushed())
-		{
-			unit.PlayAnimations();
 		}
 	}
 

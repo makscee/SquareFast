@@ -1,17 +1,20 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using UnityEditor.AnimatedValues;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
     public const float AnimationWindow = 0.1f;
     public int HP = 1;
+    [NonSerialized]
     public bool JustPopped = false;
 
     private void Start()
     {
-        _tPos = transform.position;
+        _actPos = transform.position;
+        _actScale = transform.localScale;
         Level.Instance.InitPos(this);
-        PlayAnimations();
     }
 
     protected bool MoveOrAttack(int relDir)
@@ -21,15 +24,9 @@ public class Unit : MonoBehaviour
         if (atPos != null)
         {
             bool class1 = atPos is Player, class2 = this is Player;
-            if (class1 != class2)
-            {
-                atPos.TakeDmg(this);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            if (class1 == class2) return false;
+            atPos.TakeDmg(this);
+            return true;
         }
 
         Move(relDir);
@@ -66,97 +63,69 @@ public class Unit : MonoBehaviour
         var c = sr.color;
         c.a = v ? 0.3f : 1f;
         sr.color = c;
+        Scale = v ? new Vector3(0.7f, 0.7f, 1f) : Vector3.one;
 
         if (v)
         {
-            if (_pe == null)
-            {
-                _pe = PushedEffect.Create();
-                _pe.transform.parent = transform;
-                _pe.transform.position = transform.position;
-            }
+            if (_pe != null) return;
+            _pe = PushedEffect.Create();
+            _pe.transform.parent = transform;
+            _pe.transform.position = transform.position;
         }
         else
         {
             Destroy(_pe);
         }
-
-        Scale = v ? 0.7f : 1f;
     }
 
-    private Vector3 _fPos, _tPos;
+    private Vector3 _actPos;
     public Vector3 Position
     {
-        get { return _tPos; }
+        get { return _actPos; }
         set
         {
-            _tPos = value;
-            _fPos = transform.position;
+            StartCoroutine(InterpolatePos(_actPos, value));
+            _actPos = value;
+            
         }
     }
 
-    private float _fScale = 1, _tScale = 1;
+    private Vector3 _actScale;
 
-    public float Scale
+    public Vector3 Scale
     {
-        get { return _tScale; }
+        get { return _actScale; }
         set
         {
-            _tScale = value;
-            _fScale = transform.localScale.x;
+            StartCoroutine(InterpolateScale(_actScale, value));
+            _actScale = value;
         }
     }
 
-    private IEnumerator Interpolate()
+    private IEnumerator InterpolatePos(Vector3 from, Vector3 to)
     {
-        transform.position = _fPos;
-        transform.localScale = new Vector3(_fScale, _fScale, 1);
-        
-        
         var t = 0f;
-        while (t < AnimationWindow)
+        while (t - Time.deltaTime < AnimationWindow)
         {
+            var x = Utils.Interpolate(from.x, to.x, AnimationWindow, t);
+            var y = Utils.Interpolate(from.y, to.y, AnimationWindow, t);
+            transform.position += new Vector3(x, y, 0);
             t += Time.deltaTime;
-            
-            var x = Utils.Interpolate(_fPos.x, _tPos.x, AnimationWindow, t);
-            var y = Utils.Interpolate(_fPos.y, _tPos.y, AnimationWindow, t);
-            transform.position = new Vector3(x, y, 0);
-
-            var newScale = Utils.Interpolate(_fScale, _tScale, AnimationWindow, t);
-            transform.localScale = new Vector3(newScale, newScale, 1);
-            
             yield return null;
         }
-        
-        transform.position = _tPos;
-        _fPos = _tPos;
-        
-        transform.localScale = new Vector3(_tScale, _tScale, 1);
-        _fScale = _tScale;
     }
 
-    private IEnumerator InterpolateScale()
+    private IEnumerator InterpolateScale(Vector3 from, Vector3 to)
     {
-        if (_fScale == _tScale) yield break;
-        transform.localScale = new Vector3(_fScale, _fScale, 1);
-        var t = AnimationWindow;
-        var speed = (_tScale - _fScale) / AnimationWindow;
-        while (t > 0)
+        var t = 0f;
+        while (t - Time.deltaTime < AnimationWindow)
         {
-            t -= Time.deltaTime;
-            var delta = t < 0 ? Time.deltaTime + t : Time.deltaTime;
-            var newScale = transform.localScale.x + speed * delta;
-            transform.localScale = new Vector3(newScale, newScale, 1);
+            var x = Utils.Interpolate(from.x, to.x, AnimationWindow, t);
+            var y = Utils.Interpolate(from.y, to.y, AnimationWindow, t);
+            transform.localScale += new Vector3(x, y, 0);
+            t += Time.deltaTime;
             yield return null;
         }
-        transform.localScale = new Vector3(_tScale, _tScale, 1);
-        _fScale = _tScale;
-    }
-
-    public void PlayAnimations()
-    {
-        StopCoroutine(Interpolate());
-        StartCoroutine(Interpolate());
     }
 
     public virtual bool TickUpdate()

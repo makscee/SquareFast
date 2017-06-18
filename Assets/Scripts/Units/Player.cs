@@ -23,33 +23,33 @@ public class Player : Unit
 			rightDown = Input.GetButtonDown("Right"),
 			leftPressed = Input.GetButton("Left"), 
 			rightPressed = Input.GetButton("Right");
-		if (rightUp && _dropUpRight)
-		{
-			rightUp = _dropUpRight = false;
-		}
-		if (leftUp && _dropUpLeft)
-		{
-			leftUp = _dropUpLeft = false;
-		}
-		if (leftDown && rightPressed || rightDown && leftPressed)
-		{
-			_dropUpLeft = true;
-			_dropUpRight = true;
-			_specialsManager.Start();
-			return;
-		}
-		var dir = rightUp ? 1 : (leftUp ? -1 : 0);
-		if (_specialsManager.IsStarted())
-		{
-			if (dir == 0) return;
-			var ability = _specialsManager.Add(dir);
-			if (ability == null) return;
-			ability.Use();
-			_specialsManager.Reset();
-			return;
-		}
+		var dir = leftDown ? -1 : (rightDown ? 1 : 0);
+//		if (rightUp && _dropUpRight)
+//		{
+//			rightUp = _dropUpRight = false;
+//		}
+//		if (leftUp && _dropUpLeft)
+//		{
+//			leftUp = _dropUpLeft = false;
+//		}
+//		if (leftDown && rightPressed || rightDown && leftPressed)
+//		{
+//			_dropUpLeft = true;
+//			_dropUpRight = true;
+//			_specialsManager.Start();
+//			return;
+//		}
+//		var dir = rightUp ? 1 : (leftUp ? -1 : 0);
+//		if (_specialsManager.IsStarted())
+//		{
+//			if (dir == 0) return;
+//			var ability = _specialsManager.Add(dir);
+//			if (ability == null) return;
+//			ability.Use();
+//			_specialsManager.Reset();
+//			return;
+//		}
 		if (dir == 0) return;
 		MoveOrAttack(dir);
-		Level.Instance.TickUpdate();
 	}
 }
