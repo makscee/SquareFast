@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using UnityEditor.AnimatedValues;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
@@ -17,7 +16,7 @@ public class Unit : MonoBehaviour
         Level.Instance.InitPos(this);
     }
 
-    protected bool MoveOrAttack(int relDir)
+    protected virtual bool MoveOrAttack(int relDir)
     {
         var pos = relDir + Position.IntX();
         var atPos = Level.Instance.Get(pos);
@@ -86,7 +85,6 @@ public class Unit : MonoBehaviour
         {
             StartCoroutine(InterpolatePos(_actPos, value));
             _actPos = value;
-            
         }
     }
 
@@ -111,6 +109,10 @@ public class Unit : MonoBehaviour
             var y = Utils.Interpolate(from.y, to.y, AnimationWindow, t);
             transform.position += new Vector3(x, y, 0);
             t += Time.deltaTime;
+            if (this is Player && 2 - Math.Abs(transform.position.x) < 0.001)
+            {
+                TakeDmg(this, 9999);
+            }
             yield return null;
         }
     }
@@ -137,5 +139,13 @@ public class Unit : MonoBehaviour
     {
         Level.Instance.Clear(Position.IntX());
         Destroy(gameObject);
+        
+        if (Level.Instance.EnemiesCount == 0)
+        {
+            Level.TickTime /= 1.5f;
+            CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0.43f, 0.43f), 2f, true);
+            Level.Instance.Restart();
+            CounterScript.Instance.IncreaseCounter();
+        }
     }
 }

@@ -30,6 +30,14 @@ public class CameraScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             SceneManager.LoadScene(0);
+            Level.Updating = true;
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            CounterScript.Instance.IncreaseCounter();
+            SceneManager.LoadScene(0);
+            Level.Updating = true;
+            Level.TickTime /= 1.5f;
         }
         if (Player.Instance == null) return;
         var dir = Player.Instance.transform.position - transform.position;

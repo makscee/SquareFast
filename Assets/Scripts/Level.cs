@@ -1,14 +1,28 @@
 ﻿using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Level : MonoBehaviour
 {
 	public static Level Instance { get; private set; }
 	private const int Size = 100;
 	private readonly Grid _grid = new Grid(Size);
-	private static readonly Prefab _gridSquare = new Prefab("GridSquare");
-	private const float TickTime = 0.3f;
+	private static readonly Prefab GridSquare = new Prefab("GridSquare");
+	public static float TickTime = 0.5f;
+	public static bool Updating = true; 
+
+	public void Restart(float delay = 3f)
+	{
+		Updating = false;
+		Debug.Log("restarting");
+		Invoke("InvokeRestart", delay);
+	}
+
+	private void InvokeRestart()
+	{
+		SceneManager.LoadScene(0);
+		Updating = true;
+	}
 
 	private void Awake()
 	{
@@ -16,9 +30,18 @@ public class Level : MonoBehaviour
 		const int offset = Size / 2;
 		for (var i = -offset; i < offset; i++)
 		{
-			var square = _gridSquare.Instantiate();
+			var square = GridSquare.Instantiate();
 			square.transform.position = new Vector3(i, -0.7f, 0);
+			square.transform.SetParent(transform);
 		}
+		var border = GridSquare.Instantiate();
+		border.transform.position = new Vector3(1.5f, 0f, 0);
+		border.transform.Rotate(0f, 0f, 90f);
+		border.transform.SetParent(transform);
+		border = GridSquare.Instantiate();
+		border.transform.position = new Vector3(-1.5f, 0f, 0);
+		border.transform.Rotate(0f, 0f, 90f);
+		border.transform.SetParent(transform);
 		InvokeRepeating("TickUpdate", TickTime, TickTime);
 	}
 
@@ -42,11 +65,21 @@ public class Level : MonoBehaviour
 
 	public void Clear(int pos)
 	{
+		if (!(Get(pos) is Player))
+		{
+			EnemiesCount--;
+		}
 		_grid.Clear(pos);
 	}
 
+	public int EnemiesCount { get; private set; }
+
 	public void TickUpdate()
 	{
+		if (!Updating)
+		{
+			return;
+		}
 		var units = _grid.GetAllUnits();
 		var ticked = false;
 		while (true)
@@ -71,5 +104,9 @@ public class Level : MonoBehaviour
 	public void InitPos(Unit unit)
 	{
 		_grid.Set(unit.Position.IntX(), unit);
+		if (!(unit is Player))
+		{
+			EnemiesCount++;
+		}
 	}
 }
