@@ -39,6 +39,11 @@ public class CameraScript : MonoBehaviour
             Level.Updating = true;
             Level.TickTime /= 1.5f;
         }
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            CounterScript.Instance.IncreaseCounter();
+        }
+        
         if (Player.Instance == null) return;
         var dir = Player.Instance.transform.position - transform.position;
         dir.z = 0;
