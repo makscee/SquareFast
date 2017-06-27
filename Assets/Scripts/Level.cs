@@ -26,6 +26,7 @@ public class Level : MonoBehaviour
 
 	private void Awake()
 	{
+		Prefab.PreloadPrefabs();
 		Instance = this;
 		const int offset = Size / 2;
 		for (var i = -offset; i < offset; i++)
