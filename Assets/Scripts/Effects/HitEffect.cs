@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class HitEffect : MonoBehaviour
 {
-    private static readonly Prefab Prefab = new Prefab("HitEffect");
+	private static readonly Prefab Prefab = new Prefab("HitEffect");
     public static void Create(Vector2 position, Unit unit)
     {
         var he = Prefab.Instantiate();

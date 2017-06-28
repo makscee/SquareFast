@@ -5,12 +5,12 @@ class Prefab
 {
     private readonly string _path;
     private GameObject _resource;
-    private static List<Prefab> _prefabs;
+	private static List<Prefab> _prefabs = new List<Prefab>();
 
-    public Prefab(string path)
+	public Prefab(string path)
     {
         _path = path;
-        _prefabs.Add(this);
+		_prefabs.Add(this);
     }
 
     public static void PreloadPrefabs()
@@ -18,15 +18,13 @@ class Prefab
         foreach (var prefab in _prefabs)
         {
             prefab._resource = Resources.Load<GameObject>(prefab._path);
+			var go = Object.Instantiate(prefab._resource);
+			GameObject.Destroy(go);
         }
     }
 
     public GameObject Instantiate()
     {
-        if (_resource == null)
-        {
-            _resource = Resources.Load<GameObject>(_path);
-        }
         return Object.Instantiate(_resource);
     }
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 
 class PushedEffect
 {
-    private static readonly Prefab Prefab = new Prefab("PushedEffect");
+	private static readonly Prefab Prefab = new Prefab("PushedEffect");
 
     public static GameObject Create()
     {

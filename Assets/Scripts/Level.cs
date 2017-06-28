@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,7 +10,7 @@ public class Level : MonoBehaviour
 	private readonly Grid _grid = new Grid(Size);
 	private static readonly Prefab GridSquare = new Prefab("GridSquare");
 	public static float TickTime = 0.5f;
-	public static bool Updating = true; 
+	public static bool Updating = true;
 
 	public void Restart(float delay = 3f)
 	{
@@ -24,8 +25,21 @@ public class Level : MonoBehaviour
 		Updating = true;
 	}
 
+	private void TouchStatics() {
+		List<Type> types = new List<Type>
+		{
+			typeof(HitEffect),
+			typeof(PushedEffect)
+		};
+		foreach (var t in types) 
+		{
+			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor (t.TypeHandle);
+		}
+	}
+
 	private void Awake()
 	{
+		TouchStatics();
 		Prefab.PreloadPrefabs();
 		Instance = this;
 		const int offset = Size / 2;
