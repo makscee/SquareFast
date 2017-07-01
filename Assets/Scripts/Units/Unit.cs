@@ -83,7 +83,15 @@ public class Unit : MonoBehaviour
         get { return _actPos; }
         set
         {
-            StartCoroutine(InterpolatePos(_actPos, value));
+            Utils.Animate(_actPos, value, AnimationWindow, v =>
+            {
+                transform.position += v;
+                if (this is Player && 2 - Math.Abs(transform.position.x) < 0.001)
+                {
+                    TakeDmg(this, 9999);
+                }
+            }, this);
+            
             _actPos = value;
         }
     }
@@ -95,38 +103,8 @@ public class Unit : MonoBehaviour
         get { return _actScale; }
         set
         {
-            StartCoroutine(InterpolateScale(_actScale, value));
+            Utils.Animate(_actScale, value, AnimationWindow, v => transform.localScale += v, this);
             _actScale = value;
-        }
-    }
-
-    private IEnumerator InterpolatePos(Vector3 from, Vector3 to)
-    {
-        var t = 0f;
-        while (t - Time.deltaTime < AnimationWindow)
-        {
-            var x = Utils.Interpolate(from.x, to.x, AnimationWindow, t);
-            var y = Utils.Interpolate(from.y, to.y, AnimationWindow, t);
-            transform.position += new Vector3(x, y, 0);
-            t += Time.deltaTime;
-            if (this is Player && 2 - Math.Abs(transform.position.x) < 0.001)
-            {
-                TakeDmg(this, 9999);
-            }
-            yield return null;
-        }
-    }
-
-    private IEnumerator InterpolateScale(Vector3 from, Vector3 to)
-    {
-        var t = 0f;
-        while (t - Time.deltaTime < AnimationWindow)
-        {
-            var x = Utils.Interpolate(from.x, to.x, AnimationWindow, t);
-            var y = Utils.Interpolate(from.y, to.y, AnimationWindow, t);
-            transform.localScale += new Vector3(x, y, 0);
-            t += Time.deltaTime;
-            yield return null;
         }
     }
 
@@ -140,7 +118,7 @@ public class Unit : MonoBehaviour
         Level.Instance.Clear(Position.IntX());
         Destroy(gameObject);
         
-        if (Level.Instance.EnemiesCount == 0)
+        if (Level.Instance.EnemiesCount == 0 && !(this is Player))
         {
             Level.TickTime /= 1.5f;
             CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0.43f, 0.43f), 2f, true);

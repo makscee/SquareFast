@@ -25,8 +25,8 @@ public class Level : MonoBehaviour
 		Updating = true;
 	}
 
-	private void TouchStatics() {
-		List<Type> types = new List<Type>
+	private static void TouchStatics() {
+		var types = new List<Type>
 		{
 			typeof(HitEffect),
 			typeof(PushedEffect)

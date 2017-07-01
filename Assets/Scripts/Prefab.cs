@@ -1,25 +1,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-class Prefab
+public class Prefab
 {
     private readonly string _path;
     private GameObject _resource;
-	private static List<Prefab> _prefabs = new List<Prefab>();
+	private static readonly List<Prefab> Prefabs = new List<Prefab>();
 
 	public Prefab(string path)
     {
         _path = path;
-		_prefabs.Add(this);
+		Prefabs.Add(this);
     }
 
     public static void PreloadPrefabs()
     {
-        foreach (var prefab in _prefabs)
+        foreach (var prefab in Prefabs)
         {
             prefab._resource = Resources.Load<GameObject>(prefab._path);
 			var go = Object.Instantiate(prefab._resource);
-			GameObject.Destroy(go);
+			Object.Destroy(go);
         }
     }
 
