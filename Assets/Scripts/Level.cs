@@ -9,7 +9,7 @@ public class Level : MonoBehaviour
 	private const int Size = 100;
 	private readonly Grid _grid = new Grid(Size);
 	private static readonly Prefab GridSquare = new Prefab("GridSquare");
-	public static float TickTime = 0.5f;
+	public static float TickTime = 0.25f;
 	public static bool Updating = true;
 
 	public void Restart(float delay = 3f)
