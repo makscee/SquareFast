@@ -51,11 +51,7 @@ public class TriangleEnemy : BasicEnemy
             {
                 _shieldMat = Shield.GetComponent<SpriteRenderer>().material;
             }
-            Utils.Animate(6f, 1f, Level.TickTime * 2, (v) =>
-            {
-                _shieldMat.SetFloat("_Percentage", v);
-                Debug.Log(v);
-            }, this, true);
+            Utils.Animate(6f, 1f, Level.TickTime * 2, (v) => _shieldMat.SetFloat("_Percentage", v), this, true);
             Scale = new Vector3(0.8f, 0.8f, 1f);
             var dir = Position.IntX() - source.Position.IntX();
             dir = dir > 0 ? 1 : -1;
