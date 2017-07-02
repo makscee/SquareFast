@@ -13,8 +13,6 @@ public class Player : Unit
 		Instance = this;
 	}
 
-	private bool _dropUpLeft = false;
-	private bool _dropUpRight = false;
 	private void Update()
 	{
 		bool leftDown = Input.GetButtonDown("Left"),

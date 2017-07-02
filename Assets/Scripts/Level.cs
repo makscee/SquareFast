@@ -5,12 +5,21 @@ using UnityEngine.SceneManagement;
 
 public class Level : MonoBehaviour
 {
+	public enum Layouts
+	{
+		None, Square, Triangle
+	}
+
+	public Layouts layout;
 	public static Level Instance { get; private set; }
 	private const int Size = 100;
 	private readonly Grid _grid = new Grid(Size);
 	private static readonly Prefab GridSquare = new Prefab("GridSquare");
 	public static float TickTime = 0.5f;
 	public static bool Updating = true;
+	
+	private readonly Prefab _square = new Prefab("SquareEnemy");
+	private readonly Prefab _triangle = new Prefab("TriangleEnemy");
 
 	public void Restart(float delay = 3f)
 	{
@@ -21,8 +30,34 @@ public class Level : MonoBehaviour
 
 	private void InvokeRestart()
 	{
+		var l = layout;
 		SceneManager.LoadScene(0);
 		Updating = true;
+		layout = l;
+	}
+
+	private void InitEnemies()
+	{
+		switch (layout)
+		{
+			case Layouts.None: break;
+			case Layouts.Square:
+				for (var i = 3; i <= 9; i += 2)
+				{
+					var go = _square.Instantiate();
+					go.transform.position = new Vector3(i, 0, 0);
+					go = _square.Instantiate();
+					go.transform.position = new Vector3(-i - 1, 0, 0);
+				}
+				break;
+			case Layouts.Triangle:
+				for (var i = 3; i <= 9; i += 2)
+				{
+					var go = _triangle.Instantiate();
+					go.transform.position = new Vector3(i, 0, 0);
+				}
+				break;
+		}
 	}
 
 	private static void TouchStatics() {
@@ -30,7 +65,8 @@ public class Level : MonoBehaviour
 		{
 			typeof(HitEffect),
 			typeof(PushedEffect),
-			typeof(ShieldDieEffect)
+			typeof(ShieldDieEffect),
+			typeof(Unit)
 		};
 		foreach (var t in types) 
 		{
@@ -59,6 +95,7 @@ public class Level : MonoBehaviour
 		border.transform.Rotate(0f, 0f, 90f);
 		border.transform.SetParent(transform);
 		InvokeRepeating("TickUpdate", TickTime, TickTime);
+		InitEnemies();
 	}
 
 	public void Move(int pos, Unit unit)

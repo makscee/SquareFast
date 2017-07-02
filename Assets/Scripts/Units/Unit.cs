@@ -8,12 +8,27 @@ public class Unit : MonoBehaviour
     public int HP = 1;
     [NonSerialized]
     public bool JustPopped = false;
+    private static readonly Prefab ShieldPrefab = new Prefab("Shield");
+    protected GameObject Shield;
+
+    public bool Shielded;
 
     private void Start()
     {
         _actPos = transform.position;
         _actScale = transform.localScale;
         Level.Instance.InitPos(this);
+        if (Shielded)
+        {
+            CreateShield();
+        }
+    }
+
+    protected void CreateShield()
+    {
+        Shield = ShieldPrefab.Instantiate();
+        Shield.transform.SetParent(transform);
+        Shield.transform.localPosition = Vector3.zero;
     }
 
     protected virtual bool MoveOrAttack(int relDir)
@@ -41,6 +56,17 @@ public class Unit : MonoBehaviour
     public virtual void TakeDmg(Unit source, int dmg = 1)
     {
         Debug.Log("take dmg " + this.name + " " + source.name);
+        if (Shield != null)
+        {
+            var shieldMat = Shield.GetComponent<SpriteRenderer>().material;
+            Utils.Animate(6f, 1f, Level.TickTime * 2, (v) => shieldMat.SetFloat("_Percentage", v), this, true);
+            var dir = Position.IntX() - source.Position.IntX();
+            dir = dir > 0 ? 1 : -1;
+            Move(dir);
+            Destroy(Shield);
+            ShieldDieEffect.Create(transform.position);
+            return;
+        }
         HP -= dmg;
         HitEffect.Create(transform.position, this);
         if (HP <= 0)
@@ -122,6 +148,7 @@ public class Unit : MonoBehaviour
         {
             Level.TickTime /= 1.5f;
             CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0.43f, 0.43f), 2f, true);
+            Level.Instance.layout = Level.Layouts.Triangle;
             Level.Instance.Restart();
             CounterScript.Instance.IncreaseCounter();
         }
