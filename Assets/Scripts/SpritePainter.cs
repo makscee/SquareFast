@@ -50,9 +50,9 @@ public class SpritePainter : MonoBehaviour
         foreach (var a in _changers)
         {
             a.Update();
-            c = a.Change(c);
             if (a.Time != null && a.Time < 0)
                 _changers.Remove(a);
+            c = a.Change(c);
         }
         if (_sprite != null)
             _sprite.color = c;
@@ -64,7 +64,7 @@ public class SpritePainter : MonoBehaviour
 public class ColorChanger
 {
     private readonly bool _smooth;
-    private readonly float _initialTime;
+    protected float InitialTime;
     public float? Time;
     protected Color Color;
 
@@ -73,7 +73,7 @@ public class ColorChanger
         Time = time;
         _smooth = smooth;
         if (time != null)
-            _initialTime = time.Value;
+            InitialTime = time.Value;
         Color = c;
     }
 
@@ -81,7 +81,7 @@ public class ColorChanger
     {
         float smoothValue = 1;
         if (Time != null && _smooth)
-            smoothValue = Time.Value / _initialTime;
+            smoothValue = Time.Value / InitialTime;
         return Color.Lerp(c, Color, smoothValue);
     }
 
@@ -122,5 +122,25 @@ public class PulsingChanger : ColorChanger
             _t = 0;
         }
         Color = Color.Lerp(_c1, _c2, _t);
+    }
+}
+
+public class FadeInChanger : ColorChanger
+{
+    private readonly float _lifeTime;
+
+    public FadeInChanger(Color c, float lifeTime, float fadePeriod) : base(c, 0, true)
+    {
+        InitialTime = fadePeriod;
+        _lifeTime = lifeTime;
+    }
+
+    public override void Update()
+    {
+        Time += UnityEngine.Time.deltaTime;
+        if (Time > _lifeTime)
+        {
+            Time = -1f;
+        }
     }
 }

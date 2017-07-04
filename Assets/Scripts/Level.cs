@@ -7,10 +7,10 @@ public class Level : MonoBehaviour
 {
 	public enum Layouts
 	{
-		None, Square, Triangle
+		None, SimpleSquare, Square, Rhombus, Triangle
 	}
 
-	public Layouts layout;
+	private static Layouts _layout;
 	public static Level Instance { get; private set; }
 	private const int Size = 100;
 	private readonly Grid _grid = new Grid(Size);
@@ -20,8 +20,41 @@ public class Level : MonoBehaviour
 	
 	private readonly Prefab _square = new Prefab("SquareEnemy");
 	private readonly Prefab _triangle = new Prefab("TriangleEnemy");
+	private readonly Prefab _rhombus = new Prefab("RhombusEnemy");
 
-	public void Restart(float delay = 3f)
+	private static readonly List<Tuple<Layouts, int>> Levels = new List<Tuple<Layouts, int>>()
+	{
+		new Tuple<Layouts, int>(Layouts.SimpleSquare, 1),
+		new Tuple<Layouts, int>(Layouts.SimpleSquare, 2),
+		new Tuple<Layouts, int>(Layouts.Square, 1),
+		new Tuple<Layouts, int>(Layouts.Square, 2),
+		new Tuple<Layouts, int>(Layouts.Square, 3),
+		new Tuple<Layouts, int>(Layouts.Square, 4),
+		new Tuple<Layouts, int>(Layouts.Rhombus, 1),
+		new Tuple<Layouts, int>(Layouts.Rhombus, 2),
+		new Tuple<Layouts, int>(Layouts.Rhombus, 3),
+		new Tuple<Layouts, int>(Layouts.Rhombus, 4),
+		new Tuple<Layouts, int>(Layouts.Triangle, 1),
+		new Tuple<Layouts, int>(Layouts.Triangle, 2),
+		new Tuple<Layouts, int>(Layouts.Triangle, 3),
+		new Tuple<Layouts, int>(Layouts.Triangle, 4),
+	};
+
+	private static Tuple<Layouts, int> _curLevel; 
+	public void NextLevel()
+	{
+		if (Levels.Count == 0)
+		{
+			CameraScript.Instance.GetComponent<SpritePainter>().Paint(new FadeInChanger(Color.white, 999, 4f));
+			return;
+		}
+		_curLevel = Levels[0];
+		Levels.RemoveAt(0);
+		CounterScript.Instance.Set((int)_curLevel.Item1, _curLevel.Item2);
+		Restart();
+	}
+	
+	public void Restart(float delay = 1.75f)
 	{
 		Updating = false;
 		Debug.Log("restarting");
@@ -30,17 +63,30 @@ public class Level : MonoBehaviour
 
 	private void InvokeRestart()
 	{
-		var l = layout;
 		SceneManager.LoadScene(0);
+//		Player.Instance.Move(-Player.Instance.Position.IntX());
 		Updating = true;
-		layout = l;
 	}
 
 	private void InitEnemies()
 	{
-		switch (layout)
+		Debug.Log(_layout);
+		switch (_layout)
 		{
 			case Layouts.None: break;
+			case Layouts.SimpleSquare:
+			{
+				for (var i = 3; i <= 7; i += 2)
+				{
+					var go = _square.Instantiate();
+					go.transform.position = new Vector3(i, 0, 0);
+					go.GetComponent<Unit>().Shielded = false;
+					go = _square.Instantiate();
+					go.transform.position = new Vector3(-i - 1, 0, 0);
+					go.GetComponent<Unit>().Shielded = false;
+				}
+				break;
+			}
 			case Layouts.Square:
 				for (var i = 3; i <= 9; i += 2)
 				{
@@ -57,6 +103,17 @@ public class Level : MonoBehaviour
 					go.transform.position = new Vector3(i, 0, 0);
 				}
 				break;
+			case Layouts.Rhombus:
+			{
+				for (var i = 3; i <= 9; i += 2)
+				{
+					var go = _rhombus.Instantiate();
+					go.transform.position = new Vector3(i, 0, 0);
+					go = _rhombus.Instantiate();
+					go.transform.position = new Vector3(-i - 1, 0, 0);
+				}
+				break;
+			}
 		}
 	}
 
@@ -94,8 +151,16 @@ public class Level : MonoBehaviour
 		border.transform.position = new Vector3(-1.5f, 0f, 0);
 		border.transform.Rotate(0f, 0f, 90f);
 		border.transform.SetParent(transform);
-		InvokeRepeating("TickUpdate", TickTime, TickTime);
+		if (_curLevel == null)
+		{
+			_curLevel = Levels[0];
+			Levels.RemoveAt(0);
+		}
+		TickTime = 0.5f / (float) Math.Pow(1.5f, _curLevel.Item2 - 1);
+		Debug.Log("new tt " + TickTime);
+		_layout = _curLevel.Item1;
 		InitEnemies();
+		InvokeRepeating("TickUpdate", TickTime, TickTime);
 	}
 
 	public void Move(int pos, Unit unit)

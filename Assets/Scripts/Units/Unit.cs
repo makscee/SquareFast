@@ -58,13 +58,12 @@ public class Unit : MonoBehaviour
         Debug.Log("take dmg " + this.name + " " + source.name);
         if (Shield != null)
         {
-            var shieldMat = Shield.GetComponent<SpriteRenderer>().material;
-            Utils.Animate(6f, 1f, Level.TickTime * 2, (v) => shieldMat.SetFloat("_Percentage", v), this, true);
+//            var shieldMat = Shield.GetComponent<SpriteRenderer>().material;
+//            Utils.Animate(6f, 1f, Level.TickTime * 2, (v) => shieldMat.SetFloat("_Percentage", v), this, true);
+            DestroyShield();
             var dir = Position.IntX() - source.Position.IntX();
             dir = dir > 0 ? 1 : -1;
             Move(dir);
-            Destroy(Shield);
-            ShieldDieEffect.Create(transform.position);
             return;
         }
         HP -= dmg;
@@ -79,6 +78,12 @@ public class Unit : MonoBehaviour
             dir = dir > 0 ? 1 : -1;
             Move(dir);
         }
+    }
+
+    protected void DestroyShield()
+    {
+        Destroy(Shield);
+        ShieldDieEffect.Create(transform.position);
     }
 
     private GameObject _pe;
@@ -146,11 +151,8 @@ public class Unit : MonoBehaviour
         
         if (Level.Instance.EnemiesCount == 0 && !(this is Player))
         {
-            Level.TickTime /= 1.5f;
-            CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0.43f, 0.43f), 2f, true);
-            Level.Instance.layout = Level.Layouts.Triangle;
-            Level.Instance.Restart();
-            CounterScript.Instance.IncreaseCounter();
+            CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0.43f, 0.43f), 1.5f, true);
+            Level.Instance.NextLevel();
         }
     }
 }

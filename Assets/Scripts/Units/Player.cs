@@ -25,7 +25,7 @@ public class Player : Unit
 	public override void Die()
 	{
 		base.Die();
-		CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0f, 0.01f), 2f, true);
+		CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0f, 0.01f), 1.5f, true);
 		Level.Instance.Restart();
 	}
 }

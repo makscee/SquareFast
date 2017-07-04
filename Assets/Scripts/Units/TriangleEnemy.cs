@@ -5,8 +5,6 @@ public class TriangleEnemy : BasicEnemy
 {
     private int _counterAttack = -1;
 
-    private Material _shieldMat;
-
     public override bool TickUpdate()
     {
         if (_counterAttack == -1)

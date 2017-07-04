@@ -5,17 +5,18 @@ public class CounterScript : MonoBehaviour
 {
     public static CounterScript Instance;
     private Text _text;
-    private static int _count = 1;
+    private static string text = "1 - 1";
 
     private void Awake()
     {
         Instance = this;
         _text = GetComponent<Text>();
-        _text.text = _count.ToString();
+        _text.text = text;
     }
 
-    public void IncreaseCounter()
+    public void Set(int x, int y)
     {
-        _text.text = (++_count).ToString();
+        _text.text = x + " - " + y;
+        text = _text.text;
     }
 }

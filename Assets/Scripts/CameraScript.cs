@@ -29,19 +29,11 @@ public class CameraScript : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
-            SceneManager.LoadScene(0);
-            Level.Updating = true;
+            Level.Instance.Restart();
         }
         if (Input.GetKeyDown(KeyCode.E))
         {
-            CounterScript.Instance.IncreaseCounter();
-            SceneManager.LoadScene(0);
-            Level.Updating = true;
-            Level.TickTime /= 1.5f;
-        }
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            CounterScript.Instance.IncreaseCounter();
+            Level.Instance.NextLevel();
         }
         
         if (Player.Instance == null) return;
