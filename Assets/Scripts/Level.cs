@@ -46,6 +46,9 @@ public class Level : MonoBehaviour
 		if (Levels.Count == 0)
 		{
 			CameraScript.Instance.GetComponent<SpritePainter>().Paint(new FadeInChanger(Color.white, 999, 4f));
+			Destroy(Player.Instance.gameObject);
+			Destroy(gameObject);
+			Destroy(GameObject.Find("Canvas"));
 			return;
 		}
 		_curLevel = Levels[0];
