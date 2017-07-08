@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    public const float AnimationWindow = 0.1f;
+    public const float AnimationWindow = 0.075f;
     public int HP = 1;
     [NonSerialized]
     public bool JustPopped = false;
@@ -40,6 +40,10 @@ public class Unit : MonoBehaviour
             bool class1 = atPos is Player, class2 = this is Player;
             if (class1 == class2) return false;
             atPos.TakeDmg(this);
+            if (class1)
+            {
+                Move(relDir);
+            }
             return true;
         }
 
@@ -142,6 +146,20 @@ public class Unit : MonoBehaviour
     public virtual bool TickUpdate()
     {
         return true;
+    }
+
+    private int animCount = 3;
+    public void TickAnimations()
+    {
+        var change = new Vector3(0f, 0.1f);
+        if (animCount % 3 == 0)
+        {
+            Utils.Animate(Vector3.zero, change, 0.1f, v => transform.localScale += v,
+                this);
+            Utils.Animate(change, Vector3.zero, 0.3f, v => transform.localScale += v,
+                this);
+        }
+        animCount++;
     }
 
     public virtual void Die()

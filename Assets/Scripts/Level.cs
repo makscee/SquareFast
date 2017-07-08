@@ -203,6 +203,10 @@ public class Level : MonoBehaviour
 		}
 		var units = _grid.GetAllUnits();
 		var ticked = false;
+		foreach (var unit in units)
+		{
+			unit.TickAnimations();
+		}
 		while (true)
 		{
 			var filtered = new List<Unit>();
