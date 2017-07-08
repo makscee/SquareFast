@@ -34,6 +34,11 @@ public static class Utils
 
     private static IEnumerator Animation(Vector3 from, Vector3 to, float over, Action<Vector3> action, bool fullValue)
     {
+        var unit = action.Target as Unit;
+        if (unit != null)
+        {
+            unit.RunningAnimations++;
+        }
         var t = 0f;
         var result = from;
         while (t - Time.deltaTime < over)
@@ -46,6 +51,10 @@ public static class Utils
             action(fullValue ? result : temp);
             t += Time.deltaTime;
             yield return null;
+        }
+        if (unit != null)
+        {
+            unit.RunningAnimations--;
         }
     }
 }

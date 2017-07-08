@@ -73,7 +73,6 @@ public class Level : MonoBehaviour
 
 	private void InitEnemies()
 	{
-		Debug.Log(_layout);
 		switch (_layout)
 		{
 			case Layouts.None: break;
@@ -160,7 +159,6 @@ public class Level : MonoBehaviour
 			Levels.RemoveAt(0);
 		}
 		TickTime = 0.5f / (float) Math.Pow(1.5f, _curLevel.Item2 - 1);
-		Debug.Log("new tt " + TickTime);
 		_layout = _curLevel.Item1;
 		InitEnemies();
 		InvokeRepeating("TickUpdate", TickTime, TickTime);

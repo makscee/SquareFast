@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections;
+using NUnit.Framework.Constraints;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    public const float AnimationWindow = 0.075f;
+    public const float AnimationWindow = 0.1f;
     public int HP = 1;
     [NonSerialized]
     public bool JustPopped = false;
     private static readonly Prefab ShieldPrefab = new Prefab("Shield");
     protected GameObject Shield;
+    public int RunningAnimations = 0;
 
     public bool Shielded;
 
@@ -53,6 +55,11 @@ public class Unit : MonoBehaviour
 
     public void Move(int relDir)
     {
+        var change = new Vector3(0.5f, -0.5f);
+        Utils.Animate(Vector3.zero, change, 0.001f, v => transform.localScale += v,
+            this);
+        Utils.Animate(change, Vector3.zero, AnimationWindow, v => transform.localScale += v,
+            this);
         Level.Instance.Move(Position.IntX() + relDir, this);
         Position += new Vector3(relDir, 0, 0);
     }
@@ -71,13 +78,13 @@ public class Unit : MonoBehaviour
             return;
         }
         HP -= dmg;
-        HitEffect.Create(transform.position, this);
         if (HP <= 0)
         {
             Die();
         }
         else
         {
+            HitEffect.Create(transform.position, this);
             var dir = Position.IntX() - source.Position.IntX();
             dir = dir > 0 ? 1 : -1;
             Move(dir);
@@ -166,6 +173,7 @@ public class Unit : MonoBehaviour
     {
         Level.Instance.Clear(Position.IntX());
         Destroy(gameObject);
+        HitEffect.Create(transform.position, this);
         
         if (Level.Instance.EnemiesCount == 0 && !(this is Player))
         {
