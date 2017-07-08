@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using NUnit.Framework.Constraints;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
