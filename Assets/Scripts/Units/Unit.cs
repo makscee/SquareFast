@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    public const float AnimationWindow = 0.1f;
+    public const float AnimationWindow = 0.05f;
     public int HP = 1;
     [NonSerialized]
     public bool JustPopped = false;
@@ -58,7 +58,7 @@ public class Unit : MonoBehaviour
         var change = new Vector3(0.5f, -0.5f);
         Utils.Animate(Vector3.zero, change, 0.001f, v => transform.localScale += v,
             this);
-        Utils.Animate(change, Vector3.zero, AnimationWindow, v => transform.localScale += v,
+        Utils.Animate(change, Vector3.zero, AnimationWindow * 2, v => transform.localScale += v,
             this);
         Level.Instance.Move(Position.IntX() + relDir, this);
         Position += new Vector3(relDir, 0, 0);
