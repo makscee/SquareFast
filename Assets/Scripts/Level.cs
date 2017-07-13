@@ -4,62 +4,28 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class Level : MonoBehaviour
-{
-	public enum Layouts
+{	
+	[Serializable]
+	public struct Event
 	{
-		None, SimpleSquare, Square, Rhombus, Triangle
+		public int Tick;
+		public TickAction TickAction;
 	}
 
-	private static Layouts _layout;
+	public List<Event> TickEvents;
 	public static Level Instance { get; private set; }
 	private const int Size = 100;
 	private readonly Grid _grid = new Grid(Size);
 	private static readonly Prefab GridSquare = new Prefab("GridSquare");
 	public static float TickTime = 0.5f;
+	public static int Ticks = -1;
 	public static bool Updating = true;
-	
-	private readonly Prefab _square = new Prefab("SquareEnemy");
-	private readonly Prefab _triangle = new Prefab("TriangleEnemy");
-	private readonly Prefab _rhombus = new Prefab("RhombusEnemy");
-
-	private static readonly List<Tuple<Layouts, int>> Levels = new List<Tuple<Layouts, int>>()
-	{
-		new Tuple<Layouts, int>(Layouts.SimpleSquare, 1),
-		new Tuple<Layouts, int>(Layouts.SimpleSquare, 2),
-		new Tuple<Layouts, int>(Layouts.Square, 1),
-		new Tuple<Layouts, int>(Layouts.Square, 2),
-		new Tuple<Layouts, int>(Layouts.Square, 3),
-		new Tuple<Layouts, int>(Layouts.Square, 4),
-		new Tuple<Layouts, int>(Layouts.Rhombus, 1),
-		new Tuple<Layouts, int>(Layouts.Rhombus, 2),
-		new Tuple<Layouts, int>(Layouts.Rhombus, 3),
-		new Tuple<Layouts, int>(Layouts.Rhombus, 4),
-		new Tuple<Layouts, int>(Layouts.Triangle, 1),
-		new Tuple<Layouts, int>(Layouts.Triangle, 2),
-		new Tuple<Layouts, int>(Layouts.Triangle, 3),
-		new Tuple<Layouts, int>(Layouts.Triangle, 4),
-	};
-
-	private static Tuple<Layouts, int> _curLevel; 
-	public void NextLevel()
-	{
-		if (Levels.Count == 0)
-		{
-			CameraScript.Instance.GetComponent<SpritePainter>().Paint(new FadeInChanger(Color.white, 999, 4f));
-			Destroy(Player.Instance.gameObject);
-			Destroy(gameObject);
-			Destroy(GameObject.Find("Canvas"));
-			return;
-		}
-		_curLevel = Levels[0];
-		Levels.RemoveAt(0);
-		CounterScript.Instance.Set((int)_curLevel.Item1, _curLevel.Item2);
-		Restart();
-	}
+	private LevelSpawner _levelSpawner = new LevelSpawner();
 	
 	public void Restart(float delay = 1.75f)
 	{
 		Updating = false;
+		Ticks = -1;
 		Debug.Log("restarting");
 		Invoke("InvokeRestart", delay);
 	}
@@ -69,54 +35,6 @@ public class Level : MonoBehaviour
 		SceneManager.LoadScene(0);
 //		Player.Instance.Move(-Player.Instance.Position.IntX());
 		Updating = true;
-	}
-
-	private void InitEnemies()
-	{
-		switch (_layout)
-		{
-			case Layouts.None: break;
-			case Layouts.SimpleSquare:
-			{
-				for (var i = 3; i <= 7; i += 2)
-				{
-					var go = _square.Instantiate();
-					go.transform.position = new Vector3(i, 0, 0);
-					go.GetComponent<Unit>().Shielded = false;
-					go = _square.Instantiate();
-					go.transform.position = new Vector3(-i - 1, 0, 0);
-					go.GetComponent<Unit>().Shielded = false;
-				}
-				break;
-			}
-			case Layouts.Square:
-				for (var i = 3; i <= 9; i += 2)
-				{
-					var go = _square.Instantiate();
-					go.transform.position = new Vector3(i, 0, 0);
-					go = _square.Instantiate();
-					go.transform.position = new Vector3(-i - 1, 0, 0);
-				}
-				break;
-			case Layouts.Triangle:
-				for (var i = 3; i <= 9; i += 2)
-				{
-					var go = _triangle.Instantiate();
-					go.transform.position = new Vector3(i, 0, 0);
-				}
-				break;
-			case Layouts.Rhombus:
-			{
-				for (var i = 3; i <= 9; i += 2)
-				{
-					var go = _rhombus.Instantiate();
-					go.transform.position = new Vector3(i, 0, 0);
-					go = _rhombus.Instantiate();
-					go.transform.position = new Vector3(-i - 1, 0, 0);
-				}
-				break;
-			}
-		}
 	}
 
 	private static void TouchStatics() {
@@ -153,15 +71,8 @@ public class Level : MonoBehaviour
 		border.transform.position = new Vector3(-1.5f, 0f, 0);
 		border.transform.Rotate(0f, 0f, 90f);
 		border.transform.SetParent(transform);
-		if (_curLevel == null)
-		{
-			_curLevel = Levels[0];
-			Levels.RemoveAt(0);
-		}
-		TickTime = 0.5f / (float) Math.Pow(1.5f, _curLevel.Item2 - 1);
-		_layout = _curLevel.Item1;
-		InitEnemies();
-		InvokeRepeating("TickUpdate", TickTime, TickTime);
+		TickTime = 60f / 131f / 3f;
+		InvokeRepeating("TickUpdate", TickTime + 2.9f, TickTime);
 	}
 
 	public void Move(int pos, Unit unit)
@@ -199,6 +110,16 @@ public class Level : MonoBehaviour
 		{
 			return;
 		}
+		Ticks++;
+		foreach (var tickEvent in TickEvents)
+		{
+			if (tickEvent.Tick == Ticks)
+			{
+				_levelSpawner.CurAction = tickEvent.TickAction;
+			}
+		}
+		_levelSpawner.TickUpdate();
+		CounterScript.Instance.Set(Ticks);
 		var units = _grid.GetAllUnits();
 		var ticked = false;
 		foreach (var unit in units)

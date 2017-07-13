@@ -31,10 +31,6 @@ public class CameraScript : MonoBehaviour
         {
             Level.Instance.Restart();
         }
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            Level.Instance.NextLevel();
-        }
         
         if (Player.Instance == null) return;
         var dir = Player.Instance.transform.position - transform.position;

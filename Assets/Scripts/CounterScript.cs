@@ -5,7 +5,7 @@ public class CounterScript : MonoBehaviour
 {
     public static CounterScript Instance;
     private Text _text;
-    private static string text = "1 - 1";
+    private static string text = "0";
 
     private void Awake()
     {
@@ -14,9 +14,9 @@ public class CounterScript : MonoBehaviour
         _text.text = text;
     }
 
-    public void Set(int x, int y)
+    public void Set(int x)
     {
-        _text.text = x + " - " + y;
+        _text.text = x.ToString();
         text = _text.text;
     }
 }
