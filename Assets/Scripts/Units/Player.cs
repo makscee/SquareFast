@@ -10,6 +10,7 @@ public class Player : Unit
 {
 	public static Player Instance;
 	public Text DelayText;
+	public bool Autopilot;
 
 	private void Awake()
 	{
@@ -22,6 +23,16 @@ public class Player : Unit
 		dt += Time.deltaTime;
 		bool leftDown = Input.GetButtonDown("Left"),
 			rightDown = Input.GetButtonDown("Right");
+		if (Autopilot)
+		{
+			if (Level.Instance.Get(Position.IntX() + 1))
+			{
+				rightDown = true;
+			} else if (Level.Instance.Get(Position.IntX() - 1))
+			{
+				leftDown = true;
+			}
+		}
 		var dir = leftDown ? -1 : (rightDown ? 1 : 0);
 		if (dir == 0) return;
 		DelayText.text = Math.Round(dt / Level.TickTime / 3, 3).ToString();

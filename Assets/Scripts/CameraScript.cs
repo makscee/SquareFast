@@ -2,11 +2,13 @@ using System.ComponentModel;
 using System.Net.NetworkInformation;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class CameraScript : MonoBehaviour
 {
     public static CameraScript Instance;
     private float _followSpeed = 0.05f;
+    public Text SavedTicks;
 
     private void Awake()
     {
@@ -30,6 +32,10 @@ public class CameraScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             Level.Instance.Restart();
+        }
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            SavedTicks.text += "\n" + Level.Ticks;
         }
         
         if (Player.Instance == null) return;

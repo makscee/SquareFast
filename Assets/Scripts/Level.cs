@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class Level : MonoBehaviour
-{	
-	[Serializable]
-	public struct Event
-	{
-		public int Tick;
-		public TickAction TickAction;
-	}
-
+{
 	public List<Event> TickEvents;
 	public static Level Instance { get; private set; }
 	private const int Size = 100;
@@ -20,6 +14,7 @@ public class Level : MonoBehaviour
 	public static float TickTime = 0.5f;
 	public static int Ticks = -1;
 	public static bool Updating = true;
+	public int StartTicks = -1;
 	private LevelSpawner _levelSpawner = new LevelSpawner();
 	
 	public void Restart(float delay = 1.75f)
@@ -71,8 +66,14 @@ public class Level : MonoBehaviour
 		border.transform.position = new Vector3(-1.5f, 0f, 0);
 		border.transform.Rotate(0f, 0f, 90f);
 		border.transform.SetParent(transform);
+		_levelSpawner.TickEvents = TickEvents;
 		TickTime = 60f / 131f / 3f;
-		InvokeRepeating("TickUpdate", TickTime + 2.9f, TickTime);
+		InvokeRepeating("TickUpdate", TickTime + 3.3f, TickTime);
+		if (StartTicks != -1)
+		{
+			GetComponent<AudioSource>().time = (StartTicks + 1) * TickTime;
+		}
+		Ticks = StartTicks;
 	}
 
 	public void Move(int pos, Unit unit)
@@ -111,13 +112,6 @@ public class Level : MonoBehaviour
 			return;
 		}
 		Ticks++;
-		foreach (var tickEvent in TickEvents)
-		{
-			if (tickEvent.Tick == Ticks)
-			{
-				_levelSpawner.CurAction = tickEvent.TickAction;
-			}
-		}
 		_levelSpawner.TickUpdate();
 		CounterScript.Instance.Set(Ticks);
 		var units = _grid.GetAllUnits();

@@ -175,7 +175,7 @@ public class Unit : MonoBehaviour
         
         if (Level.Instance.EnemiesCount == 0 && !(this is Player))
         {
-            CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0.43f, 0.43f), 1.5f, true);
+//            CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0.43f, 0.43f), 1.5f, true);
             
         }
     }
