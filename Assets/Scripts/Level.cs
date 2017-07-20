@@ -13,6 +13,7 @@ public class Level : MonoBehaviour
 	public static float TickTime = 0.5f;
 	public static int Ticks = -1;
 	public static bool Updating = true;
+	public static int SaveTicks = -1;
 	public int StartTicks = -1;
 	private LevelSpawner _levelSpawner = new LevelSpawner();
 	
@@ -45,6 +46,7 @@ public class Level : MonoBehaviour
 		}
 	}
 
+	public float OverrideTickTime = 0;
 	private void Awake()
 	{
 		TouchStatics();
@@ -67,7 +69,15 @@ public class Level : MonoBehaviour
 		border.transform.SetParent(transform);
 		_levelSpawner.TickEvents = TickEvents;
 		TickTime = 60f / 131f / 3f;
-		InvokeRepeating("TickUpdate", TickTime + 3.3f, TickTime);
+		if (OverrideTickTime > 0)
+		{
+			TickTime = OverrideTickTime;
+		}
+		InvokeRepeating("TickUpdate", TickTime + (OverrideTickTime > 0 ? 0 : 3.3f), TickTime);
+		if (SaveTicks != -1)
+		{
+			StartTicks = SaveTicks;
+		}
 		if (StartTicks != -1)
 		{
 			GetComponent<AudioSource>().time = (StartTicks + 1) * TickTime;

@@ -20,25 +20,26 @@ public static class Utils
         return (to - from) / over * delta;
     }
 
-    public static void Animate(Vector3 from, Vector3 to, float over, Action<Vector3> onChange, MonoBehaviour obj = null, bool fullValue = false)
+    public static void Animate(Vector3 from, Vector3 to, float over, Action<Vector3> onChange, MonoBehaviour obj = null, bool fullValue = false, float delay = 0f)
     {
         obj = obj == null ? Level.Instance : obj;
-        obj.StartCoroutine(Animation(from, to, over, onChange, fullValue));
+        obj.StartCoroutine(Animation(from, to, over, onChange, fullValue, delay));
     }
 
-    public static void Animate(float from, float to, float over, Action<float> onChange, MonoBehaviour obj = null, bool fullValue = false)
+    public static void Animate(float from, float to, float over, Action<float> onChange, MonoBehaviour obj = null, bool fullValue = false, float delay = 0f)
     {
         obj = obj == null ? Level.Instance : obj;
-        obj.StartCoroutine(Animation(new Vector3(from, 0), new Vector3(to, 0), over, v => onChange(v.x), fullValue));
+        obj.StartCoroutine(Animation(new Vector3(from, 0), new Vector3(to, 0), over, v => onChange(v.x), fullValue, delay));
     }
 
-    private static IEnumerator Animation(Vector3 from, Vector3 to, float over, Action<Vector3> action, bool fullValue)
+    private static IEnumerator Animation(Vector3 from, Vector3 to, float over, Action<Vector3> action, bool fullValue, float delay)
     {
         var unit = action.Target as Unit;
         if (unit != null)
         {
             unit.RunningAnimations++;
         }
+        yield return new WaitForSeconds(delay);
         var t = 0f;
         var result = from;
         while (t - Time.deltaTime < over)

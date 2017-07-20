@@ -6,6 +6,7 @@ public class RhombusEnemy : BasicEnemy
     {
         if (Shield)
         {
+            HadShield = true;
             Scale = new Vector3(0.8f, 0.8f, 1f);
             MoveT = 1;
             var dir = Player.Instance.Position.IntX() - Position.IntX();

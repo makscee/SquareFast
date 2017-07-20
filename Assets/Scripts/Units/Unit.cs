@@ -40,6 +40,7 @@ public class Unit : MonoBehaviour
             bool class1 = atPos is Player, class2 = this is Player;
             if (class1 == class2) return false;
             atPos.TakeDmg(this);
+            AttackAnim(relDir, atPos);
             if (class1)
             {
                 Move(relDir);
@@ -49,6 +50,26 @@ public class Unit : MonoBehaviour
 
         Move(relDir);
         return true;
+    }
+
+    protected void AttackAnim(int relDir, Unit target)
+    {
+        var change = new Vector3(0.5f, -0.5f);
+        Utils.Animate(Vector3.zero, change, 0.001f, v => transform.localScale += v,
+            this);
+        Utils.Animate(change, Vector3.zero, AnimationWindow, v => transform.localScale += v,
+            this);
+        Utils.Animate(_actPos, _actPos + new Vector3((float) relDir / 1.5f, 0, 0), AnimationWindow,
+            v => transform.position += v, this);
+        change = -change;
+        target.TakeDmgAnim(AnimationWindow);
+        Utils.Animate(_actPos + new Vector3((float) relDir / 1.5f, 0, 0), _actPos, AnimationWindow,
+            v => transform.position += v,
+            this, false, AnimationWindow);
+        Utils.Animate(Vector3.zero, change, 0.001f, v => transform.localScale += v,
+            this, false, AnimationWindow);
+        Utils.Animate(change, Vector3.zero, AnimationWindow, v => transform.localScale += v,
+            this, false, AnimationWindow);
     }
 
     public void Move(int relDir)
@@ -62,17 +83,40 @@ public class Unit : MonoBehaviour
         Position += new Vector3(relDir, 0, 0);
     }
 
+    public void TakeDmgAnim(float delay)
+    {
+        Invoke("_TakeDmgAnim", delay);
+    }
+
+    private void _TakeDmgAnim()
+    {
+        if (HadShield)
+        {
+            HadShield = false;
+            ShieldDieEffect.Create(transform.position);
+        }
+        else
+        {
+            HitEffect.Create(transform.position, this);
+            if (HP <= 0)
+            {
+                Destroy(gameObject);
+            }
+        }
+    }
+
+    protected bool HadShield = false;
     public virtual void TakeDmg(Unit source, int dmg = 1)
     {
-        Debug.Log("take dmg " + this.name + " " + source.name);
         if (Shield != null)
         {
 //            var shieldMat = Shield.GetComponent<SpriteRenderer>().material;
 //            Utils.Animate(6f, 1f, Level.TickTime * 2, (v) => shieldMat.SetFloat("_Percentage", v), this, true);
+            HadShield = true;
             DestroyShield();
-            var dir = Position.IntX() - source.Position.IntX();
-            dir = dir > 0 ? 1 : -1;
-            Move(dir);
+//            var dir = Position.IntX() - source.Position.IntX();
+//            dir = dir > 0 ? 1 : -1;
+//            Move(dir);
             return;
         }
         HP -= dmg;
@@ -82,7 +126,6 @@ public class Unit : MonoBehaviour
         }
         else
         {
-            HitEffect.Create(transform.position, this);
             var dir = Position.IntX() - source.Position.IntX();
             dir = dir > 0 ? 1 : -1;
             Move(dir);
@@ -92,7 +135,6 @@ public class Unit : MonoBehaviour
     protected void DestroyShield()
     {
         Destroy(Shield);
-        ShieldDieEffect.Create(transform.position);
     }
 
     private GameObject _pe;
@@ -170,8 +212,6 @@ public class Unit : MonoBehaviour
     public virtual void Die()
     {
         Level.Instance.Clear(Position.IntX());
-        Destroy(gameObject);
-        HitEffect.Create(transform.position, this);
         
         if (Level.Instance.EnemiesCount == 0 && !(this is Player))
         {
