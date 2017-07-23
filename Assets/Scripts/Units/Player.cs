@@ -20,6 +20,10 @@ public class Player : Unit
 	private float dt = 0;
 	private void Update()
 	{
+		if (Input.GetKeyDown(KeyCode.F))
+		{
+			AttackAnim(1, this);
+		}
 		dt += Time.deltaTime;
 		bool leftDown = Input.GetButtonDown("Left"),
 			rightDown = Input.GetButtonDown("Right");

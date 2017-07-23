@@ -14,6 +14,12 @@ public class RhombusEnemy : BasicEnemy
             DestroyShield();
             return;
         }
+        if (HP > 1)
+        {
+            MoveT = 2;
+            var dir = Player.Instance.Position.IntX() - Position.IntX();
+            Move(dir * 2);
+        }
         base.TakeDmg(source, dmg);
     }
 }

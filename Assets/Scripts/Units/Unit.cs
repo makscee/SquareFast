@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Unit : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class Unit : MonoBehaviour
     private static readonly Prefab ShieldPrefab = new Prefab("Shield");
     protected GameObject Shield;
     public int RunningAnimations = 0;
+    protected Material HpMat;
 
     public bool Shielded;
 
@@ -18,6 +20,12 @@ public class Unit : MonoBehaviour
         _actPos = transform.position;
         _actScale = transform.localScale;
         Level.Instance.InitPos(this);
+        HpMat = GetComponent<SpriteRenderer>().material;
+        HpMat.SetFloat("_Rot", Random.Range(-1f, 1f));
+        HpMat.SetFloat("_Center", Random.Range(0.35f, 0.55f));
+        HpMat.SetInt("_Hp", HP);
+        HpMat.SetInt("_CurHp", HP);
+        
         if (Shielded)
         {
             CreateShield();
@@ -120,15 +128,10 @@ public class Unit : MonoBehaviour
             return;
         }
         HP -= dmg;
+        HpMat.SetInt("_CurHp", HP);
         if (HP <= 0)
         {
             Die();
-        }
-        else
-        {
-            var dir = Position.IntX() - source.Position.IntX();
-            dir = dir > 0 ? 1 : -1;
-            Move(dir);
         }
     }
 
