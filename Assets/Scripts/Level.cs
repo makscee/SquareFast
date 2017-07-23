@@ -15,7 +15,7 @@ public class Level : MonoBehaviour
 	public static bool Updating = true;
 	public static int SaveTicks = -1;
 	public int StartTicks = -1;
-	private LevelSpawner _levelSpawner = new LevelSpawner();
+	private LevelSpawner _levelSpawner;
 	
 	public void Restart(float delay = 1.75f)
 	{
@@ -47,8 +47,10 @@ public class Level : MonoBehaviour
 	}
 
 	public float OverrideTickTime = 0;
+
 	private void Awake()
 	{
+		_levelSpawner = new LevelSpawner();
 		TouchStatics();
 		Prefab.PreloadPrefabs();
 		Instance = this;
