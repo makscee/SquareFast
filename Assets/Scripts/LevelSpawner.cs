@@ -44,19 +44,25 @@ public class EnemyPattern
     private int _li, _ri, _produced;
     public GameObject GetNext()
     {
-        GameObject go;
-        if (_produced % 2 == 0)
+        GameObject go = null;
+        if (_produced % 2 != 0)
         {
-            go = _left[_li].Instantiate();
-            go.transform.position = new Vector3(LevelSpawner.Distance, 0, 0);
-            go.GetComponent<Unit>().HP = _leftHp[_li];
+            if (_left[_li] != null)
+            {
+                go = _left[_li].Instantiate();
+                go.transform.position = new Vector3(-LevelSpawner.Distance, 0, 0);
+                go.GetComponent<Unit>().HP = _leftHp[_li];
+            }
             _li = _li + 1 % _left.Count;
         }
         else
         {
-            go = _right[_ri].Instantiate();
-            go.transform.position = new Vector3(-LevelSpawner.Distance, 0, 0);
-            go.GetComponent<Unit>().HP = _rightHp[_ri];
+            if (_right[_ri] != null)
+            {
+                go = _right[_ri].Instantiate();
+                go.transform.position = new Vector3(LevelSpawner.Distance, 0, 0);
+                go.GetComponent<Unit>().HP = _rightHp[_ri];
+            }
             _ri = _ri + 1 % _right.Count;
         }
         _produced++;
@@ -79,7 +85,6 @@ public class EnemyPattern
 public class LevelSpawner
 {
     public const int Distance = 8;
-    public TickAction CurAction = TickAction.None;
     public List<Event> TickEvents;
     
     private static readonly Prefab Square = new Prefab("SquareEnemy");
@@ -93,7 +98,10 @@ public class LevelSpawner
         _patterns = new List<EnemyPattern>
         {
             new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(Rhombus, 2).AddRight(Rhombus, 2).SetLength(2),
-            new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).SetLength(2)
+            new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).SetLength(2),
+            new EnemyPattern().AddLeft(Square).AddRight(Rhombus, 2).SetLength(4),
+//            new EnemyPattern().AddRight(Rhombus, 3).AddLeft(Rhombus, 3).SetLength(4),
+//            new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetLength(4),
         };
         _ci = Random.Range(0, _patterns.Count);
         _curPattern = _patterns[_ci];
@@ -105,31 +113,11 @@ public class LevelSpawner
     {
         if (Level.Ticks % 3 != 0) return;
         _curPattern.GetNext();
-        if (_curPattern.Ended())
-        {
-            _curPattern.Reset();
-            _ci += Random.Range(1, _patterns.Count - 1);
-            _ci %= _patterns.Count;
-            _curPattern = _patterns[_ci];
-        }
-    }
-
-    private GameObject PlaceGo(Prefab l, Prefab r = null)
-    {
-        GameObject go = null;
-        if (Level.Ticks % 3 == 0)
-        {
-            if (Level.Ticks / 3 % 2 == 0)
-            {
-                go = r == null ? l.Instantiate() : r.Instantiate();
-                go.transform.position = new Vector3(Distance, 0, 0);
-            }
-            else
-            {
-                go = l.Instantiate();
-                go.transform.position = new Vector3(-Distance, 0, 0);
-            }
-        }
-        return go;
+        if (!_curPattern.Ended()) return;
+        
+        _curPattern.Reset();
+        _ci += Random.Range(1, _patterns.Count - 1);
+        _ci %= _patterns.Count;
+        _curPattern = _patterns[_ci];
     }
 }

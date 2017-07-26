@@ -70,20 +70,21 @@ public class Level : MonoBehaviour
 		border.transform.Rotate(0f, 0f, 90f);
 		border.transform.SetParent(transform);
 		_levelSpawner.TickEvents = TickEvents;
-		TickTime = 60f / 131f / 3f;
+		
+		TickTime = 60f / 100f / 3f;
+		const float musicStart = 9.7f;
+		var delay = Time.time > 0 ? 0 : 2f;
+		
 		if (OverrideTickTime > 0)
 		{
 			TickTime = OverrideTickTime;
 		}
-		InvokeRepeating("TickUpdate", TickTime + (OverrideTickTime > 0 ? 0 : 3.3f), TickTime);
+		InvokeRepeating("TickUpdate", (OverrideTickTime > 0 ? 0 : delay), TickTime);
 		if (SaveTicks != -1)
 		{
 			StartTicks = SaveTicks;
 		}
-		if (StartTicks != -1)
-		{
-			GetComponent<AudioSource>().time = (StartTicks + 1) * TickTime;
-		}
+		GetComponent<AudioSource>().time = (StartTicks + 1) * TickTime + musicStart - delay;
 		Ticks = StartTicks;
 	}
 

@@ -174,6 +174,7 @@ public class Unit : MonoBehaviour
                 if (this is Player && 2 - Math.Abs(transform.position.x) < 0.001)
                 {
                     TakeDmg(this, 9999);
+                    TakeDmgAnim(0);
                 }
             }, this);
             
