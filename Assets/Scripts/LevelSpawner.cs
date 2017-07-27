@@ -52,6 +52,7 @@ public class EnemyPattern
                 go = _left[_li].Instantiate();
                 go.transform.position = new Vector3(-LevelSpawner.Distance, 0, 0);
                 go.GetComponent<Unit>().HP = _leftHp[_li];
+                SpawnEffect.Create(go.transform.position, go.GetComponent<Unit>());
             }
             _li = _li + 1 % _left.Count;
         }
@@ -62,6 +63,7 @@ public class EnemyPattern
                 go = _right[_ri].Instantiate();
                 go.transform.position = new Vector3(LevelSpawner.Distance, 0, 0);
                 go.GetComponent<Unit>().HP = _rightHp[_ri];
+                SpawnEffect.Create(go.transform.position, go.GetComponent<Unit>());
             }
             _ri = _ri + 1 % _right.Count;
         }

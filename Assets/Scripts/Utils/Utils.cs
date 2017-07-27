@@ -58,4 +58,16 @@ public static class Utils
             unit.RunningAnimations--;
         }
     }
+
+    public static void InvokeDelayed(Action a, float delay)
+    {
+        var obj = Level.Instance;
+        obj.StartCoroutine(Delay(a, delay));
+    }
+
+    private static IEnumerator Delay(Action a, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        a();
+    }
 }

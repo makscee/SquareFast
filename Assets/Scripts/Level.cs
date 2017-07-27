@@ -7,7 +7,7 @@ public class Level : MonoBehaviour
 {
 	public List<Event> TickEvents;
 	public static Level Instance { get; private set; }
-	private const int Size = 100;
+	private const int Size = LevelSpawner.Distance * 2 + 1;
 	private readonly Grid _grid = new Grid(Size);
 	private static readonly Prefab GridSquare = new Prefab("GridSquare");
 	public static float TickTime = 0.5f;
@@ -38,7 +38,8 @@ public class Level : MonoBehaviour
 			typeof(HitEffect),
 			typeof(PushedEffect),
 			typeof(ShieldDieEffect),
-			typeof(Unit)
+			typeof(Unit),
+			typeof(SpawnEffect),
 		};
 		foreach (var t in types) 
 		{
@@ -54,8 +55,8 @@ public class Level : MonoBehaviour
 		TouchStatics();
 		Prefab.PreloadPrefabs();
 		Instance = this;
-		const int offset = Size / 2;
-		for (var i = -offset; i < offset; i++)
+		const int offset = LevelSpawner.Distance;
+		for (var i = -offset; i <= offset; i++)
 		{
 			var square = GridSquare.Instantiate();
 			square.transform.position = new Vector3(i, -0.7f, 0);

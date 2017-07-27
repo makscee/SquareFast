@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class HitEffect : MonoBehaviour
+public class HitEffect
 {
 	private static readonly Prefab Prefab = new Prefab("HitEffect");
     public static void Create(Vector2 position, Unit unit)
@@ -11,17 +11,33 @@ public class HitEffect : MonoBehaviour
 
         var main = ps.main;
         main.startColor = unit.GetComponent<SpriteRenderer>().color;
-        Destroy(he, 5f);
+        Object.Destroy(he, 5f);
     }
 }
 
-public class ShieldDieEffect : MonoBehaviour
+public class ShieldDieEffect
 {
 	private static readonly Prefab Prefab = new Prefab("ShieldDieEffect");
     public static void Create(Vector2 position)
     {
         var he = Prefab.Instantiate();
         he.transform.position = position;
-        Destroy(he, 5f);
+        Object.Destroy(he, 5f);
+    }
+}
+
+public class SpawnEffect
+{
+    private static readonly Prefab Prefab = new Prefab("SpawnEffect");
+    public static void Create(Vector2 position, Unit unit)
+    {
+        var he = Prefab.Instantiate();
+        he.transform.position = position;
+        var ps = he.GetComponent<ParticleSystem>();
+
+        var main = ps.main;
+        main.startColor = unit.GetComponent<SpriteRenderer>().color;
+        Utils.InvokeDelayed(() => ps.Stop(), Level.TickTime * 2);
+        Object.Destroy(he, Level.TickTime * 3);
     }
 }
