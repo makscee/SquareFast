@@ -30,6 +30,8 @@ public class Unit : MonoBehaviour
         {
             CreateShield();
         }
+        
+        SpawnEffect.Create(transform.position, this);
     }
 
     protected void CreateShield()
@@ -42,6 +44,11 @@ public class Unit : MonoBehaviour
     protected virtual bool MoveOrAttack(int relDir)
     {
         var pos = relDir + Position.IntX();
+        
+        if (Math.Abs(pos) > Level.Size / 2)
+        {
+            return true;
+        }
         var atPos = Level.Instance.Get(pos);
         if (atPos != null)
         {
@@ -171,10 +178,10 @@ public class Unit : MonoBehaviour
             Utils.Animate(_actPos, value, AnimationWindow, v =>
             {
                 transform.position += v;
-                if (this is Player && 2 - Math.Abs(transform.position.x) < 0.001)
+                var player = this as Player;
+                if (player != null && 2 - Math.Abs(transform.position.x) < 0.001)
                 {
-                    TakeDmg(this, 9999);
-                    TakeDmgAnim(0);
+                    player.HandleBoundries();
                 }
             }, this);
             
@@ -223,4 +230,9 @@ public class Unit : MonoBehaviour
             
         }
     }
+
+    public virtual Prefab GetPrefab()
+    {
+        return null;
+    } 
 }

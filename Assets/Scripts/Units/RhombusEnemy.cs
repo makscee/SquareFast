@@ -2,6 +2,12 @@ using UnityEngine;
 
 public class RhombusEnemy : BasicEnemy
 {
+    public new static readonly Prefab Prefab = new Prefab("RhombusEnemy");
+    public override Prefab GetPrefab()
+    {
+        return Prefab;
+    }
+    
     public override void TakeDmg(Unit source, int dmg = 1)
     {
         if (Shield)
@@ -14,7 +20,7 @@ public class RhombusEnemy : BasicEnemy
             DestroyShield();
             return;
         }
-        if (HP > 1)
+        if (HP - dmg > 0)
         {
             MoveT = 2;
             var dir = Player.Instance.Position.IntX() - Position.IntX();

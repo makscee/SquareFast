@@ -37,7 +37,7 @@ public class SpawnEffect
 
         var main = ps.main;
         main.startColor = unit.GetComponent<SpriteRenderer>().color;
-        Utils.InvokeDelayed(() => ps.Stop(), Level.TickTime * 2);
-        Object.Destroy(he, Level.TickTime * 3);
+        Utils.InvokeDelayed(() => ps.Stop(), 0.4f);
+        Object.Destroy(he, 0.6f);
     }
 }

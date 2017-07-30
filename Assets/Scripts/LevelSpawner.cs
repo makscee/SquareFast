@@ -52,7 +52,6 @@ public class EnemyPattern
                 go = _left[_li].Instantiate();
                 go.transform.position = new Vector3(-LevelSpawner.Distance, 0, 0);
                 go.GetComponent<Unit>().HP = _leftHp[_li];
-                SpawnEffect.Create(go.transform.position, go.GetComponent<Unit>());
             }
             _li = _li + 1 % _left.Count;
         }
@@ -63,7 +62,6 @@ public class EnemyPattern
                 go = _right[_ri].Instantiate();
                 go.transform.position = new Vector3(LevelSpawner.Distance, 0, 0);
                 go.GetComponent<Unit>().HP = _rightHp[_ri];
-                SpawnEffect.Create(go.transform.position, go.GetComponent<Unit>());
             }
             _ri = _ri + 1 % _right.Count;
         }
@@ -88,10 +86,10 @@ public class LevelSpawner
 {
     public const int Distance = 8;
     public List<Event> TickEvents;
-    
-    private static readonly Prefab Square = new Prefab("SquareEnemy");
-    private static readonly Prefab Triangle = new Prefab("TriangleEnemy");
-    private static readonly Prefab Rhombus = new Prefab("RhombusEnemy");
+
+    private static readonly Prefab Square = BasicEnemy.Prefab;
+    private static readonly Prefab Triangle = TriangleEnemy.Prefab;
+    private static readonly Prefab Rhombus = RhombusEnemy.Prefab;
 
     private readonly List<EnemyPattern> _patterns;
 

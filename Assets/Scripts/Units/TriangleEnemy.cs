@@ -4,6 +4,11 @@ using UnityEngine;
 public class TriangleEnemy : BasicEnemy
 {
     private int _counterAttack = -1;
+    public new static readonly Prefab Prefab = new Prefab("TriangleEnemy");
+    public override Prefab GetPrefab()
+    {
+        return Prefab;
+    }
 
     public override bool TickUpdate()
     {
@@ -28,7 +33,7 @@ public class TriangleEnemy : BasicEnemy
 
     public override void TakeDmg(Unit source, int dmg = 1)
     {
-        if (Shield || HP > 1)
+        if (Shield || HP - dmg > 0)
         {
             Scale = new Vector3(0.8f, 0.8f, 1f);
             _counterAttack = 1;

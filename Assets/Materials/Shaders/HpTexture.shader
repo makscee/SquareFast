@@ -35,6 +35,7 @@ Shader "HpTexture"
             #pragma vertex vert
             #pragma fragment frag
             #pragma multi_compile DUMMY PIXELSNAP_ON
+            #pragma target 2.0
             #include "UnityCG.cginc"
 
             struct appdata_t

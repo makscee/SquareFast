@@ -27,4 +27,9 @@ public class Prefab
     {
         return Object.Instantiate(_resource);
     }
+
+    public override string ToString()
+    {
+        return _path;
+    }
 }

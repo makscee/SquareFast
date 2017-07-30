@@ -1,30 +1,19 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Runtime.InteropServices;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 public class Player : Unit
 {
 	public static Player Instance;
-	public Text DelayText;
 	public bool Autopilot;
+	public static Prefab Prefab = new Prefab("Player");
+	public bool GameOverInstance = false;
 
 	private void Awake()
 	{
 		Instance = this;
 	}
 
-	private float dt = 0;
 	private void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.F))
-		{
-			AttackAnim(1, this);
-		}
-		dt += Time.deltaTime;
 		bool leftDown = Input.GetButtonDown("Left"),
 			rightDown = Input.GetButtonDown("Right");
 		if (Autopilot)
@@ -39,23 +28,58 @@ public class Player : Unit
 		}
 		var dir = leftDown ? -1 : (rightDown ? 1 : 0);
 		if (dir == 0) return;
-		DelayText.text = Math.Round(dt / Level.TickTime / 3, 3).ToString();
 		MoveOrAttack(dir);
 	}
 
-	public override bool TickUpdate()
+	public void HandleBoundries()
 	{
-		if (Level.Ticks % 3 == 0)
+		if (Level.GameOver)
 		{
-			dt = 0;
+			if (transform.position.x < 0)
+			{
+				Level.Instance.ExitGameover();
+			}
+			else
+			{
+				return;
+			}
 		}
-		return base.TickUpdate();
+		TakeDmg(this, 9999);
+		TakeDmgAnim(0);
+	}
+
+	public override void TakeDmg(Unit source, int dmg = 1)
+	{
+		Level.Instance.Killer = source.GetPrefab();
+		Debug.Log(Level.Instance.Killer);
+		base.TakeDmg(source, dmg);
 	}
 
 	public override void Die()
 	{
+		if (!Level.GameOver && !GameOverInstance)
+		{
+			Level.Instance.EnterGameOver();
+		}
+		if (GameOverInstance && Level.GameOver)
+		{
+			Utils.InvokeDelayed(() =>
+			{
+				Level.Instance.GetAllUnits().ForEach((u) =>
+				{
+					u.TakeDmg(null, 999);
+					u.TakeDmgAnim(0);
+				});
+				var p = Prefab.Instantiate();
+				p.GetComponent<Player>().GameOverInstance = true;
+				if (Level.Instance.Killer != null)
+				{
+					var go = Level.Instance.Killer.Instantiate();
+					go.transform.position = new Vector3(5, 0, 0);
+					go.GetComponent<SpriteRenderer>().color = new Color(0.3f, 0.3f, 0.3f);
+				}
+			}, 1f);
+		}
 		base.Die();
-		CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0f, 0.01f), 1.5f, true);
-		Level.Instance.Restart();
 	}
 }

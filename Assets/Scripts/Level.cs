@@ -2,26 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Level : MonoBehaviour
 {
 	public List<Event> TickEvents;
 	public static Level Instance { get; private set; }
-	private const int Size = LevelSpawner.Distance * 2 + 1;
+	public const int Size = LevelSpawner.Distance * 2 + 1;
 	private readonly Grid _grid = new Grid(Size);
 	private static readonly Prefab GridSquare = new Prefab("GridSquare");
 	public static float TickTime = 0.5f;
 	public static int Ticks = -1;
 	public static bool Updating = true;
+	public static bool GameOver = false;
+	public static bool Spawning = true;
 	public static int SaveTicks = -1;
 	public int StartTicks = -1;
 	private LevelSpawner _levelSpawner;
+	private AudioSource _audioSource;
+	public Text ContinueText;
+
+	private GameObject _leftBorder, _rightBorder;
+
+	[NonSerialized] public Prefab Killer = null;
 	
 	public void Restart(float delay = 1.75f)
 	{
 		Updating = false;
 		Ticks = -1;
-		Debug.Log("restarting");
 		Invoke("InvokeRestart", delay);
 	}
 
@@ -40,6 +48,7 @@ public class Level : MonoBehaviour
 			typeof(ShieldDieEffect),
 			typeof(Unit),
 			typeof(SpawnEffect),
+			typeof(LevelSpawner),
 		};
 		foreach (var t in types) 
 		{
@@ -63,10 +72,12 @@ public class Level : MonoBehaviour
 			square.transform.SetParent(transform);
 		}
 		var border = GridSquare.Instantiate();
+		_rightBorder = border;
 		border.transform.position = new Vector3(1.5f, 0f, 0);
 		border.transform.Rotate(0f, 0f, 90f);
 		border.transform.SetParent(transform);
 		border = GridSquare.Instantiate();
+		_leftBorder = border;
 		border.transform.position = new Vector3(-1.5f, 0f, 0);
 		border.transform.Rotate(0f, 0f, 90f);
 		border.transform.SetParent(transform);
@@ -80,12 +91,16 @@ public class Level : MonoBehaviour
 		{
 			TickTime = OverrideTickTime;
 		}
+		CancelInvoke("TickUpdate");
 		InvokeRepeating("TickUpdate", (OverrideTickTime > 0 ? 0 : delay), TickTime);
 		if (SaveTicks != -1)
 		{
 			StartTicks = SaveTicks;
 		}
-		GetComponent<AudioSource>().time = (StartTicks + 1) * TickTime + musicStart - delay;
+		_audioSource = GetComponent<AudioSource>();
+		_audioSource.volume = 0f;
+		Utils.Animate(0f, 1f, 0.9f, (v) => _audioSource.volume += v);
+		_audioSource.time = (StartTicks + 1) * TickTime + musicStart - delay;
 		Ticks = StartTicks;
 	}
 
@@ -125,7 +140,7 @@ public class Level : MonoBehaviour
 			return;
 		}
 		Ticks++;
-		_levelSpawner.TickUpdate();
+		if (Spawning) _levelSpawner.TickUpdate();
 		CounterScript.Instance.Set(Ticks);
 		var units = _grid.GetAllUnits();
 		var ticked = false;
@@ -159,5 +174,72 @@ public class Level : MonoBehaviour
 		{
 			EnemiesCount++;
 		}
+	}
+
+	public List<Unit> GetAllUnits()
+	{
+		return _grid.GetAllUnitsWithPushed();
+	}
+
+	private const float GOAnimationTime = 1f;
+	public void EnterGameOver()
+	{
+		Utils.Animate(1f, 0f, 0.5f, (v) => _audioSource.volume += v);
+		CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0f, 0.01f), GOAnimationTime / 2, true);
+		Updating = false;
+		GameOver = true;
+		Utils.InvokeDelayed(() =>
+		{
+			foreach (var unit in Level.Instance.GetAllUnits())
+			{
+				unit.TakeDmg(Player.Instance, 9999);
+				unit.TakeDmgAnim(0);
+			}
+		}, GOAnimationTime / 2);
+		var c = ContinueText.color;
+		c = new Color(c.r, c.g, c.b, 0);
+		Utils.InvokeDelayed(() =>
+		{
+			Utils.Animate(0f, 1f, GOAnimationTime / 4, (v) =>
+			{
+				CameraScript.Instance.Progress += v;
+				c.a += v;
+				ContinueText.color = c;
+			});
+		}, GOAnimationTime * 0.75f);
+		Utils.InvokeDelayed(() =>
+		{
+			_rightBorder.SetActive(false);
+			var p = Player.Prefab.Instantiate();
+			p.GetComponent<Player>().GameOverInstance = true;
+			Updating = true;
+			Spawning = false;
+			TickTime = 0.5f;
+			CancelInvoke("TickUpdate");
+			InvokeRepeating("TickUpdate", 0f, TickTime);
+			if (Killer != null)
+			{
+				var go = Killer.Instantiate();
+				go.transform.position = new Vector3(5, 0, 0);
+				go.GetComponent<SpriteRenderer>().color = new Color(0.3f, 0.3f, 0.3f);
+			}
+		}, GOAnimationTime);
+	}
+
+	public void ExitGameover()
+	{
+		GameOver = false;
+		Updating = true;
+		Spawning = true;
+		var c = ContinueText.color;
+		c = new Color(c.r, c.g, c.b, 1);
+		Utils.Animate(1f, 0f, GOAnimationTime / 4, (v) =>
+		{
+			CameraScript.Instance.Progress += v;
+			c.a += v;
+			ContinueText.color = c;
+		});
+		_rightBorder.SetActive(false);
+		Restart(GOAnimationTime / 2);
 	}
 }
