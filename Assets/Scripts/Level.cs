@@ -207,23 +207,30 @@ public class Level : MonoBehaviour
 				ContinueText.color = c;
 			});
 		}, GOAnimationTime * 0.75f);
-		Utils.InvokeDelayed(() =>
+		Utils.InvokeDelayed(RespawnGOUnits, GOAnimationTime);
+	}
+
+	public void RespawnGOUnits()
+	{
+		GetAllUnits().ForEach((u) =>
 		{
-			_rightBorder.SetActive(false);
-			var p = Player.Prefab.Instantiate();
-			p.GetComponent<Player>().GameOverInstance = true;
-			Updating = true;
-			Spawning = false;
-			TickTime = 0.5f;
-			CancelInvoke("TickUpdate");
-			InvokeRepeating("TickUpdate", 0f, TickTime);
-			if (Killer != null)
-			{
-				var go = Killer.Instantiate();
-				go.transform.position = new Vector3(5, 0, 0);
-				go.GetComponent<SpriteRenderer>().color = new Color(0.3f, 0.3f, 0.3f);
-			}
-		}, GOAnimationTime);
+			u.TakeDmg(null, 999);
+			u.TakeDmgAnim(0);
+		});
+		_rightBorder.SetActive(false);
+		var p = Player.Prefab.Instantiate();
+		p.GetComponent<Player>().GameOverInstance = true;
+		Updating = true;
+		Spawning = false;
+		TickTime = 0.5f;
+		CancelInvoke("TickUpdate");
+		InvokeRepeating("TickUpdate", 0f, TickTime);
+		if (Killer != null)
+		{
+			var go = Killer.Instantiate();
+			go.transform.position = new Vector3(5, 0, 0);
+			go.GetComponent<SpriteRenderer>().color = new Color(0.3f, 0.3f, 0.3f);
+		}
 	}
 
 	public void ExitGameover()
