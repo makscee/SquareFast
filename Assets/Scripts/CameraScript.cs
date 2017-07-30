@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class CameraScript : MonoBehaviour
 {
     public static CameraScript Instance;
-    private float _followSpeed = 0.05f;
+    private const float FollowSpeed = 0.05f;
     public Text SavedTicks;
     public Material Material;
     public float Progress;
@@ -16,6 +16,7 @@ public class CameraScript : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        Material = new Material(Material);
     }
 
     private void Update()
@@ -29,10 +30,11 @@ public class CameraScript : MonoBehaviour
             SavedTicks.text += "\n" + Level.Ticks;
         }
         
+        Debug.Log(Player.Instance);
         if (Player.Instance == null) return;
         var dir = Player.Instance.transform.position - transform.position;
         dir.z = 0;
-        transform.position += dir * _followSpeed;
+        transform.position += dir * FollowSpeed;
     }
 
     private void OnRenderImage (RenderTexture source, RenderTexture destination)

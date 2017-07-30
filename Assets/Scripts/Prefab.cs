@@ -18,8 +18,8 @@ public class Prefab
         foreach (var prefab in Prefabs)
         {
             prefab._resource = Resources.Load<GameObject>(prefab._path);
-			var go = Object.Instantiate(prefab._resource);
-			Object.Destroy(go);
+//			var go = Object.Instantiate(prefab._resource);
+//			Object.Destroy(go);
         }
     }
 

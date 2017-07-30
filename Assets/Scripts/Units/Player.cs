@@ -9,6 +9,7 @@ public class Player : Unit
 
 	private void Awake()
 	{
+		Debug.Log("awoken " + this + " " + GameOverInstance);
 		Instance = this;
 	}
 
