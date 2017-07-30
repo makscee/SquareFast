@@ -59,9 +59,9 @@ public static class Utils
         }
     }
 
-    public static void InvokeDelayed(Action a, float delay)
+    public static void InvokeDelayed(Action a, float delay, MonoBehaviour obj = null)
     {
-        var obj = Level.Instance;
+        obj = obj == null ? Level.Instance : obj;
         obj.StartCoroutine(Delay(a, delay));
     }
 

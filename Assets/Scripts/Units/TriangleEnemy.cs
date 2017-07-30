@@ -33,7 +33,7 @@ public class TriangleEnemy : BasicEnemy
 
     public override void TakeDmg(Unit source, int dmg = 1)
     {
-        if (Shield || HP - dmg > 0)
+        if (HP - dmg > 0)
         {
             Scale = new Vector3(0.8f, 0.8f, 1f);
             _counterAttack = 1;

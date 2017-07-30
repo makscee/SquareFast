@@ -8,12 +8,8 @@ public class Unit : MonoBehaviour
     public int HP = 1;
     [NonSerialized]
     public bool JustPopped = false;
-    private static readonly Prefab ShieldPrefab = new Prefab("Shield");
-    protected GameObject Shield;
     public int RunningAnimations = 0;
     protected Material HpMat;
-
-    public bool Shielded;
 
     private void Start()
     {
@@ -26,19 +22,7 @@ public class Unit : MonoBehaviour
         HpMat.SetInt("_Hp", HP);
         HpMat.SetInt("_CurHp", HP);
         
-        if (Shielded)
-        {
-            CreateShield();
-        }
-        
         SpawnEffect.Create(transform.position, this);
-    }
-
-    protected void CreateShield()
-    {
-        Shield = ShieldPrefab.Instantiate();
-        Shield.transform.SetParent(transform);
-        Shield.transform.localPosition = Vector3.zero;
     }
 
     protected virtual bool MoveOrAttack(int relDir)
@@ -74,11 +58,10 @@ public class Unit : MonoBehaviour
             this);
         Utils.Animate(change, Vector3.zero, AnimationWindow, v => transform.localScale += v,
             this);
-        Utils.Animate(_actPos, _actPos + new Vector3((float) relDir / 1.5f, 0, 0), AnimationWindow,
+        Utils.Animate(_actPos, _actPos + new Vector3(relDir / 1.5f, 0, 0), AnimationWindow,
             v => transform.position += v, this);
         change = -change;
-        target.TakeDmgAnim(AnimationWindow);
-        Utils.Animate(_actPos + new Vector3((float) relDir / 1.5f, 0, 0), _actPos, AnimationWindow,
+        Utils.Animate(_actPos + new Vector3(relDir / 1.5f, 0, 0), _actPos, AnimationWindow,
             v => transform.position += v,
             this, false, AnimationWindow);
         Utils.Animate(Vector3.zero, change, 0.001f, v => transform.localScale += v,
@@ -98,53 +81,25 @@ public class Unit : MonoBehaviour
         Position += new Vector3(relDir, 0, 0);
     }
 
-    public void TakeDmgAnim(float delay)
-    {
-        Invoke("_TakeDmgAnim", delay);
-    }
-
     private void _TakeDmgAnim()
     {
-        if (HadShield)
+        HitEffect.Create(transform.position, this);
+        if (HP <= 0)
         {
-            HadShield = false;
-            ShieldDieEffect.Create(transform.position);
-        }
-        else
-        {
-            HitEffect.Create(transform.position, this);
-            if (HP <= 0)
-            {
-                Destroy(gameObject);
-            }
+            Destroy(gameObject);
         }
     }
 
     protected bool HadShield = false;
     public virtual void TakeDmg(Unit source, int dmg = 1)
     {
-        if (Shield != null)
-        {
-//            var shieldMat = Shield.GetComponent<SpriteRenderer>().material;
-//            Utils.Animate(6f, 1f, Level.TickTime * 2, (v) => shieldMat.SetFloat("_Percentage", v), this, true);
-            HadShield = true;
-            DestroyShield();
-//            var dir = Position.IntX() - source.Position.IntX();
-//            dir = dir > 0 ? 1 : -1;
-//            Move(dir);
-            return;
-        }
+        Utils.InvokeDelayed(_TakeDmgAnim, AnimationWindow, this);
         HP -= dmg;
         HpMat.SetInt("_CurHp", HP);
         if (HP <= 0)
         {
             Die();
         }
-    }
-
-    protected void DestroyShield()
-    {
-        Destroy(Shield);
     }
 
     private GameObject _pe;

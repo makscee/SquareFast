@@ -34,7 +34,7 @@ public class Player : Unit
 
 	public void HandleBoundries()
 	{
-		if (Level.GameOver)
+		if (Level.GameOver && GameOverInstance)
 		{
 			if (transform.position.x < 0)
 			{
@@ -46,13 +46,11 @@ public class Player : Unit
 			}
 		}
 		TakeDmg(this, 9999);
-		TakeDmgAnim(0);
 	}
 
 	public override void TakeDmg(Unit source, int dmg = 1)
 	{
 		Level.Instance.Killer = source.GetPrefab();
-		Debug.Log(Level.Instance.Killer);
 		base.TakeDmg(source, dmg);
 	}
 

@@ -190,10 +190,9 @@ public class Level : MonoBehaviour
 		GameOver = true;
 		Utils.InvokeDelayed(() =>
 		{
-			foreach (var unit in Level.Instance.GetAllUnits())
+			foreach (var unit in GetAllUnits())
 			{
 				unit.TakeDmg(Player.Instance, 9999);
-				unit.TakeDmgAnim(0);
 			}
 		}, GOAnimationTime / 2);
 		var c = ContinueText.color;
@@ -215,7 +214,6 @@ public class Level : MonoBehaviour
 		GetAllUnits().ForEach((u) =>
 		{
 			u.TakeDmg(null, 999);
-			u.TakeDmgAnim(0);
 		});
 		_rightBorder.SetActive(false);
 		var p = Player.Prefab.Instantiate();

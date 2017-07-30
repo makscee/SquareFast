@@ -29,8 +29,6 @@ public class CameraScript : MonoBehaviour
         {
             SavedTicks.text += "\n" + Level.Ticks;
         }
-        
-        Debug.Log(Player.Instance);
         if (Player.Instance == null) return;
         var dir = Player.Instance.transform.position - transform.position;
         dir.z = 0;
