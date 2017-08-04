@@ -103,7 +103,7 @@ public class LevelSpawner
 //            new EnemyPattern().AddRight(Rhombus, 3).AddLeft(Rhombus, 3).SetLength(4),
 //            new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetLength(4),
         };
-        _ci = Random.Range(0, _patterns.Count);
+        _ci = 0;
         _curPattern = _patterns[_ci];
     }
 

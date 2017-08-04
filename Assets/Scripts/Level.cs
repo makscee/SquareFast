@@ -21,6 +21,7 @@ public class Level : MonoBehaviour
 	private LevelSpawner _levelSpawner;
 	private AudioSource _audioSource;
 	public Text ContinueText;
+	public Text ControlsText;
 
 	private GameObject _leftBorder, _rightBorder;
 
@@ -82,11 +83,11 @@ public class Level : MonoBehaviour
 		border.transform.Rotate(0f, 0f, 90f);
 		border.transform.SetParent(transform);
 		_levelSpawner.TickEvents = TickEvents;
-		
+
 		TickTime = 60f / 100f / 3f;
 		const float musicStart = 9.7f;
 		var delay = Time.time > 0 ? 0 : 2f;
-		
+
 		if (OverrideTickTime > 0)
 		{
 			TickTime = OverrideTickTime;
@@ -102,6 +103,17 @@ public class Level : MonoBehaviour
 		Utils.Animate(0f, 1f, 0.9f, (v) => _audioSource.volume += v);
 		_audioSource.time = (StartTicks + 1) * TickTime + musicStart - delay;
 		Ticks = StartTicks;
+		
+		if (Time.time != 0) return;
+		var c = ControlsText.color;
+		c.a = 1;
+		ControlsText.color = c;
+		c = new Color(c.r, c.g, c.b, 0);
+		Utils.Animate(1f, 0f, 3f, (v) =>
+		{
+			c.a = v;
+			ControlsText.color = c;
+		}, null, true, 2f);
 	}
 
 	public void Move(int pos, Unit unit)
