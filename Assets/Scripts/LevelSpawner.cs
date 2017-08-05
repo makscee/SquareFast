@@ -53,7 +53,7 @@ public class EnemyPattern
                 go.transform.position = new Vector3(-LevelSpawner.Distance, 0, 0);
                 go.GetComponent<Unit>().HP = _leftHp[_li];
             }
-            _li = _li + 1 % _left.Count;
+            _li = (_li + 1) % _left.Count;
         }
         else
         {
@@ -63,7 +63,7 @@ public class EnemyPattern
                 go.transform.position = new Vector3(LevelSpawner.Distance, 0, 0);
                 go.GetComponent<Unit>().HP = _rightHp[_ri];
             }
-            _ri = _ri + 1 % _right.Count;
+            _ri = (_ri + 1) % _right.Count;
         }
         _produced++;
         return go;
@@ -94,34 +94,64 @@ public class LevelSpawner
 
     public LevelSpawner()
     {
-        _patterns = new List<List<EnemyPattern>>();
-        _patterns.Add(new List<EnemyPattern>
+        _patterns = new List<List<EnemyPattern>>
         {
-            new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(Rhombus, 2).AddRight(Rhombus, 2).SetLength(2),
-            new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).SetLength(2),
-            new EnemyPattern().AddLeft(Square).AddRight(Rhombus, 2).SetLength(4),
-        });
-        _patterns.Add(new List<EnemyPattern>
-        {
-            new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetLength(4),
-        });
-        _patterns.Add(new List<EnemyPattern>
-        {
-            new EnemyPattern().AddRight(Rhombus, 3).AddLeft(Rhombus, 3).SetLength(4),
-        });
+            new List<EnemyPattern>
+            {
+                new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(Rhombus, 2).AddRight(Rhombus, 2)
+                    .SetLength(2),
+                new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).SetLength(2),
+                new EnemyPattern().AddLeft(Square).AddRight(Rhombus, 2).SetLength(4),
+            },
+            new List<EnemyPattern>
+            {
+                new EnemyPattern().AddLeft(Square).AddRight(Square).SetLength(2),
+                new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetLength(4),
+            },
+            new List<EnemyPattern>
+            {
+                new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetLength(2),
+                new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Rhombus, 2).SetLength(2),
+                new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetLength(2),
+            },
+            new List<EnemyPattern>
+            {
+                new EnemyPattern().AddLeft(Square).AddRight(Square).SetLength(2),
+                new EnemyPattern().AddRight(Rhombus, 3).AddLeft(Rhombus, 3).SetLength(4),
+            }
+        };
         _curPattern = _patterns[_cl][_ci];
-        Utils.InvokeDelayed(() =>
+        var distTime = Distance * Level.TickTime * 3;
+        const float sublevelTime = 15f;
+        Action a = () =>
         {
-            if (_cl < _patterns.Count - 1)
+            Utils.InvokeDelayed(() =>
+            {
+                if (_cl >= _patterns.Count - 1) return;
                 _cl++;
-        }, 15, null, true);
+                _ci = 0;
+                _curPattern = _patterns[_cl][_ci];
+                _spawning = false;
+                Utils.InvokeDelayed(() => _spawning = true, distTime);
+            }, sublevelTime - distTime);
+        };
+        Level.Instance.StartAction += () =>
+        {
+            Utils.InvokeDelayed(() =>
+            {
+                Pattern.Instance.NextLevel();
+                a();
+            }, sublevelTime, null, true);
+            a();
+        };
     }
 
     private EnemyPattern _curPattern;
     private int _ci = 0, _cl = 0;
+    private bool _spawning = true;
     public void TickUpdate()
     {
-        if (Level.Ticks % 3 != 0) return;
+        if (Level.Ticks % 3 != 0 || !_spawning) return;
         _curPattern.GetNext();
         if (!_curPattern.Ended()) return;
         

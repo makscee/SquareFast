@@ -18,11 +18,14 @@ public class Player : Unit
 			rightDown = Input.GetButtonDown("Right");
 		if (Autopilot)
 		{
-			if (Level.Instance.Get(Position.IntX() + 1))
+			Unit u;
+			if (u = Level.Instance.Get(Position.IntX() + 1))
 			{
+				u.HP = 1;
 				rightDown = true;
-			} else if (Level.Instance.Get(Position.IntX() - 1))
+			} else if (u = Level.Instance.Get(Position.IntX() - 1))
 			{
+				u.HP = 1;
 				leftDown = true;
 			}
 		}
@@ -49,8 +52,11 @@ public class Player : Unit
 
 	public override void TakeDmg(Unit source, int dmg = 1)
 	{
-		Level.Instance.Killer = source.GetPrefab();
-		Level.Instance.KillerHP = source.MaxHP;
+		if (source != null)
+		{
+			Level.Instance.Killer = source.GetPrefab();
+			Level.Instance.KillerHP = source.MaxHP;
+		}
 		base.TakeDmg(source, dmg);
 	}
 

@@ -1,22 +1,23 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class CounterScript : MonoBehaviour
 {
-    public static CounterScript Instance;
     private Text _text;
-    private static string text = "0";
 
-    private void Awake()
+    private void Start()
     {
-        Instance = this;
         _text = GetComponent<Text>();
-        _text.text = text;
+        Level.Instance.StartAction += () => _started = true;
     }
 
-    public void Set(int x)
+    private float _t = 0;
+    private bool _started;
+    private void Update()
     {
-        _text.text = x.ToString();
-        text = _text.text;
+        if (!_started || Level.GameOver) return;
+        _t += Time.deltaTime;
+        _text.text = string.Format("{0:F2}", Math.Round(_t, 2));
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -21,6 +22,7 @@ public class Level : MonoBehaviour
 	private AudioSource _audioSource;
 	public Text ContinueText;
 	public Text ControlsText;
+	public Text TimeText;
 
 	private GameObject _leftBorder, _rightBorder;
 
@@ -148,15 +150,23 @@ public class Level : MonoBehaviour
 
 	public int EnemiesCount { get; private set; }
 
+	private bool _started;
+	public Action StartAction;
+
 	public void TickUpdate()
 	{
 		if (!Updating)
 		{
 			return;
 		}
+		if (!_started && !GameOver)
+		{
+			StartAction();
+			_started = true;
+		}
 		Ticks++;
+		Pattern.Instance.TickUpdate();
 		if (Spawning) _levelSpawner.TickUpdate();
-		CounterScript.Instance.Set(Ticks);
 		var units = _grid.GetAllUnits();
 		var ticked = false;
 		foreach (var unit in units)
@@ -203,13 +213,8 @@ public class Level : MonoBehaviour
 		CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0f, 0.01f), GOAnimationTime / 2, true);
 		Updating = false;
 		GameOver = true;
-		Utils.InvokeDelayed(() =>
-		{
-			foreach (var unit in GetAllUnits())
-			{
-				unit.TakeDmg(Player.Instance, 9999);
-			}
-		}, GOAnimationTime / 2);
+		Pattern.Instance.Reset();
+		Utils.InvokeDelayed(KillEverything, GOAnimationTime / 2);
 		var c = ContinueText.color;
 		c = new Color(c.r, c.g, c.b, 0);
 		Utils.InvokeDelayed(() =>
@@ -221,15 +226,16 @@ public class Level : MonoBehaviour
 				ContinueText.color = c;
 			});
 		}, GOAnimationTime * 0.75f);
-		Utils.InvokeDelayed(RespawnGOUnits, GOAnimationTime);
+		Utils.InvokeDelayed(() =>
+		{
+			RespawnGOUnits();
+			if (Killer != null) RespawnKiller();
+		}, GOAnimationTime);
 	}
 
 	public void RespawnGOUnits()
 	{
-		GetAllUnits().ForEach((u) =>
-		{
-			u.TakeDmg(null, 999);
-		});
+		KillEverything();
 		_rightBorder.SetActive(false);
 		var p = Player.Prefab.Instantiate();
 		p.GetComponent<Player>().GameOverInstance = true;
@@ -238,13 +244,23 @@ public class Level : MonoBehaviour
 		TickTime = 0.5f;
 		CancelInvoke("TickUpdate");
 		InvokeRepeating("TickUpdate", 0f, TickTime);
-		if (Killer != null)
+	}
+
+	private void RespawnKiller()
+	{
+		if (!GameOver)
 		{
-			var go = Killer.Instantiate();
-			go.GetComponent<Unit>().HP = KillerHP;
-			go.transform.position = new Vector3(5, 0, 0);
-			go.GetComponent<SpriteRenderer>().color = new Color(0.3f, 0.3f, 0.3f);
+			return;
 		}
+		var go = Killer.Instantiate();
+		var unit = go.GetComponent<Unit>();
+		unit.HP = KillerHP;
+		unit.DieEvent += () =>
+		{
+			Utils.InvokeDelayed(RespawnKiller, 1f);
+		};
+		go.transform.position = new Vector3(5, 0, 0);
+		go.GetComponent<SpriteRenderer>().color = new Color(0.3f, 0.3f, 0.3f);
 	}
 
 	public void ExitGameover()
@@ -252,6 +268,7 @@ public class Level : MonoBehaviour
 		GameOver = false;
 		Updating = true;
 		Spawning = true;
+		KillEverything();
 		var c = ContinueText.color;
 		c = new Color(c.r, c.g, c.b, 1);
 		Utils.Animate(1f, 0f, GOAnimationTime / 4, (v) =>
@@ -260,7 +277,14 @@ public class Level : MonoBehaviour
 			c.a += v;
 			ContinueText.color = c;
 		});
-		_rightBorder.SetActive(false);
 		Restart(GOAnimationTime / 2);
+	}
+
+	public void KillEverything()
+	{
+		GetAllUnits().ForEach((u) =>
+		{
+			u.TakeDmg(null, 999);
+		});
 	}
 }

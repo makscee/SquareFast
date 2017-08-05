@@ -11,6 +11,7 @@ public class Unit : MonoBehaviour
     public bool JustPopped = false;
     public int RunningAnimations = 0;
     protected Material HpMat;
+    public Action DieEvent = () => { };
 
     private void Start()
     {
@@ -183,6 +184,7 @@ public class Unit : MonoBehaviour
     public virtual void Die()
     {
         Level.Instance.Clear(Position.IntX());
+        DieEvent();
         
         if (Level.Instance.EnemiesCount == 0 && !(this is Player))
         {
