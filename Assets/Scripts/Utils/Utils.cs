@@ -59,15 +59,20 @@ public static class Utils
         }
     }
 
-    public static void InvokeDelayed(Action a, float delay, MonoBehaviour obj = null)
+    public static void InvokeDelayed(Action a, float delay, MonoBehaviour obj = null, bool repeat = false)
     {
         obj = obj == null ? Level.Instance : obj;
-        obj.StartCoroutine(Delay(a, delay));
+        obj.StartCoroutine(Delay(a, delay, repeat));
     }
 
-    private static IEnumerator Delay(Action a, float delay)
+    private static IEnumerator Delay(Action a, float delay, bool repeat)
     {
         yield return new WaitForSeconds(delay);
         a();
+        while (repeat)
+        {
+            yield return new WaitForSeconds(delay);
+            a();
+        }
     }
 }

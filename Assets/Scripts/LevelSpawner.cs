@@ -85,30 +85,40 @@ public class EnemyPattern
 public class LevelSpawner
 {
     public const int Distance = 8;
-    public List<Event> TickEvents;
 
     private static readonly Prefab Square = BasicEnemy.Prefab;
     private static readonly Prefab Triangle = TriangleEnemy.Prefab;
     private static readonly Prefab Rhombus = RhombusEnemy.Prefab;
 
-    private readonly List<EnemyPattern> _patterns;
+    private readonly List<List<EnemyPattern>> _patterns;
 
     public LevelSpawner()
     {
-        _patterns = new List<EnemyPattern>
+        _patterns = new List<List<EnemyPattern>>();
+        _patterns.Add(new List<EnemyPattern>
         {
             new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(Rhombus, 2).AddRight(Rhombus, 2).SetLength(2),
             new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).SetLength(2),
             new EnemyPattern().AddLeft(Square).AddRight(Rhombus, 2).SetLength(4),
-//            new EnemyPattern().AddRight(Rhombus, 3).AddLeft(Rhombus, 3).SetLength(4),
-//            new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetLength(4),
-        };
-        _ci = 0;
-        _curPattern = _patterns[_ci];
+        });
+        _patterns.Add(new List<EnemyPattern>
+        {
+            new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetLength(4),
+        });
+        _patterns.Add(new List<EnemyPattern>
+        {
+            new EnemyPattern().AddRight(Rhombus, 3).AddLeft(Rhombus, 3).SetLength(4),
+        });
+        _curPattern = _patterns[_cl][_ci];
+        Utils.InvokeDelayed(() =>
+        {
+            if (_cl < _patterns.Count - 1)
+                _cl++;
+        }, 15, null, true);
     }
 
     private EnemyPattern _curPattern;
-    private int _ci;
+    private int _ci = 0, _cl = 0;
     public void TickUpdate()
     {
         if (Level.Ticks % 3 != 0) return;
@@ -116,8 +126,8 @@ public class LevelSpawner
         if (!_curPattern.Ended()) return;
         
         _curPattern.Reset();
-        _ci += Random.Range(1, _patterns.Count - 1);
-        _ci %= _patterns.Count;
-        _curPattern = _patterns[_ci];
+        _ci += Random.Range(1, _patterns[_cl].Count - 1);
+        _ci %= _patterns[_cl].Count;
+        _curPattern = _patterns[_cl][_ci];
     }
 }

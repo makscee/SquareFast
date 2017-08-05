@@ -9,7 +9,6 @@ public class Player : Unit
 
 	private void Awake()
 	{
-		Debug.Log("awoken " + this + " " + GameOverInstance);
 		Instance = this;
 	}
 
@@ -51,6 +50,7 @@ public class Player : Unit
 	public override void TakeDmg(Unit source, int dmg = 1)
 	{
 		Level.Instance.Killer = source.GetPrefab();
+		Level.Instance.KillerHP = source.MaxHP;
 		base.TakeDmg(source, dmg);
 	}
 

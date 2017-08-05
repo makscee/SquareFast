@@ -6,6 +6,7 @@ public class Unit : MonoBehaviour
 {
     public const float AnimationWindow = 0.05f;
     public int HP = 1;
+    public int MaxHP;
     [NonSerialized]
     public bool JustPopped = false;
     public int RunningAnimations = 0;
@@ -13,6 +14,7 @@ public class Unit : MonoBehaviour
 
     private void Start()
     {
+        MaxHP = HP;
         _actPos = transform.position;
         _actScale = transform.localScale;
         Level.Instance.InitPos(this);
@@ -27,6 +29,10 @@ public class Unit : MonoBehaviour
 
     protected virtual bool MoveOrAttack(int relDir)
     {
+        if (HP <= 0)
+        {
+            return true;
+        }
         var pos = relDir + Position.IntX();
         
         if (Math.Abs(pos) > Level.Size / 2)
@@ -39,7 +45,7 @@ public class Unit : MonoBehaviour
             bool class1 = atPos is Player, class2 = this is Player;
             if (class1 == class2) return false;
             atPos.TakeDmg(this);
-            AttackAnim(relDir, atPos);
+            AttackAnim(relDir);
             if (class1)
             {
                 Move(relDir);
@@ -51,7 +57,7 @@ public class Unit : MonoBehaviour
         return true;
     }
 
-    protected void AttackAnim(int relDir, Unit target)
+    protected void AttackAnim(int relDir)
     {
         var change = new Vector3(0.5f, -0.5f);
         Utils.Animate(Vector3.zero, change, 0.001f, v => transform.localScale += v,
@@ -90,7 +96,6 @@ public class Unit : MonoBehaviour
         }
     }
 
-    protected bool HadShield = false;
     public virtual void TakeDmg(Unit source, int dmg = 1)
     {
         Utils.InvokeDelayed(_TakeDmgAnim, AnimationWindow, this);

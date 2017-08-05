@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class Level : MonoBehaviour
 {
-	public List<Event> TickEvents;
 	public static Level Instance { get; private set; }
 	public const int Size = LevelSpawner.Distance * 2 + 1;
 	private readonly Grid _grid = new Grid(Size);
@@ -26,6 +25,7 @@ public class Level : MonoBehaviour
 	private GameObject _leftBorder, _rightBorder;
 
 	[NonSerialized] public Prefab Killer = null;
+	[NonSerialized] public int KillerHP;
 	
 	public void Restart(float delay = 1.75f)
 	{
@@ -59,9 +59,13 @@ public class Level : MonoBehaviour
 
 	public float OverrideTickTime = 0;
 
-	private void Awake()
+	private void Start()
 	{
 		_levelSpawner = new LevelSpawner();
+	}
+	
+	private void Awake()
+	{
 		TouchStatics();
 		Prefab.PreloadPrefabs();
 		Instance = this;
@@ -82,7 +86,6 @@ public class Level : MonoBehaviour
 		border.transform.position = new Vector3(-1.5f, 0f, 0);
 		border.transform.Rotate(0f, 0f, 90f);
 		border.transform.SetParent(transform);
-		_levelSpawner.TickEvents = TickEvents;
 
 		TickTime = 60f / 100f / 3f;
 		const float musicStart = 9.7f;
@@ -238,6 +241,7 @@ public class Level : MonoBehaviour
 		if (Killer != null)
 		{
 			var go = Killer.Instantiate();
+			go.GetComponent<Unit>().HP = KillerHP;
 			go.transform.position = new Vector3(5, 0, 0);
 			go.GetComponent<SpriteRenderer>().color = new Color(0.3f, 0.3f, 0.3f);
 		}
