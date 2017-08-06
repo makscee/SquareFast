@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Xml.Schema;
+using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Player : Unit
 {
@@ -16,6 +18,18 @@ public class Player : Unit
 	{
 		bool leftDown = Input.GetButtonDown("Left"),
 			rightDown = Input.GetButtonDown("Right");
+		if (Input.touchCount > 0)
+		{
+			for (var i = 0; i < Input.touchCount; ++i)
+			{
+				if (Input.GetTouch(i).phase != TouchPhase.Began) continue;
+				var pos = Input.GetTouch(i).position.x / Camera.main.pixelWidth;
+				if (pos > 0.5f)
+					rightDown = true;
+				else
+					leftDown = true;
+			}
+		}
 		if (Autopilot)
 		{
 			Unit u;
