@@ -22,6 +22,10 @@ public class Pattern : MonoBehaviour
 
     public void NextLevel()
     {
+        if (Level.GameOver)
+        {
+            return;
+        }
         _curLevel++;
         var c = 1;
         foreach (var images in Images)
