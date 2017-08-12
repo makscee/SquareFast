@@ -16,7 +16,6 @@ public class InversePostFX : MonoBehaviour
         
         if (invProgress != 0)
         {
-            RenderTexture rt2 = new CustomRenderTexture(Camera.main.pixelWidth, Camera.main.pixelHeight);
             Inverse.SetFloat("_Progress", invProgress);
             Inverse.SetColor("_BG", Camera.main.backgroundColor);
             Graphics.Blit (source, destination, Inverse);

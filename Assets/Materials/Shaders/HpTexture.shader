@@ -103,7 +103,6 @@ Shader "HpTexture"
 				float delta = 0.03;
 				if (_Hp > 1) {
 				    vec = i.texcoord - fixed2(0.5, _Center);
-				    [unroll(8)]
                     for (int k = 0; k <= _Hp; k++)
                     {
                         float ang2 = PI * 2 * k / _Hp;
