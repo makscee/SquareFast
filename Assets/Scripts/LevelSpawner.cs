@@ -130,26 +130,32 @@ public class LevelSpawner
             {
                 if (Level.GameOver) return;
                 if (_cl >= _patterns.Count - 1) return;
-                
-                CameraScript.Instance.SwitchFollow = _lastSpawned;
-                var u = _lastSpawned.GetComponent<Unit>();
-                u.DieEvent += () =>
+
+                if (_lastSpawned != null)
                 {
-                    var cs = CameraScript.Instance;
-                    Utils.Animate(cs.SwitchProgress, 1f, 0.1f, (v) => cs.SwitchProgress = v, null, true);
-                    Utils.InvokeDelayed(() =>
+                    CameraScript.Instance.SwitchFollow = _lastSpawned;
+                    var u = _lastSpawned.GetComponent<Unit>();
+                    u.DieEvent += () =>
                     {
-                        cs.SwitchColor = cs.SwitchColors[0];
-                        cs.SwitchColors.RemoveAt(0);
-                        Utils.Animate(1f, 0f, 0.2f, (v) => cs.SwitchProgress = v, null, true);
-                    }, 0.2f);
-                };
-                
+                        Utils.InvokeDelayed(() =>
+                        {
+                            var cs = CameraScript.Instance;
+                            Utils.Animate(cs.SwitchProgress, 1f, 0.1f, (v) => cs.SwitchProgress = v, null, true);
+                            Utils.InvokeDelayed(() =>
+                            {
+                                cs.SwitchColor = cs.SwitchColors[0];
+                                cs.SwitchColors.RemoveAt(0);
+                                Utils.Animate(1f, 0f, 0.2f, (v) => cs.SwitchProgress = v, null, true);
+                            }, 0.2f);
+                        }, Level.TickTime * 2);
+                    };
+                }
+
                 _cl++;
                 _ci = 0;
                 _curPattern = _patterns[_cl][_ci];
                 _spawning = false;
-                Utils.InvokeDelayed(() => _spawning = true, distTime / 3);
+                Utils.InvokeDelayed(() => _spawning = true, distTime / 2);
             }, sublevelTime - distTime);
         };
         Level.Instance.StartAction += () =>

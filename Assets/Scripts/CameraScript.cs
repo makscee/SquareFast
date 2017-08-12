@@ -19,7 +19,6 @@ public class CameraScript : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        Inverse = new Material(Inverse);
         ColorSwitch = new Material(ColorSwitch);
     }
 
@@ -28,10 +27,12 @@ public class CameraScript : MonoBehaviour
         if (SwitchFollow != null)
         {
             var pos = SwitchFollow.transform.position;
-            pos += pos.x > 0 ? Vector3.right : Vector3.left;
+            pos += pos.x > 0 ? new Vector3(1.5f, 0) : new Vector3(-1.5f, 0);
+            pos.x = Math.Max(2f, Math.Abs(pos.x));
             var v = Camera.main.WorldToScreenPoint(pos).x;
             var w = (float) Camera.main.pixelWidth / 2;
-            SwitchProgress = 1 - Math.Abs(v - w) / w;
+            var needSP = (1 - Math.Abs(v - w) / w) - SwitchProgress;
+            SwitchProgress += needSP / 2;
         }
         if (Input.GetKeyDown(KeyCode.R))
         {
@@ -49,20 +50,9 @@ public class CameraScript : MonoBehaviour
 
     private void OnRenderImage (RenderTexture source, RenderTexture destination)
     {
-        RenderTexture rt = new CustomRenderTexture(Camera.main.pixelWidth, Camera.main.pixelHeight);
         ColorSwitch.SetFloat("_Progress", SwitchProgress);
         ColorSwitch.SetFloat("_InvProgress", InvProgress);
         ColorSwitch.SetColor("_Color", SwitchColor);
-        Graphics.Blit (source, rt, ColorSwitch);
-        if (InvProgress != 0)
-        {
-            RenderTexture rt2 = new CustomRenderTexture(Camera.main.pixelWidth, Camera.main.pixelHeight);
-            Inverse.SetFloat("_Progress", InvProgress);
-            Inverse.SetColor("_BG", Camera.main.backgroundColor);
-            Graphics.Blit (rt, rt2, Inverse);
-            rt.DiscardContents();
-            rt = rt2;
-        }
-        Graphics.Blit(rt, destination);
+        Graphics.Blit (source, destination, ColorSwitch);
     }
 }

@@ -35,7 +35,7 @@ Shader "HpTexture"
             #pragma vertex vert
             #pragma fragment frag
             #pragma multi_compile DUMMY PIXELSNAP_ON
-            #pragma target 2.0
+            //#pragma target 2.0
             #include "UnityCG.cginc"
 
             struct appdata_t
@@ -103,15 +103,10 @@ Shader "HpTexture"
 				float delta = 0.03;
 				if (_Hp > 1) {
 				    vec = i.texcoord - fixed2(0.5, _Center);
+				    [unroll(8)]
                     for (int k = 0; k <= _Hp; k++)
                     {
                         float ang2 = PI * 2 * k / _Hp;
-//                        fixed2 v = rotate(vec, ang2);   
-//                        if (v.y >= -0.001 && abs(v.x) <= delta)
-//                        {
-//                            c.rgb *= 0.4;
-//                            break;
-//                        }
                         if (ang1 <= ang2)
                         {
                             if (_CurHp < k)
