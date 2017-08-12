@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -127,12 +128,28 @@ public class LevelSpawner
         {
             Utils.InvokeDelayed(() =>
             {
+                if (Level.GameOver) return;
                 if (_cl >= _patterns.Count - 1) return;
+                
+                CameraScript.Instance.SwitchFollow = _lastSpawned;
+                var u = _lastSpawned.GetComponent<Unit>();
+                u.DieEvent += () =>
+                {
+                    var cs = CameraScript.Instance;
+                    Utils.Animate(cs.SwitchProgress, 1f, 0.1f, (v) => cs.SwitchProgress = v, null, true);
+                    Utils.InvokeDelayed(() =>
+                    {
+                        cs.SwitchColor = cs.SwitchColors[0];
+                        cs.SwitchColors.RemoveAt(0);
+                        Utils.Animate(1f, 0f, 0.2f, (v) => cs.SwitchProgress = v, null, true);
+                    }, 0.2f);
+                };
+                
                 _cl++;
                 _ci = 0;
                 _curPattern = _patterns[_cl][_ci];
                 _spawning = false;
-                Utils.InvokeDelayed(() => _spawning = true, distTime);
+                Utils.InvokeDelayed(() => _spawning = true, distTime / 3);
             }, sublevelTime - distTime);
         };
         Level.Instance.StartAction += () =>
@@ -149,10 +166,15 @@ public class LevelSpawner
     private EnemyPattern _curPattern;
     private int _ci = 0, _cl = 0;
     private bool _spawning = true;
+    private GameObject _lastSpawned;
     public void TickUpdate()
     {
         if (Level.Ticks % 3 != 0 || !_spawning) return;
-        _curPattern.GetNext();
+        var next = _curPattern.GetNext();
+        if (next != null)
+        {
+            _lastSpawned = next;
+        }
         if (!_curPattern.Ended()) return;
         
         _curPattern.Reset();

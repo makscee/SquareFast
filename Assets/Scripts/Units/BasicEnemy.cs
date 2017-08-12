@@ -15,7 +15,8 @@ public class BasicEnemy : Unit
     {
         var sr = GetComponent<SpriteRenderer>();
         var c = sr.color;
-        c.b += Random.value;
+//        c.b += Random.value;
+        c *= 0.7f;
         sr.color = c;
     }
     

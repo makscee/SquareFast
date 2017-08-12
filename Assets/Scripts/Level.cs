@@ -221,7 +221,7 @@ public class Level : MonoBehaviour
 		{
 			Utils.Animate(0f, 1f, GOAnimationTime / 4, (v) =>
 			{
-				CameraScript.Instance.Progress += v;
+				CameraScript.Instance.InvProgress += v;
 				c.a += v;
 				ContinueText.color = c;
 			});
@@ -273,7 +273,7 @@ public class Level : MonoBehaviour
 		c = new Color(c.r, c.g, c.b, 1);
 		Utils.Animate(1f, 0f, GOAnimationTime / 4, (v) =>
 		{
-			CameraScript.Instance.Progress += v;
+			CameraScript.Instance.InvProgress += v;
 			c.a += v;
 			ContinueText.color = c;
 		});
