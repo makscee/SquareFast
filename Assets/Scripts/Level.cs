@@ -27,6 +27,7 @@ public class Level : MonoBehaviour
 	private GameObject _leftBorder, _rightBorder;
 
 	[NonSerialized] public Prefab Killer = null;
+	[NonSerialized] public Unit KillerUnit = null;
 	[NonSerialized] public int KillerHP;
 	
 	public void Restart(float delay = 1.75f)
@@ -151,7 +152,7 @@ public class Level : MonoBehaviour
 	public int EnemiesCount { get; private set; }
 
 	private bool _started;
-	public Action StartAction;
+	public Action StartAction, GameOverAction = () => { }, ExitGameOverAction = () => { };
 
 	public void TickUpdate()
 	{
@@ -209,10 +210,10 @@ public class Level : MonoBehaviour
 	private const float GOAnimationTime = 1f;
 	public void EnterGameOver()
 	{
-		Utils.Animate(1f, 0f, 0.5f, (v) => _audioSource.volume += v);
-		CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0f, 0.01f), GOAnimationTime / 2, true);
 		Updating = false;
 		GameOver = true;
+		Utils.Animate(1f, 0f, 0.5f, (v) => _audioSource.volume += v);
+		CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0f, 0.01f), GOAnimationTime / 2, true);
 		Pattern.Instance.Reset();
 		Utils.InvokeDelayed(KillEverything, GOAnimationTime / 2);
 		var ct = ContinueText.color;
@@ -233,8 +234,10 @@ public class Level : MonoBehaviour
 		}, GOAnimationTime * 0.75f);
 		Utils.InvokeDelayed(() =>
 		{
+			Camera.main.GetComponent<SpritePainter>().Paint(Color.black);
 			RespawnGOUnits();
 			if (Killer != null) RespawnKiller();
+			GameOverAction();
 		}, GOAnimationTime);
 	}
 
@@ -259,6 +262,7 @@ public class Level : MonoBehaviour
 		}
 		var go = Killer.Instantiate();
 		var unit = go.GetComponent<Unit>();
+		KillerUnit = unit;
 		unit.HP = KillerHP;
 		unit.DieEvent += () =>
 		{
@@ -273,6 +277,7 @@ public class Level : MonoBehaviour
 		GameOver = false;
 		Updating = true;
 		Spawning = true;
+		ExitGameOverAction();
 		KillEverything();
 		var ct = ContinueText.color;
 		ct = new Color(ct.r, ct.g, ct.b, 1);
