@@ -215,15 +215,20 @@ public class Level : MonoBehaviour
 		GameOver = true;
 		Pattern.Instance.Reset();
 		Utils.InvokeDelayed(KillEverything, GOAnimationTime / 2);
-		var c = ContinueText.color;
-		c = new Color(c.r, c.g, c.b, 0);
+		var ct = ContinueText.color;
+		ct = new Color(ct.r, ct.g, ct.b, 0);
+		var tt = TimeText.color;
 		Utils.InvokeDelayed(() =>
 		{
 			Utils.Animate(0f, 1f, GOAnimationTime / 4, (v) =>
 			{
 				CameraScript.Instance.InvProgress += v;
-				c.a += v;
-				ContinueText.color = c;
+				ct.a += v;
+				ContinueText.color = ct;
+				tt.r = 1 - ct.a;
+				tt.g = 1 - ct.a;
+				tt.b = 1 - ct.a;
+				TimeText.color = tt;
 			});
 		}, GOAnimationTime * 0.75f);
 		Utils.InvokeDelayed(() =>
@@ -269,13 +274,17 @@ public class Level : MonoBehaviour
 		Updating = true;
 		Spawning = true;
 		KillEverything();
-		var c = ContinueText.color;
-		c = new Color(c.r, c.g, c.b, 1);
+		var ct = ContinueText.color;
+		ct = new Color(ct.r, ct.g, ct.b, 1);
+		var tt = TimeText.color;
 		Utils.Animate(1f, 0f, GOAnimationTime / 4, (v) =>
 		{
 			CameraScript.Instance.InvProgress += v;
-			c.a += v;
-			ContinueText.color = c;
+			ct.a += v;
+			ContinueText.color = ct;
+			tt.a = ct.a;
+			TimeText.color = tt;
+
 		});
 		Restart(GOAnimationTime / 2);
 	}

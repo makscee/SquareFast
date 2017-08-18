@@ -16,7 +16,11 @@ public class CounterScript : MonoBehaviour
     private bool _started;
     private void Update()
     {
-        if (!_started || Level.GameOver) return;
+        if (!_started || Level.GameOver)
+        {
+            _started = false;
+            return;
+        }
         _t += Time.deltaTime;
         _text.text = string.Format("{0:F2}", Math.Round(_t, 2));
     }

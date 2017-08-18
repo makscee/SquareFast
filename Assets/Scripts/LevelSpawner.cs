@@ -99,10 +99,11 @@ public class LevelSpawner
         {
             new List<EnemyPattern>
             {
-                new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(Rhombus, 2).AddRight(Rhombus, 2)
-                    .SetLength(2),
+                new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(Square).AddRight(Square)
+                    .AddLeft(Square, 2).AddRight(Square, 2).SetLength(3),
                 new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).SetLength(2),
                 new EnemyPattern().AddLeft(Square).AddRight(Rhombus, 2).SetLength(4),
+                new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).AddLeft(Rhombus, 2).AddRight(Rhombus, 2).SetLength(1),
             },
             new List<EnemyPattern>
             {
