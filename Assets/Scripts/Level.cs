@@ -245,8 +245,11 @@ public class Level : MonoBehaviour
 	{
 		KillEverything();
 		_rightBorder.SetActive(false);
-		var p = Player.Prefab.Instantiate();
-		p.GetComponent<Player>().GameOverInstance = true;
+		Utils.InvokeDelayed(() =>
+		{
+			var p = Player.Prefab.Instantiate();
+			p.GetComponent<Player>().GameOverInstance = true;
+		}, 0.3f);
 		Updating = true;
 		Spawning = false;
 		TickTime = 0.5f;
