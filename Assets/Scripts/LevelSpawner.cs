@@ -101,9 +101,9 @@ public class LevelSpawner
             {
                 new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(Square).AddRight(Square)
                     .AddLeft(Square, 2).AddRight(Square, 2).SetLength(3),
-                new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).SetLength(2),
+                new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(null).AddRight(Rhombus, 2).SetLength(2),
                 new EnemyPattern().AddLeft(Square).AddRight(Rhombus, 2).SetLength(4),
-                new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).AddLeft(Rhombus, 2).AddRight(Rhombus, 2).SetLength(1),
+                new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).AddLeft(null, 2).AddRight(Rhombus, 2).SetLength(2),
             },
             new List<EnemyPattern>
             {
@@ -147,6 +147,7 @@ public class LevelSpawner
                                 cs.SwitchColor = cs.SwitchColors[0];
                                 cs.SwitchColors.RemoveAt(0);
                                 Utils.Animate(1f, 0f, 0.2f, (v) => cs.SwitchProgress = v, null, true);
+                                Pattern.Instance.NextLevel();
                             }, 0.2f);
                         }, Level.TickTime * 2);
                     };
@@ -163,7 +164,6 @@ public class LevelSpawner
         {
             Utils.InvokeDelayed(() =>
             {
-                Pattern.Instance.NextLevel();
                 a();
             }, sublevelTime, null, true);
             a();
