@@ -4,7 +4,7 @@ using Random = UnityEngine.Random;
 
 public class Unit : MonoBehaviour
 {
-    public const float AnimationWindow = 0.05f;
+    public const float AnimationWindow = 0.1f;
     public int HP = 1;
     public int MaxHP;
     [NonSerialized]
@@ -49,7 +49,9 @@ public class Unit : MonoBehaviour
             AttackAnim(relDir);
             if (class1)
             {
-                Move(relDir);
+//                Move(relDir);
+                Time.timeScale = 0.1f;
+                Utils.Animate(0.1f, 1f, 1f, (v) => Time.timeScale += v);
             }
             return true;
         }
@@ -61,29 +63,31 @@ public class Unit : MonoBehaviour
     protected void AttackAnim(int relDir)
     {
         var change = new Vector3(0.5f, -0.5f);
+        const float awHalf = AnimationWindow / 2;
         Utils.Animate(Vector3.zero, change, 0.001f, v => transform.localScale += v,
             this);
-        Utils.Animate(change, Vector3.zero, AnimationWindow, v => transform.localScale += v,
+        Utils.Animate(change, Vector3.zero, awHalf, v => transform.localScale += v,
             this);
-        Utils.Animate(_actPos, _actPos + new Vector3(relDir / 1.5f, 0, 0), AnimationWindow,
+        Utils.Animate(_actPos, _actPos + new Vector3(relDir / 1.5f, 0, 0), awHalf,
             v => transform.position += v, this);
         change = -change;
-        Utils.Animate(_actPos + new Vector3(relDir / 1.5f, 0, 0), _actPos, AnimationWindow,
+        Utils.Animate(_actPos + new Vector3(relDir / 1.5f, 0, 0), _actPos, awHalf,
             v => transform.position += v,
-            this, false, AnimationWindow);
+            this, false, awHalf);
         Utils.Animate(Vector3.zero, change, 0.001f, v => transform.localScale += v,
-            this, false, AnimationWindow);
-        Utils.Animate(change, Vector3.zero, AnimationWindow, v => transform.localScale += v,
-            this, false, AnimationWindow);
+            this, false, awHalf);
+        Utils.Animate(change, Vector3.zero, awHalf, v => transform.localScale += v,
+            this, false, awHalf);
     }
 
     public void Move(int relDir)
     {
         var change = new Vector3(0.5f, -0.5f);
-        Utils.Animate(Vector3.zero, change, 0.001f, v => transform.localScale += v,
+        Utils.Animate(Vector3.zero, change, AnimationWindow / 2, v => transform.localScale += v,
             this);
-        Utils.Animate(change, Vector3.zero, AnimationWindow * 2, v => transform.localScale += v,
-            this);
+        Utils.InvokeDelayed( () => Utils.Animate(change, Vector3.zero, AnimationWindow / 2, v => transform.localScale += v,
+            this), AnimationWindow / 3 * 2, this);
+        
         Level.Instance.Move(Position.IntX() + relDir, this);
         Position += new Vector3(relDir, 0, 0);
     }
@@ -99,7 +103,7 @@ public class Unit : MonoBehaviour
 
     public virtual void TakeDmg(Unit source, int dmg = 1)
     {
-        Utils.InvokeDelayed(_TakeDmgAnim, AnimationWindow, this);
+        Utils.InvokeDelayed(_TakeDmgAnim, AnimationWindow / 2, this);
         HP -= dmg;
         HpMat.SetInt("_CurHp", HP);
         if (HP <= 0)
