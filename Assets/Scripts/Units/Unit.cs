@@ -52,6 +52,9 @@ public class Unit : MonoBehaviour
 //                Move(relDir);
                 Time.timeScale = 0.1f;
                 Utils.Animate(0.1f, 1f, 1f, (v) => Time.timeScale += v);
+                var camSize = Camera.main.orthographicSize;
+                Utils.Animate(camSize, camSize / 1.5f, 0.07f, (v) => Camera.main.orthographicSize += v);
+                Utils.InvokeDelayed(() => Utils.Animate(Camera.main.orthographicSize, camSize, 0.2f, (v) => Camera.main.orthographicSize += v), 0.5f);
             }
             return true;
         }
