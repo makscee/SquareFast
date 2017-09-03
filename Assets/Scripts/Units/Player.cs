@@ -48,17 +48,18 @@ public class Player : Unit
 		MoveOrAttack(dir);
 	}
 
-	public void HandleBoundries()
+	public void HandleBoundries(bool left)
 	{
 		if (Level.GameOver && GameOverInstance)
 		{
-			if (transform.position.x < 0)
+			if (left)
 			{
 				Level.Instance.ExitGameover();
 			}
 			else
 			{
-				return;
+				Debug.Log("quit");
+				Application.Quit();
 			}
 		}
 		TakeDmg(this, 9999);

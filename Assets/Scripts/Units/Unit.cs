@@ -18,7 +18,10 @@ public class Unit : MonoBehaviour
         MaxHP = HP;
         _actPos = transform.position;
         _actScale = transform.localScale;
-        Level.Instance.InitPos(this);
+        if (Level.Instance != null)
+        {
+            Level.Instance.InitPos(this);
+        }
         HpMat = GetComponent<SpriteRenderer>().material;
         HpMat.SetFloat("_Rot", Random.Range(-1f, 1f));
         HpMat.SetFloat("_Center", Random.Range(0.35f, 0.55f));
@@ -147,12 +150,20 @@ public class Unit : MonoBehaviour
             {
                 transform.position += v;
                 var player = this as Player;
-                if (player != null && 2 - Math.Abs(transform.position.x) < 0.001)
+                if (player != null)
                 {
-                    player.HandleBoundries();
+                    var pos = player.transform.position.x;
+                    if (pos < Math.Floor(Level.Instance.LeftBorder.transform.position.x) + 0.01f)
+                    {
+                        player.HandleBoundries(true);
+                    }
+                    else if (pos > Math.Ceiling(Level.Instance.RightBorder.transform.position.x) - 0.01f)
+                    {
+                        player.HandleBoundries(false);
+                    }
                 }
             }, this);
-            
+
             _actPos = value;
         }
     }

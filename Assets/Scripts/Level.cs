@@ -20,11 +20,13 @@ public class Level : MonoBehaviour
 	public int StartTicks = -1;
 	private LevelSpawner _levelSpawner;
 	private AudioSource _audioSource;
-	public Text ContinueText;
+	public Text RestartText;
+	public Text QuitText;
 	public Text ControlsText;
 	public Text TimeText;
 
-	private GameObject _leftBorder, _rightBorder;
+	[NonSerialized]
+	public GameObject LeftBorder, RightBorder;
 
 	[NonSerialized] public Prefab Killer = null;
 	[NonSerialized] public Unit KillerUnit = null;
@@ -80,12 +82,12 @@ public class Level : MonoBehaviour
 			square.transform.SetParent(transform);
 		}
 		var border = GridSquare.Instantiate();
-		_rightBorder = border;
+		RightBorder = border;
 		border.transform.position = new Vector3(1.5f, 0f, 0);
 		border.transform.Rotate(0f, 0f, 90f);
 		border.transform.SetParent(transform);
 		border = GridSquare.Instantiate();
-		_leftBorder = border;
+		LeftBorder = border;
 		border.transform.position = new Vector3(-1.5f, 0f, 0);
 		border.transform.Rotate(0f, 0f, 90f);
 		border.transform.SetParent(transform);
@@ -216,16 +218,18 @@ public class Level : MonoBehaviour
 		CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0f, 0.01f), GOAnimationTime / 2, true);
 		Pattern.Instance.Reset();
 		Utils.InvokeDelayed(KillEverything, GOAnimationTime / 2);
-		var ct = ContinueText.color;
+		var ct = RestartText.color;
 		ct = new Color(ct.r, ct.g, ct.b, 0);
 		var tt = TimeText.color;
 		Utils.InvokeDelayed(() =>
 		{
+			LeftBorder.transform.position = new Vector3(-3.5f, 0f, 0f);
 			Utils.Animate(0f, 1f, GOAnimationTime / 4, (v) =>
 			{
 				CameraScript.Instance.InvProgress += v;
 				ct.a += v;
-				ContinueText.color = ct;
+				RestartText.color = ct;
+				QuitText.color = ct;
 				tt.r = 1 - ct.a;
 				tt.g = 1 - ct.a;
 				tt.b = 1 - ct.a;
@@ -244,7 +248,7 @@ public class Level : MonoBehaviour
 	public void RespawnGOUnits()
 	{
 		KillEverything();
-		_rightBorder.SetActive(false);
+//		RightBorder.SetActive(false);
 		Utils.InvokeDelayed(() =>
 		{
 			var p = Player.Prefab.Instantiate();
@@ -271,7 +275,7 @@ public class Level : MonoBehaviour
 		{
 			Utils.InvokeDelayed(RespawnKiller, 1f);
 		};
-		go.transform.position = new Vector3(5, 0, 0);
+		go.transform.position = new Vector3(-2, 0, 0);
 		go.GetComponent<SpriteRenderer>().color = new Color(0.3f, 0.3f, 0.3f);
 	}
 
@@ -282,14 +286,15 @@ public class Level : MonoBehaviour
 		Spawning = true;
 		ExitGameOverAction();
 		KillEverything();
-		var ct = ContinueText.color;
+		var ct = RestartText.color;
 		ct = new Color(ct.r, ct.g, ct.b, 1);
 		var tt = TimeText.color;
 		Utils.Animate(1f, 0f, GOAnimationTime / 4, (v) =>
 		{
 			CameraScript.Instance.InvProgress += v;
 			ct.a += v;
-			ContinueText.color = ct;
+			RestartText.color = ct;
+			QuitText.color = ct;
 			tt.a = ct.a;
 			TimeText.color = tt;
 
