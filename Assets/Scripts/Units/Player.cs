@@ -1,6 +1,7 @@
 ﻿using System.Xml.Schema;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class Player : Unit
 {
@@ -18,6 +19,10 @@ public class Player : Unit
 	{
 		bool leftDown = Input.GetButtonDown("Left"),
 			rightDown = Input.GetButtonDown("Right");
+		if (Input.GetKeyDown(KeyCode.E))
+		{
+			AttackAnim(1);
+		}
 		if (Input.touchCount > 0)
 		{
 			for (var i = 0; i < Input.touchCount; ++i)
@@ -50,7 +55,20 @@ public class Player : Unit
 
 	public void HandleBoundries(bool left)
 	{
-		if (Level.GameOver && GameOverInstance)
+		var menu = Level.Instance as MenuLevel;
+		if (menu != null)
+		{
+			if (!left)
+			{
+				menu.NextItem();
+				return;
+			}
+			else
+			{
+				menu.Confirm();
+			}
+		}
+		else if (Level.GameOver && GameOverInstance)
 		{
 			if (left)
 			{
@@ -58,8 +76,7 @@ public class Player : Unit
 			}
 			else
 			{
-				Debug.Log("quit");
-				Application.Quit();
+				SceneManager.LoadScene(0);
 			}
 		}
 		TakeDmg(this, 9999);
@@ -77,6 +94,11 @@ public class Player : Unit
 
 	public override void Die()
 	{
+		if (Level.Instance is MenuLevel)
+		{
+			base.Die();
+			return;
+		}
 		if (!Level.GameOver && !GameOverInstance)
 		{
 			Level.Instance.EnterGameOver();

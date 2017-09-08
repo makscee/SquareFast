@@ -4,7 +4,7 @@ using UnityEngine;
 public class TriangleEnemy : BasicEnemy
 {
     private int _counterAttack = -1;
-    public new static readonly Prefab Prefab = new Prefab("TriangleEnemy");
+    public new static readonly Prefab Prefab = new Prefab("Enemies/TriangleEnemy");
     public override Prefab GetPrefab()
     {
         return Prefab;

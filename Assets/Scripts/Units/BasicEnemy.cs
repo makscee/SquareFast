@@ -5,7 +5,7 @@ public class BasicEnemy : Unit
     protected const int MovePeriod = 2;
     protected int MoveT = MovePeriod;
     
-    public static readonly Prefab Prefab = new Prefab("SquareEnemy");
+    public static readonly Prefab Prefab = new Prefab("Enemies/SquareEnemy");
     public override Prefab GetPrefab()
     {
         return Prefab;

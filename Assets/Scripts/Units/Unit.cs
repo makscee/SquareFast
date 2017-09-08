@@ -88,12 +88,27 @@ public class Unit : MonoBehaviour
 
     public void Move(int relDir)
     {
+        if (Level.Instance is MenuLevel)
+        {
+            if (Level.Instance.RightBorder.transform.position.x < Position.x + relDir)
+            {
+                AttackAnim(relDir);
+                var player = this as Player;
+                if (player != null)
+                {
+                    player.HandleBoundries(false);
+                }
+                return;
+            }
+        }
+
         var change = new Vector3(0.5f, -0.5f);
         Utils.Animate(Vector3.zero, change, AnimationWindow / 2, v => transform.localScale += v,
             this);
-        Utils.InvokeDelayed( () => Utils.Animate(change, Vector3.zero, AnimationWindow / 2, v => transform.localScale += v,
+        Utils.InvokeDelayed(() => Utils.Animate(change, Vector3.zero, AnimationWindow / 2,
+            v => transform.localScale += v,
             this), AnimationWindow / 3 * 2, this);
-        
+
         Level.Instance.Move(Position.IntX() + relDir, this);
         Position += new Vector3(relDir, 0, 0);
     }

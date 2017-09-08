@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class Level : MonoBehaviour
 {
-	public static Level Instance { get; private set; }
+	public static Level Instance { get; protected set; }
 	public const int Size = LevelSpawner.Distance * 2 + 1;
 	private readonly Grid _grid = new Grid(Size);
 	private static readonly Prefab GridSquare = new Prefab("GridSquare");
@@ -17,6 +17,8 @@ public class Level : MonoBehaviour
 	public static bool GameOver = false;
 	public static bool Spawning = true;
 	public static int SaveTicks = -1;
+	public static bool IsFirstStart = true;
+	public static string CurrentScene;
 	public int StartTicks = -1;
 	private LevelSpawner _levelSpawner;
 	private AudioSource _audioSource;
@@ -41,12 +43,11 @@ public class Level : MonoBehaviour
 
 	private void InvokeRestart()
 	{
-		SceneManager.LoadScene(0);
-//		Player.Instance.Move(-Player.Instance.Position.IntX());
+		SceneManager.LoadScene(CurrentScene);
 		Updating = true;
 	}
 
-	private static void TouchStatics() {
+	protected static void TouchStatics() {
 		var types = new List<Type>
 		{
 			typeof(HitEffect),
@@ -71,6 +72,10 @@ public class Level : MonoBehaviour
 	
 	private void Awake()
 	{
+		Updating = true;
+		GameOver = false;
+		Spawning = true;
+		CurrentScene = SceneManager.GetActiveScene().name;
 		TouchStatics();
 		Prefab.PreloadPrefabs();
 		Instance = this;
@@ -94,7 +99,7 @@ public class Level : MonoBehaviour
 
 		TickTime = 60f / 100f / 3f;
 		const float musicStart = 9.7f;
-		var delay = Time.time > 0 ? 0 : 2f;
+		var delay = IsFirstStart ? 2f : 0;
 
 		if (OverrideTickTime > 0)
 		{
@@ -112,7 +117,8 @@ public class Level : MonoBehaviour
 		_audioSource.time = (StartTicks + 1) * TickTime + musicStart - delay;
 		Ticks = StartTicks;
 		
-		if (Time.time != 0) return;
+		if (!IsFirstStart) return;
+		IsFirstStart = false;
 		var c = ControlsText.color;
 		c.a = 1;
 		ControlsText.color = c;
@@ -158,6 +164,7 @@ public class Level : MonoBehaviour
 
 	public void TickUpdate()
 	{
+		Debug.Log("update");
 		if (!Updating)
 		{
 			return;

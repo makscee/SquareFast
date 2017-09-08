@@ -34,16 +34,13 @@ public class CameraScript : MonoBehaviour
             var needSP = (1 - Math.Abs(v - w) / w) - SwitchProgress;
             SwitchProgress += needSP / 2;
         }
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Level.Instance.Restart();
-        }
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            SavedTicks.text += "\n" + Level.Ticks;
-        }
         if (Player.Instance == null) return;
-        var dir = Player.Instance.transform.position - transform.position;
+        var needPos = Player.Instance.transform.position;
+        if (Level.Instance is MenuLevel)
+        {
+            needPos += Vector3.up * 4;
+        }
+        var dir =  needPos - transform.position;
         dir.z = 0;
         transform.position += dir * FollowSpeed;
     }
