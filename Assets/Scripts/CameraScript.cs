@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,7 +13,6 @@ public class CameraScript : MonoBehaviour
     public float InvProgress, SwitchProgress;
     public Color SwitchColor;
     public GameObject SwitchFollow;
-    public List<Color> SwitchColors;
 
     private void Awake()
     {
@@ -36,13 +34,26 @@ public class CameraScript : MonoBehaviour
         }
         if (Player.Instance == null) return;
         var needPos = Player.Instance.transform.position;
-        if (Level.Instance is MenuLevel)
+        if (Menu.Instance.isActiveAndEnabled)
         {
             needPos += Vector3.up * 4;
         }
         var dir =  needPos - transform.position;
         dir.z = 0;
         transform.position += dir * FollowSpeed;
+    }
+
+    private const float SwitchTime = 0.2f;
+    public void SwitchScene(Action a = null)
+    {
+        Utils.Animate(0, 1, SwitchTime, (v) => SwitchProgress = v, null, true);
+        Utils.InvokeDelayed(() =>
+        {
+            InvProgress = 0f;
+            Utils.Animate(1, 0, SwitchTime, (v) => SwitchProgress = v, null, true);
+            transform.position = new Vector3(0, 0, transform.position.z);
+            if (a != null) a();
+        }, SwitchTime);
     }
 
     private void OnRenderImage (RenderTexture source, RenderTexture destination)

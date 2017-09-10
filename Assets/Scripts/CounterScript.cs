@@ -10,6 +10,11 @@ public class CounterScript : MonoBehaviour
     {
         _text = GetComponent<Text>();
         Level.Instance.StartAction += () => _started = true;
+        Level.Instance.ExitGameOverAction += () =>
+        {
+            _t = 0;
+            _started = true;
+        };
     }
 
     private float _t = 0;

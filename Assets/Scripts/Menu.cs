@@ -4,16 +4,16 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class MenuLevel : Level
+public class Menu : MonoBehaviour
 {
-    private static readonly Prefab GridSquare = new Prefab("GridSquare");
     private static readonly Prefab MenuItemPrefab = new Prefab("MenuItemText");
     public Canvas WorldCanvas;
+    public static Menu Instance;
 
     private class MenuItem
     {
         public readonly Text Text;
-        public Action Action;
+        public readonly Action Action;
 
         public MenuItem(string text, Action action)
         {
@@ -21,7 +21,7 @@ public class MenuLevel : Level
             var go = MenuItemPrefab.Instantiate();
             Text = go.GetComponent<Text>();
             Text.text = text;
-            go.transform.SetParent(((MenuLevel) Instance).WorldCanvas.transform);
+            go.transform.SetParent((Instance).WorldCanvas.transform);
         }
     }
 
@@ -67,9 +67,25 @@ public class MenuLevel : Level
         }
     }
 
+    private void OnEnable()
+    {
+        var gm = GridMarks.Instance;
+        gm.SetSize(1);
+        gm.SetBorders(-1, 1);
+        gm.SetBorderHandlers(() =>
+        {
+            Player.Instance.TakeDmg(Player.Instance, 999);
+            CameraScript.Instance.SwitchScene(Confirm);
+        }, NextItem);
+        if (Player.Instance == null)
+        {
+            Player.Prefab.Instantiate();
+        }
+    }
+
     private void Awake()
     {
-        TouchStatics();
+        Prefab.TouchStatics();
         Prefab.PreloadPrefabs();
         Instance = this;
 
@@ -77,30 +93,12 @@ public class MenuLevel : Level
         {
             new MenuItem("PLAY", () =>
             {
-                SceneManager.LoadScene(1);
-                Level.IsFirstStart = true;
+                gameObject.SetActive(false);
+                Level.Instance.gameObject.SetActive(true);
             }),
-            new MenuItem("HIGH SCORES", () => { }),
-            new MenuItem("QUIT", Application.Quit),
+            new MenuItem("HIGH SCORES", () => SceneManager.LoadScene(0)),
+            new MenuItem("QUIT", Application.Quit)
         };
         RefreshItems();
-        
-        const int offset = 1;
-        for (var i = -offset; i <= offset; i++)
-        {
-            var square = GridSquare.Instantiate();
-            square.transform.position = new Vector3(i, -0.7f, 0);
-            square.transform.SetParent(transform);
-        }
-        var border = GridSquare.Instantiate();
-        RightBorder = border;
-        border.transform.position = new Vector3(1.5f, 0f, 0);
-        border.transform.Rotate(0f, 0f, 90f);
-        border.transform.SetParent(transform);
-        border = GridSquare.Instantiate();
-        LeftBorder = border;
-        border.transform.position = new Vector3(-1.5f, 0f, 0);
-        border.transform.Rotate(0f, 0f, 90f);
-        border.transform.SetParent(transform);
     }
 }

@@ -92,9 +92,19 @@ public class LevelSpawner
     private static readonly Prefab Rhombus = RhombusEnemy.Prefab;
 
     private readonly List<List<EnemyPattern>> _patterns;
+    private readonly List<Color> _switchColors = new List<Color>();
 
     public LevelSpawner()
     {
+        _switchColors.Add(new Color(0.97f, 0.64f, 1f));
+        _switchColors.Add(new Color(0.61f, 0.65f, 1f));
+        _switchColors.Add(new Color(0.88f, 1f, 0.61f));
+
+        var sp = Camera.main.GetComponent<SpritePainter>();
+        sp.Clear();
+        sp.Paint(new Color(0.21f, 0.21f, 0.21f));
+        CameraScript.Instance.SwitchColor = Color.white;
+        
         _patterns = new List<List<EnemyPattern>>
         {
             new List<EnemyPattern>
@@ -144,8 +154,8 @@ public class LevelSpawner
                             Utils.Animate(cs.SwitchProgress, 1f, 0.1f, (v) => cs.SwitchProgress = v, null, true);
                             Utils.InvokeDelayed(() =>
                             {
-                                cs.SwitchColor = cs.SwitchColors[0];
-                                cs.SwitchColors.RemoveAt(0);
+                                cs.SwitchColor = _switchColors[0];
+                                _switchColors.RemoveAt(0);
                                 Utils.Animate(1f, 0f, 0.2f, (v) => cs.SwitchProgress = v, null, true);
                                 Pattern.Instance.NextLevel();
                             }, 0.2f);
@@ -160,7 +170,7 @@ public class LevelSpawner
                 Utils.InvokeDelayed(() => _spawning = true, distTime / 2);
             }, sublevelTime - distTime);
         };
-        Level.Instance.StartAction += () =>
+        StartAction = () =>
         {
             Utils.InvokeDelayed(() =>
             {
@@ -169,6 +179,8 @@ public class LevelSpawner
             a();
         };
     }
+
+    public Action StartAction;
 
     private EnemyPattern _curPattern;
     private int _ci = 0, _cl = 0;

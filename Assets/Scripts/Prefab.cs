@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public class Prefab
 {
@@ -7,6 +9,23 @@ public class Prefab
     private GameObject _resource;
 	private static readonly List<Prefab> Prefabs = new List<Prefab>();
 
+    public static void TouchStatics() {
+        var types = new List<Type>
+        {
+            typeof(HitEffect),
+            typeof(PushedEffect),
+            typeof(ShieldDieEffect),
+            typeof(Unit),
+            typeof(SpawnEffect),
+            typeof(LevelSpawner),
+            typeof(GridMarks),
+        };
+        foreach (var t in types) 
+        {
+            System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor (t.TypeHandle);
+        }
+    }
+    
 	public Prefab(string path)
     {
         _path = path;
@@ -17,14 +36,20 @@ public class Prefab
     {
         foreach (var prefab in Prefabs)
         {
-            prefab._resource = Resources.Load<GameObject>(prefab._path);
-//			var go = Object.Instantiate(prefab._resource);
-//			Object.Destroy(go);
+            if (prefab._resource == null)
+            {
+                prefab._resource = Resources.Load<GameObject>(prefab._path);
+            }
         }
     }
 
     public GameObject Instantiate()
     {
+        if (_resource == null)
+        {
+            Debug.Log("Resource " + _path + " was null. Loading.");
+            _resource = Resources.Load<GameObject>(_path);
+        }
         return Object.Instantiate(_resource);
     }
 

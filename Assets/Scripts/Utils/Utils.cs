@@ -22,13 +22,13 @@ public static class Utils
 
     public static void Animate(Vector3 from, Vector3 to, float over, Action<Vector3> onChange, MonoBehaviour obj = null, bool fullValue = false, float delay = 0f)
     {
-        obj = obj == null ? Level.Instance : obj;
+        obj = obj == null ? CameraScript.Instance : obj;
         obj.StartCoroutine(Animation(from, to, over, onChange, fullValue, delay));
     }
 
     public static void Animate(float from, float to, float over, Action<float> onChange, MonoBehaviour obj = null, bool fullValue = false, float delay = 0f)
     {
-        obj = obj == null ? Level.Instance : obj;
+        obj = obj == null ? CameraScript.Instance : obj;
         obj.StartCoroutine(Animation(new Vector3(from, 0), new Vector3(to, 0), over, v => onChange(v.x), fullValue, delay));
     }
 
@@ -61,7 +61,7 @@ public static class Utils
 
     public static void InvokeDelayed(Action a, float delay, MonoBehaviour obj = null, bool repeat = false)
     {
-        obj = obj == null ? Level.Instance : obj;
+        obj = obj == null ? CameraScript.Instance : obj;
         obj.StartCoroutine(Delay(a, delay, repeat));
     }
 

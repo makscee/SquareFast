@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
+//[ExecuteInEditMode]
 public class InversePostFX : MonoBehaviour
 {
     public Material Inverse;

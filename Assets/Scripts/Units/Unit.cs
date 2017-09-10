@@ -88,15 +88,14 @@ public class Unit : MonoBehaviour
 
     public void Move(int relDir)
     {
-        if (Level.Instance is MenuLevel)
+        if (Menu.Instance.isActiveAndEnabled)
         {
-            if (Level.Instance.RightBorder.transform.position.x < Position.x + relDir)
+            if (GridMarks.Instance.RightBorder.transform.position.x < Position.x + relDir)
             {
                 AttackAnim(relDir);
-                var player = this as Player;
-                if (player != null)
+                if (this is Player)
                 {
-                    player.HandleBoundries(false);
+                    GridMarks.Instance.HandlerRight();
                 }
                 return;
             }
@@ -165,17 +164,18 @@ public class Unit : MonoBehaviour
             {
                 transform.position += v;
                 var player = this as Player;
-                if (player != null)
+                if (player == null) return;
+                var pos = player.transform.position.x;
+                if (HP <= 0) return;
+                if (pos < Math.Floor(GridMarks.Instance.LeftBorder.transform.position.x) + 0.01f)
                 {
-                    var pos = player.transform.position.x;
-                    if (pos < Math.Floor(Level.Instance.LeftBorder.transform.position.x) + 0.01f)
-                    {
-                        player.HandleBoundries(true);
-                    }
-                    else if (pos > Math.Ceiling(Level.Instance.RightBorder.transform.position.x) - 0.01f)
-                    {
-                        player.HandleBoundries(false);
-                    }
+                    Debug.Log("handle left");
+                    GridMarks.Instance.HandlerLeft();
+                }
+                else if (pos > Math.Ceiling(GridMarks.Instance.RightBorder.transform.position.x) - 0.01f)
+                {
+                    Debug.Log("handle right");
+                    GridMarks.Instance.HandlerRight();
                 }
             }, this);
 

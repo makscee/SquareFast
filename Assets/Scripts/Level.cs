@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Level : MonoBehaviour
@@ -10,7 +8,6 @@ public class Level : MonoBehaviour
 	public static Level Instance { get; protected set; }
 	public const int Size = LevelSpawner.Distance * 2 + 1;
 	private readonly Grid _grid = new Grid(Size);
-	private static readonly Prefab GridSquare = new Prefab("GridSquare");
 	public static float TickTime = 0.5f;
 	public static int Ticks = -1;
 	public static bool Updating = true;
@@ -18,7 +15,6 @@ public class Level : MonoBehaviour
 	public static bool Spawning = true;
 	public static int SaveTicks = -1;
 	public static bool IsFirstStart = true;
-	public static string CurrentScene;
 	public int StartTicks = -1;
 	private LevelSpawner _levelSpawner;
 	private AudioSource _audioSource;
@@ -27,8 +23,10 @@ public class Level : MonoBehaviour
 	public Text ControlsText;
 	public Text TimeText;
 
-	[NonSerialized]
-	public GameObject LeftBorder, RightBorder;
+	public Level()
+	{
+		Instance = this;
+	}
 
 	[NonSerialized] public Prefab Killer = null;
 	[NonSerialized] public Unit KillerUnit = null;
@@ -43,79 +41,53 @@ public class Level : MonoBehaviour
 
 	private void InvokeRestart()
 	{
-		SceneManager.LoadScene(CurrentScene);
+		
 		Updating = true;
 	}
 
-	protected static void TouchStatics() {
-		var types = new List<Type>
-		{
-			typeof(HitEffect),
-			typeof(PushedEffect),
-			typeof(ShieldDieEffect),
-			typeof(Unit),
-			typeof(SpawnEffect),
-			typeof(LevelSpawner),
-		};
-		foreach (var t in types) 
-		{
-			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor (t.TypeHandle);
-		}
-	}
-
-	public float OverrideTickTime = 0;
-
-	private void Start()
-	{
-		_levelSpawner = new LevelSpawner();
-	}
-	
 	private void Awake()
 	{
+		Prefab.TouchStatics();
+		Prefab.PreloadPrefabs();
+		_audioSource = GetComponent<AudioSource>();
+	}
+
+	private void OnEnable()
+	{
+		Player.Prefab.Instantiate();
 		Updating = true;
 		GameOver = false;
 		Spawning = true;
-		CurrentScene = SceneManager.GetActiveScene().name;
-		TouchStatics();
-		Prefab.PreloadPrefabs();
-		Instance = this;
+		_started = false;
 		const int offset = LevelSpawner.Distance;
-		for (var i = -offset; i <= offset; i++)
-		{
-			var square = GridSquare.Instantiate();
-			square.transform.position = new Vector3(i, -0.7f, 0);
-			square.transform.SetParent(transform);
-		}
-		var border = GridSquare.Instantiate();
-		RightBorder = border;
-		border.transform.position = new Vector3(1.5f, 0f, 0);
-		border.transform.Rotate(0f, 0f, 90f);
-		border.transform.SetParent(transform);
-		border = GridSquare.Instantiate();
-		LeftBorder = border;
-		border.transform.position = new Vector3(-1.5f, 0f, 0);
-		border.transform.Rotate(0f, 0f, 90f);
-		border.transform.SetParent(transform);
+		GridMarks.Instance.SetSize(offset);
+		GridMarks.Instance.SetBorderHandlers(() =>
+			{
+				Player.Instance.DieEvent = () => { };
+				Player.Instance.TakeDmg(Player.Instance, 999);
+			},
+			() =>
+			{
+				Player.Instance.DieEvent = () => { };
+				Player.Instance.TakeDmg(Player.Instance, 999);
+			});
+		GridMarks.Instance.SetBorders(-1, 1);
 
 		TickTime = 60f / 100f / 3f;
 		const float musicStart = 9.7f;
 		var delay = IsFirstStart ? 2f : 0;
 
-		if (OverrideTickTime > 0)
-		{
-			TickTime = OverrideTickTime;
-		}
 		CancelInvoke("TickUpdate");
-		InvokeRepeating("TickUpdate", (OverrideTickTime > 0 ? 0 : delay), TickTime);
+		InvokeRepeating("TickUpdate", delay, TickTime);
 		if (SaveTicks != -1)
 		{
 			StartTicks = SaveTicks;
 		}
-		_audioSource = GetComponent<AudioSource>();
 		_audioSource.volume = 0f;
 		Utils.Animate(0f, 1f, 0.9f, (v) => _audioSource.volume += v);
 		_audioSource.time = (StartTicks + 1) * TickTime + musicStart - delay;
 		Ticks = StartTicks;
+		_levelSpawner = new LevelSpawner();
 		
 		if (!IsFirstStart) return;
 		IsFirstStart = false;
@@ -164,7 +136,6 @@ public class Level : MonoBehaviour
 
 	public void TickUpdate()
 	{
-		Debug.Log("update");
 		if (!Updating)
 		{
 			return;
@@ -172,6 +143,7 @@ public class Level : MonoBehaviour
 		if (!_started && !GameOver)
 		{
 			StartAction();
+			_levelSpawner.StartAction();
 			_started = true;
 		}
 		Ticks++;
@@ -221,6 +193,22 @@ public class Level : MonoBehaviour
 	{
 		Updating = false;
 		GameOver = true;
+		GridMarks.Instance.HandlerLeft += () =>
+		{
+			if (!GameOver) return;
+			ExitGameover();
+			Utils.InvokeDelayed(OnEnable, GOAnimationTime / 4);
+		};
+		GridMarks.Instance.HandlerRight += () =>
+		{
+			CameraScript.Instance.SwitchScene(() =>
+			{
+				ExitGameover();
+				gameObject.SetActive(false);
+				Menu.Instance.gameObject.SetActive(true);
+			});
+		};
+		
 		Utils.Animate(1f, 0f, 0.5f, (v) => _audioSource.volume += v);
 		CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0f, 0.01f), GOAnimationTime / 2, true);
 		Pattern.Instance.Reset();
@@ -230,7 +218,7 @@ public class Level : MonoBehaviour
 		var tt = TimeText.color;
 		Utils.InvokeDelayed(() =>
 		{
-			LeftBorder.transform.position = new Vector3(-3.5f, 0f, 0f);
+			GridMarks.Instance.SetBorders(-3, 1);
 			Utils.Animate(0f, 1f, GOAnimationTime / 4, (v) =>
 			{
 				CameraScript.Instance.InvProgress += v;
@@ -255,11 +243,15 @@ public class Level : MonoBehaviour
 	public void RespawnGOUnits()
 	{
 		KillEverything();
-//		RightBorder.SetActive(false);
 		Utils.InvokeDelayed(() =>
 		{
-			var p = Player.Prefab.Instantiate();
-			p.GetComponent<Player>().GameOverInstance = true;
+			var pgo = Player.Prefab.Instantiate();
+			var p = pgo.GetComponent<Player>();
+			p.GameOverInstance = true;
+			p.DieEvent = () =>
+			{
+				if (GameOver) Utils.InvokeDelayed(RespawnGOUnits, 1f);
+			};
 		}, 0.3f);
 		Updating = true;
 		Spawning = false;
@@ -292,21 +284,25 @@ public class Level : MonoBehaviour
 		Updating = true;
 		Spawning = true;
 		ExitGameOverAction();
+		Player.Instance.DieEvent = () => { };
 		KillEverything();
 		var ct = RestartText.color;
 		ct = new Color(ct.r, ct.g, ct.b, 1);
 		var tt = TimeText.color;
+		
 		Utils.Animate(1f, 0f, GOAnimationTime / 4, (v) =>
 		{
 			CameraScript.Instance.InvProgress += v;
 			ct.a += v;
 			RestartText.color = ct;
 			QuitText.color = ct;
-			tt.a = ct.a;
+			tt.r = 1 - ct.a;
+			tt.g = 1 - ct.a;
+			tt.b = 1 - ct.a;
 			TimeText.color = tt;
 
 		});
-		Restart(GOAnimationTime / 2);
+		CancelInvoke("TickUpdate");
 	}
 
 	public void KillEverything()

@@ -21,7 +21,7 @@ public class Player : Unit
 			rightDown = Input.GetButtonDown("Right");
 		if (Input.GetKeyDown(KeyCode.E))
 		{
-			AttackAnim(1);
+			CameraScript.Instance.SwitchScene();
 		}
 		if (Input.touchCount > 0)
 		{
@@ -55,20 +55,7 @@ public class Player : Unit
 
 	public void HandleBoundries(bool left)
 	{
-		var menu = Level.Instance as MenuLevel;
-		if (menu != null)
-		{
-			if (!left)
-			{
-				menu.NextItem();
-				return;
-			}
-			else
-			{
-				menu.Confirm();
-			}
-		}
-		else if (Level.GameOver && GameOverInstance)
+		if (Level.GameOver && GameOverInstance)
 		{
 			if (left)
 			{
@@ -94,7 +81,7 @@ public class Player : Unit
 
 	public override void Die()
 	{
-		if (Level.Instance is MenuLevel)
+		if (Menu.Instance.isActiveAndEnabled)
 		{
 			base.Die();
 			return;
@@ -103,13 +90,13 @@ public class Player : Unit
 		{
 			Level.Instance.EnterGameOver();
 		}
-		if (GameOverInstance && Level.GameOver)
-		{
-			Utils.InvokeDelayed(() =>
-			{
-				Level.Instance.RespawnGOUnits();
-			}, 1f);
-		}
+//		if (GameOverInstance && Level.GameOver)
+//		{
+//			Utils.InvokeDelayed(() =>
+//			{
+//				Level.Instance.RespawnGOUnits();
+//			}, 1f);
+//		}
 		base.Die();
 	}
 }
