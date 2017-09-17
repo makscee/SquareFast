@@ -15,6 +15,7 @@ public class Level : MonoBehaviour
 	public static bool Spawning = true;
 	public static int SaveTicks = -1;
 	public static bool IsFirstStart = true;
+	public static int CurrentLevel = 1;
 	public int StartTicks = -1;
 	private LevelSpawner _levelSpawner;
 	private AudioSource _audioSource;
@@ -59,6 +60,7 @@ public class Level : MonoBehaviour
 		GameOver = false;
 		Spawning = true;
 		_started = false;
+		Pattern.Instance.Reset();
 		const int offset = LevelSpawner.Distance;
 		GridMarks.Instance.SetSize(offset);
 		GridMarks.Instance.SetBorderHandlers(() =>

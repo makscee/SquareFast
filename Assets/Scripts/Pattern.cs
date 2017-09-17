@@ -8,27 +8,33 @@ public struct PatternImages
 {
     public List<RawImage> Images;
 }
+[Serializable]
+public struct PatternsImages
+{
+    public List<PatternImages> Patterns;
+}
 
 public class Pattern : MonoBehaviour
 {
     public static Pattern Instance;
-    public List<PatternImages> Images;
+    public List<PatternsImages> Images;
     private int _curLevel = 0;
+    private int _patterns = 0;
 
     private void Awake()
     {
         Instance = this;
     }
 
-    public void NextLevel()
+    public void NextLevel(int skip = 1)
     {
         if (Level.GameOver)
         {
             return;
         }
-        _curLevel++;
+        _curLevel += skip;
         var c = 1;
-        foreach (var images in Images)
+        foreach (var images in Images[_patterns].Patterns)
         {
             if (c > _curLevel) break;
             c++;
@@ -36,22 +42,31 @@ public class Pattern : MonoBehaviour
             {
                 if (!image.gameObject.activeSelf)
                 {
-                    image.rectTransform.localScale = Vector3.zero;
-                    Utils.Animate(Vector3.zero, Vector3.one, Level.TickTime / 2, (v) => image.rectTransform.localScale += v);
+                    var from = _patterns == 1 ? new Vector3(0, 1, 1) : Vector3.zero;
+                    image.rectTransform.localScale = from;
+                    Utils.Animate(from, Vector3.one, Level.TickTime / 2, (v) => image.rectTransform.localScale += v);
                 }
                 image.gameObject.SetActive(true);
             }
         }
     }
 
+    public void SetPatterns(int l)
+    {
+        _patterns = l - 1;
+    }
+
     public void Reset()
     {
         _curLevel = 0;
-        foreach (var images in Images)
+        foreach (var patterns in Images)
         {
-            foreach (var image in images.Images)
+            foreach (var images in patterns.Patterns)
             {
-                image.gameObject.SetActive(false);
+                foreach (var image in images.Images)
+                {
+                    image.gameObject.SetActive(false);
+                }
             }
         }
     }
@@ -63,7 +78,7 @@ public class Pattern : MonoBehaviour
             return;
         }
         var c = 1;
-        foreach (var images in Images)
+        foreach (var images in Images[_patterns].Patterns)
         {
             if (c > _curLevel) break;
             c++;

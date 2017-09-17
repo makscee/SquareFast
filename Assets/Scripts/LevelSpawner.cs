@@ -91,47 +91,19 @@ public class LevelSpawner
     private static readonly Prefab Triangle = TriangleEnemy.Prefab;
     private static readonly Prefab Rhombus = RhombusEnemy.Prefab;
 
-    private readonly List<List<EnemyPattern>> _patterns;
+    private List<List<EnemyPattern>> _patterns;
     private readonly List<Color> _switchColors = new List<Color>();
 
-    public LevelSpawner()
+    public LevelSpawner(int level = 1)
     {
-        _switchColors.Add(new Color(0.97f, 0.64f, 1f));
-        _switchColors.Add(new Color(0.61f, 0.65f, 1f));
-        _switchColors.Add(new Color(0.88f, 1f, 0.61f));
+        InitLevel(level);
 
         var sp = Camera.main.GetComponent<SpritePainter>();
         sp.Clear();
         sp.Paint(new Color(0.21f, 0.21f, 0.21f));
-        CameraScript.Instance.SwitchColor = Color.white;
+        CameraScript.Instance.SwitchColor = _switchColors[0];
+        _switchColors.RemoveAt(0);
         
-        _patterns = new List<List<EnemyPattern>>
-        {
-            new List<EnemyPattern>
-            {
-                new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(Square).AddRight(Square)
-                    .AddLeft(Square, 2).AddRight(Square, 2).SetLength(3),
-                new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(null).AddRight(Rhombus, 2).SetLength(2),
-                new EnemyPattern().AddLeft(Square).AddRight(Rhombus, 2).SetLength(4),
-                new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).AddLeft(null, 2).AddRight(Rhombus, 2).SetLength(2),
-            },
-            new List<EnemyPattern>
-            {
-                new EnemyPattern().AddLeft(Square).AddRight(Square).SetLength(2),
-                new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetLength(4),
-            },
-            new List<EnemyPattern>
-            {
-                new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetLength(2),
-                new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Rhombus, 2).SetLength(2),
-                new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetLength(2),
-            },
-            new List<EnemyPattern>
-            {
-                new EnemyPattern().AddLeft(Square).AddRight(Square).SetLength(2),
-                new EnemyPattern().AddRight(Rhombus, 3).AddLeft(Rhombus, 3).SetLength(4),
-            }
-        };
         _curPattern = _patterns[_cl][_ci];
         var distTime = Distance * Level.TickTime * 3;
         const float sublevelTime = 15f;
@@ -200,5 +172,49 @@ public class LevelSpawner
         _ci += Random.Range(1, _patterns[_cl].Count - 1);
         _ci %= _patterns[_cl].Count;
         _curPattern = _patterns[_cl][_ci];
+    }
+
+    private void InitLevel(int level)
+    {
+        switch (level)
+        {
+            case 1:
+            {
+                _switchColors.Add(Color.white);
+                _switchColors.Add(new Color(0.97f, 0.64f, 1f));
+                _switchColors.Add(new Color(0.61f, 0.65f, 1f));
+                _switchColors.Add(new Color(0.88f, 1f, 0.61f));
+                
+                _patterns = new List<List<EnemyPattern>>
+                {
+                    new List<EnemyPattern>
+                    {
+                        new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(Square).AddRight(Square)
+                            .AddLeft(Square, 2).AddRight(Square, 2).SetLength(3),
+                        new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(null).AddRight(Rhombus, 2).SetLength(2),
+                        new EnemyPattern().AddLeft(Square).AddRight(Rhombus, 2).SetLength(4),
+                        new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).AddLeft(null, 2).AddRight(Rhombus, 2).SetLength(2),
+                    },
+                    new List<EnemyPattern>
+                    {
+                        new EnemyPattern().AddLeft(Square).AddRight(Square).SetLength(2),
+                        new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetLength(4),
+                    },
+                    new List<EnemyPattern>
+                    {
+                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetLength(2),
+                        new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Rhombus, 2).SetLength(2),
+                        new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetLength(2),
+                    },
+                    new List<EnemyPattern>
+                    {
+                        new EnemyPattern().AddLeft(Square).AddRight(Square).SetLength(2),
+                        new EnemyPattern().AddRight(Rhombus, 3).AddLeft(Rhombus, 3).SetLength(4),
+                    }
+                };
+                break;
+            }
+            default: break;
+        }
     }
 }

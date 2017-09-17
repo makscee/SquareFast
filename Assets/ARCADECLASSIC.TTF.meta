@@ -4,18 +4,18 @@ timeCreated: 1501419509
 licenseType: Free
 TrueTypeFontImporter:
   serializedVersion: 4
-  fontSize: 16
+  fontSize: 32
   forceTextureCase: -2
   characterSpacing: 0
   characterPadding: 1
-  includeFontData: 1
+  includeFontData: 0
   fontName: ArcadeClassic
   fontNames:
   - ArcadeClassic
   fallbackFontReferences: []
   customCharacters: 
-  fontRenderingMode: 0
-  ascentCalculationMode: 1
+  fontRenderingMode: 2
+  ascentCalculationMode: 2
   userData: 
   assetBundleName: 
   assetBundleVariant: 
