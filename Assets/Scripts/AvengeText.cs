@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class AvengeText : MonoBehaviour
 {
     public Text Text;
+    public UnitedTint Tint;
     private Unit _killer;
     private void Start()
     {
@@ -11,18 +12,18 @@ public class AvengeText : MonoBehaviour
         {
             if (Level.Instance.Killer == null) return;
             _killer = Level.Instance.KillerUnit;
-            var c = Text.color;
+            var c = Tint.Color;
             c.a = 0;
-            Text.color = c;
+            Tint.Color = c;
             Utils.Animate(0f, 1f, 0.5f, (f) =>
             {
                 c.a += f;
-                Text.color = c;
+                Tint.Color = c;
             });
             _killer.DieEvent += () => Utils.Animate(1f, 0f, 0.4f, f =>
             {
                 c.a += f;
-                Text.color = c;
+                Tint.Color = c;
             });
         };
     }

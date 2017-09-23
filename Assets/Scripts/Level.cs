@@ -95,12 +95,13 @@ public class Level : MonoBehaviour
 		IsFirstStart = false;
 		var c = ControlsText.color;
 		c.a = 1;
-		ControlsText.color = c;
+		var ut = ControlsText.GetComponent<UnitedTint>();
+		ut.Color = c;
 		c = new Color(c.r, c.g, c.b, 0);
 		Utils.Animate(1f, 0f, 3f, (v) =>
 		{
 			c.a = v;
-			ControlsText.color = c;
+			ut.Color = c;
 		}, null, true, 2f);
 	}
 
@@ -208,14 +209,19 @@ public class Level : MonoBehaviour
 				ExitGameover();
 				gameObject.SetActive(false);
 				Menu.Instance.gameObject.SetActive(true);
+				Menu.Instance.RefreshItems(true);
 			});
 		};
 		
 		Utils.Animate(1f, 0f, 0.5f, (v) => _audioSource.volume += v);
-		CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0f, 0.01f), GOAnimationTime / 2, true);
+//		CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0f, 0.01f), GOAnimationTime / 2, true);
+		Utils.Animate(Camera.main.backgroundColor, Color.black, GOAnimationTime / 2, (v) => Camera.main.backgroundColor += v);
+		Utils.Animate(UnitedTint.Tint, Color.white, GOAnimationTime / 2, (v) => UnitedTint.Tint += v);
 		Pattern.Instance.Reset();
 		Utils.InvokeDelayed(KillEverything, GOAnimationTime / 2);
-		var ct = RestartText.color;
+		var rtut = RestartText.GetComponent<UnitedTint>();
+		var qtut = QuitText.GetComponent<UnitedTint>();
+		var ct = rtut.Color;
 		ct = new Color(ct.r, ct.g, ct.b, 0);
 		var tt = TimeText.color;
 		Utils.InvokeDelayed(() =>
@@ -225,8 +231,8 @@ public class Level : MonoBehaviour
 			{
 				CameraScript.Instance.InvProgress += v;
 				ct.a += v;
-				RestartText.color = ct;
-				QuitText.color = ct;
+				rtut.Color = ct;
+				qtut.Color = ct;
 				tt.r = 1 - ct.a;
 				tt.g = 1 - ct.a;
 				tt.b = 1 - ct.a;
@@ -235,7 +241,7 @@ public class Level : MonoBehaviour
 		}, GOAnimationTime * 0.75f);
 		Utils.InvokeDelayed(() =>
 		{
-			Camera.main.GetComponent<SpritePainter>().Paint(Color.black);
+//			Camera.main.GetComponent<SpritePainter>().Paint(Color.black);
 			RespawnGOUnits();
 			if (Killer != null) RespawnKiller();
 			GameOverAction();
@@ -288,7 +294,9 @@ public class Level : MonoBehaviour
 		ExitGameOverAction();
 		Player.Instance.DieEvent = () => { };
 		KillEverything();
-		var ct = RestartText.color;
+		var rtut = RestartText.GetComponent<UnitedTint>();
+		var qtut = QuitText.GetComponent<UnitedTint>();
+		var ct = rtut.Color;
 		ct = new Color(ct.r, ct.g, ct.b, 1);
 		var tt = TimeText.color;
 		
@@ -296,8 +304,8 @@ public class Level : MonoBehaviour
 		{
 			CameraScript.Instance.InvProgress += v;
 			ct.a += v;
-			RestartText.color = ct;
-			QuitText.color = ct;
+			rtut.Color = ct;
+			qtut.Color= ct;
 			tt.r = 1 - ct.a;
 			tt.g = 1 - ct.a;
 			tt.b = 1 - ct.a;

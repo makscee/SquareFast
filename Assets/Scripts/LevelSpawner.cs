@@ -97,11 +97,8 @@ public class LevelSpawner
     public LevelSpawner(int level = 1)
     {
         InitLevel(level);
-
-        var sp = Camera.main.GetComponent<SpritePainter>();
-        sp.Clear();
-        sp.Paint(new Color(0.21f, 0.21f, 0.21f));
-        CameraScript.Instance.SwitchColor = _switchColors[0];
+        UnitedTint.Tint = _switchColors[0];
+        CameraScript.ChangeColorTinted(UnitedTint.Tint);
         _switchColors.RemoveAt(0);
         
         _curPattern = _patterns[_cl][_ci];
@@ -126,7 +123,8 @@ public class LevelSpawner
                             Utils.Animate(cs.SwitchProgress, 1f, 0.1f, (v) => cs.SwitchProgress = v, null, true);
                             Utils.InvokeDelayed(() =>
                             {
-                                cs.SwitchColor = _switchColors[0];
+                                UnitedTint.Tint = _switchColors[0];
+                                CameraScript.ChangeColorTinted(UnitedTint.Tint);
                                 _switchColors.RemoveAt(0);
                                 Utils.Animate(1f, 0f, 0.2f, (v) => cs.SwitchProgress = v, null, true);
                                 Pattern.Instance.NextLevel();

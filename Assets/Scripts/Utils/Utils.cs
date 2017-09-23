@@ -26,6 +26,14 @@ public static class Utils
         obj.StartCoroutine(Animation(from, to, over, onChange, fullValue, delay));
     }
 
+    public static void Animate(Color from, Color to, float over, Action<Color> onChange, MonoBehaviour obj = null, bool fullValue = false, float delay = 0f)
+    {
+        obj = obj == null ? CameraScript.Instance : obj;
+        var fromVec = new Vector3(from.r, from.g, from.b);
+        var toVec = new Vector3(to.r, to.g, to.b);
+        obj.StartCoroutine(Animation(fromVec, toVec, over, v => onChange(new Color(v.x, v.y, v.z)), fullValue, delay));
+    }
+
     public static void Animate(float from, float to, float over, Action<float> onChange, MonoBehaviour obj = null, bool fullValue = false, float delay = 0f)
     {
         obj = obj == null ? CameraScript.Instance : obj;

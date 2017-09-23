@@ -56,6 +56,11 @@ public class CameraScript : MonoBehaviour
         }, SwitchTime);
     }
 
+    public static void ChangeColorTinted(Color c)
+    {
+        Camera.main.backgroundColor = c * new Color(0.21f, 0.21f, 0.21f);
+    }
+
     private void OnRenderImage (RenderTexture source, RenderTexture destination)
     {
         ColorSwitch.SetFloat("_Progress", SwitchProgress);

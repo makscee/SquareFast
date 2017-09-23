@@ -42,7 +42,7 @@ public class Menu : MonoBehaviour
     }
 
     private const float AnimationWindow = 0.2f;
-    private void RefreshItems(bool initial = false)
+    public void RefreshItems(bool initial = false)
     {
         var i = 0;
         _items[0].OnSelect();
@@ -76,11 +76,12 @@ public class Menu : MonoBehaviour
             {
                 t.transform.localScale += v;
             });
+            var ut = t.GetComponent<UnitedTint>();
             Utils.Animate(1f / (ib + 1), 1f / (i + 1), AnimationWindow, (v) =>
             {
-                var c = t.color;
+                var c = ut.Color;
                 c.a += v;
-                t.color = c;
+                ut.Color = c;
             });
             i++;
         }
@@ -120,7 +121,8 @@ public class Menu : MonoBehaviour
                 p.SetPatterns(1);
                 p.Reset();
                 p.NextLevel(2);
-                CameraScript.Instance.SwitchColor = Color.white;
+                UnitedTint.Tint = Color.white;
+                CameraScript.ChangeColorTinted(UnitedTint.Tint);
             }),
             new MenuItem("LEVEL 2", () =>
             {
@@ -132,7 +134,8 @@ public class Menu : MonoBehaviour
                 p.SetPatterns(2);
                 p.Reset();
                 p.NextLevel(2);
-                CameraScript.Instance.SwitchColor = new Color(0.97f, 0.64f, 1f);
+                UnitedTint.Tint = new Color(0.97f, 0.64f, 1f);
+                CameraScript.ChangeColorTinted(UnitedTint.Tint);
             }),
         };
 
@@ -164,7 +167,8 @@ public class Menu : MonoBehaviour
         {
             var p = Pattern.Instance;
             p.Reset();
-            CameraScript.Instance.SwitchColor = Color.white;
+            UnitedTint.Tint = Color.white;
+            Camera.main.backgroundColor = Color.black;
         }));
 
         _items = firstList;
