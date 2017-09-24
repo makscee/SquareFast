@@ -119,6 +119,7 @@ public class LevelSpawner
                     {
                         Utils.InvokeDelayed(() =>
                         {
+                            if (Level.GameOver) return;
                             var cs = CameraScript.Instance;
                             Utils.Animate(cs.SwitchProgress, 1f, 0.1f, (v) => cs.SwitchProgress = v, null, true);
                             Utils.InvokeDelayed(() =>

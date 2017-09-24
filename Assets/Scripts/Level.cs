@@ -216,7 +216,7 @@ public class Level : MonoBehaviour
 		Utils.Animate(1f, 0f, 0.5f, (v) => _audioSource.volume += v);
 //		CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0f, 0.01f), GOAnimationTime / 2, true);
 		Utils.Animate(Camera.main.backgroundColor, Color.black, GOAnimationTime / 2, (v) => Camera.main.backgroundColor += v);
-		Utils.Animate(UnitedTint.Tint, Color.white, GOAnimationTime / 2, (v) => UnitedTint.Tint += v);
+		Utils.Animate(UnitedTint.Tint, Color.white, GOAnimationTime / 2, (v) => UnitedTint.Tint = v, null, true);
 		Pattern.Instance.Reset();
 		Utils.InvokeDelayed(KillEverything, GOAnimationTime / 2);
 		var rtut = RestartText.GetComponent<UnitedTint>();
