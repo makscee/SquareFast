@@ -85,7 +85,7 @@ public class EnemyPattern
 
 public class LevelSpawner
 {
-    public const int Distance = 8;
+    public static int Distance = 8;
 
     private static readonly Prefab Square = BasicEnemy.Prefab;
     private static readonly Prefab Triangle = TriangleEnemy.Prefab;
@@ -179,10 +179,17 @@ public class LevelSpawner
         {
             case 1:
             {
-                _switchColors.Add(Color.white);
-                _switchColors.Add(new Color(0.97f, 0.64f, 1f));
-                _switchColors.Add(new Color(0.61f, 0.65f, 1f));
-                _switchColors.Add(new Color(0.88f, 1f, 0.61f));
+                Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.Char;
+                Level.Instance.MusicStart = 9.7f;
+                Level.Instance.MusicDelay = 2f;
+                
+                Level.TickTime = 60f / 100 / 3f;
+                
+                _switchColors.Add(new Color(1f, 0.63f, 0.31f));
+                _switchColors.Add(new Color(1f, 0.48f, 0.21f));
+                _switchColors.Add(new Color(1f, 0.43f, 0f));
+                _switchColors.Add(new Color(1f, 0.09f, 0f));
+                
                 
                 _patterns = new List<List<EnemyPattern>>
                 {
@@ -190,9 +197,51 @@ public class LevelSpawner
                     {
                         new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(Square).AddRight(Square)
                             .AddLeft(Square, 2).AddRight(Square, 2).SetLength(3),
+                    },
+                    new List<EnemyPattern>
+                    {
                         new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(null).AddRight(Rhombus, 2).SetLength(2),
                         new EnemyPattern().AddLeft(Square).AddRight(Rhombus, 2).SetLength(4),
                         new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).AddLeft(null, 2).AddRight(Rhombus, 2).SetLength(2),
+                    },
+                    new List<EnemyPattern>
+                    {
+                        new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(null).AddRight(Rhombus, 2).SetLength(2),
+                        new EnemyPattern().AddLeft(Square,2).AddRight(Square, 2).SetLength(2),
+                        new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Rhombus, 2).SetLength(2),
+                    },
+                    new List<EnemyPattern>
+                    {
+                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetLength(2),
+                        new EnemyPattern().AddLeft(Square).AddRight(Square).SetLength(2),
+                        new EnemyPattern().AddRight(Rhombus, 2).AddLeft(Rhombus, 2).SetLength(2),
+                    }
+                };
+                break;
+            }
+            case 2:
+            {
+                Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.Deicide;
+                Level.Instance.MusicStart = 3.4f;
+                Level.Instance.MusicDelay = 2f;
+                Level.TickTime = 60f / 131 / 3f;
+                Distance = 5;
+                
+                _switchColors.Add(new Color(1f, 0.51f, 0.69f));
+                _switchColors.Add(new Color(1f, 0.37f, 0.78f));
+                _switchColors.Add(new Color(1f, 0.27f, 0.83f));
+                _switchColors.Add(new Color(0.88f, 0f, 1f));
+                
+                
+                _patterns = new List<List<EnemyPattern>>
+                {
+                    new List<EnemyPattern>
+                    {
+                        
+                        new EnemyPattern().AddLeft(Square, 2).AddRight(Square).AddLeft(Square, 2).AddRight(Square)
+                            .AddLeft(Square, 2).AddRight(Square, 2).SetLength(3),
+                        new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Square, 2).SetLength(2),
+                        new EnemyPattern().AddLeft(Square, 2).AddRight(Rhombus, 2).AddLeft(Rhombus, 2).AddRight(Square, 2).SetLength(2),
                     },
                     new List<EnemyPattern>
                     {
@@ -204,11 +253,15 @@ public class LevelSpawner
                         new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetLength(2),
                         new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Rhombus, 2).SetLength(2),
                         new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetLength(2),
+                        new EnemyPattern().AddLeft(Triangle, 2).AddRight(Rhombus, 2).AddRight(null).AddLeft(Square, 3).SetLength(2),
                     },
                     new List<EnemyPattern>
                     {
-                        new EnemyPattern().AddLeft(Square).AddRight(Square).SetLength(2),
-                        new EnemyPattern().AddRight(Rhombus, 3).AddLeft(Rhombus, 3).SetLength(4),
+                        new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).SetLength(2),
+                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetLength(1),
+                        new EnemyPattern().AddRight(Rhombus, 3).AddLeft(Rhombus, 3).SetLength(2),
+                        new EnemyPattern().AddLeft(Triangle, 2).AddRight(Rhombus, 2).AddRight(null).AddLeft(Square, 3).SetLength(2),
+                        new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetLength(2),
                     }
                 };
                 break;

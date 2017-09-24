@@ -7,6 +7,7 @@ public class UnitedTint : MonoBehaviour
 
     private SpriteRenderer _spriteRenderer;
     private Text _text;
+    private RawImage _image;
     [SerializeField]
     private Color _color;
     private bool _initedColor;
@@ -24,14 +25,16 @@ public class UnitedTint : MonoBehaviour
     private void Awake()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        _text = GetComponent<Text>();
         if (_initedColor) return;
         if (_spriteRenderer)
         {
             Color = _spriteRenderer.color;
-        } else if (_text)
+        } else if (_text = GetComponent<Text>())
         {
             Color = _text.color;
+        } else if (_image = GetComponent<RawImage>())
+        {
+            Color = _image.color;
         }
     }
 
@@ -43,6 +46,9 @@ public class UnitedTint : MonoBehaviour
         } else if (_text)
         {
             _text.color = Color * Tint;
+        } else if (_image)
+        {
+            _image.color = Color * Tint;
         }
     }
 }

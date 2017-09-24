@@ -6,8 +6,8 @@ using UnityEngine.UI;
 public class Level : MonoBehaviour
 {
 	public static Level Instance { get; protected set; }
-	public const int Size = LevelSpawner.Distance * 2 + 1;
-	private readonly Grid _grid = new Grid(Size);
+	public static int Size = 15;
+	private Grid _grid = new Grid(15);
 	public static float TickTime = 0.5f;
 	public static int Ticks = -1;
 	public static bool Updating = true;
@@ -23,6 +23,8 @@ public class Level : MonoBehaviour
 	public Text QuitText;
 	public Text ControlsText;
 	public Text TimeText;
+	public AudioClip Char, Deicide;
+	public float MusicStart, MusicDelay;
 
 	public Level()
 	{
@@ -55,13 +57,16 @@ public class Level : MonoBehaviour
 
 	private void OnEnable()
 	{
+		_levelSpawner = new LevelSpawner(CurrentLevel);
+		var size = LevelSpawner.Distance * 2 + 1;
+		_grid = new Grid(size);
 		Player.Prefab.Instantiate();
 		Updating = true;
 		GameOver = false;
 		Spawning = true;
 		_started = false;
 		Pattern.Instance.Reset();
-		const int offset = LevelSpawner.Distance;
+		var offset = LevelSpawner.Distance;
 		GridMarks.Instance.SetSize(offset);
 		GridMarks.Instance.SetBorderHandlers(() =>
 			{
@@ -75,9 +80,7 @@ public class Level : MonoBehaviour
 			});
 		GridMarks.Instance.SetBorders(-1, 1);
 
-		TickTime = 60f / 100f / 3f;
-		const float musicStart = 9.7f;
-		var delay = IsFirstStart ? 2f : 0;
+		var delay = IsFirstStart ? MusicDelay : 0;
 
 		CancelInvoke("TickUpdate");
 		InvokeRepeating("TickUpdate", delay, TickTime);
@@ -87,9 +90,9 @@ public class Level : MonoBehaviour
 		}
 		_audioSource.volume = 0f;
 		Utils.Animate(0f, 1f, 0.9f, (v) => _audioSource.volume += v);
-		_audioSource.time = (StartTicks + 1) * TickTime + musicStart - delay;
+		_audioSource.time = (StartTicks + 1) * TickTime + MusicStart - delay;
+		_audioSource.Play();
 		Ticks = StartTicks;
-		_levelSpawner = new LevelSpawner();
 		
 		if (!IsFirstStart) return;
 		IsFirstStart = false;

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class CameraScript : MonoBehaviour
 {
     public static CameraScript Instance;
-    private const float FollowSpeed = 0.05f;
+    private const float FollowSpeed = 3f;
     public Text SavedTicks;
     public Material Inverse;
     public Material ColorSwitch;
@@ -40,7 +40,7 @@ public class CameraScript : MonoBehaviour
         }
         var dir =  needPos - transform.position;
         dir.z = 0;
-        transform.position += dir * FollowSpeed;
+        transform.position += dir * FollowSpeed * Time.deltaTime;
     }
 
     private const float SwitchTime = 0.2f;

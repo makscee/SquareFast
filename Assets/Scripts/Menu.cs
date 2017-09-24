@@ -113,6 +113,7 @@ public class Menu : MonoBehaviour
         {
             new MenuItem("LEVEL 1", () =>
             {
+                Level.CurrentLevel = 1;
                 gameObject.SetActive(false);
                 Level.Instance.gameObject.SetActive(true);
             }, () =>
@@ -121,11 +122,12 @@ public class Menu : MonoBehaviour
                 p.SetPatterns(1);
                 p.Reset();
                 p.NextLevel(2);
-                UnitedTint.Tint = Color.white;
+                UnitedTint.Tint = new Color(1f, 0.63f, 0.31f);
                 CameraScript.ChangeColorTinted(UnitedTint.Tint);
             }),
             new MenuItem("LEVEL 2", () =>
             {
+                Level.CurrentLevel = 2;
                 gameObject.SetActive(false);
                 Level.Instance.gameObject.SetActive(true);
             }, () =>
@@ -134,7 +136,7 @@ public class Menu : MonoBehaviour
                 p.SetPatterns(2);
                 p.Reset();
                 p.NextLevel(2);
-                UnitedTint.Tint = new Color(0.97f, 0.64f, 1f);
+                UnitedTint.Tint = new Color(1f, 0.51f, 0.69f);
                 CameraScript.ChangeColorTinted(UnitedTint.Tint);
             }),
         };
