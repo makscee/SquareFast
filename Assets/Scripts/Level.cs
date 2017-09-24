@@ -254,6 +254,7 @@ public class Level : MonoBehaviour
 	public void RespawnGOUnits()
 	{
 		KillEverything();
+		CameraScript.Instance.SwitchProgress = 0;
 		Utils.InvokeDelayed(() =>
 		{
 			var pgo = Player.Prefab.Instantiate();
