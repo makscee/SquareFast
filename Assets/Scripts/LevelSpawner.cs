@@ -94,7 +94,7 @@ public class LevelSpawner
     private List<List<EnemyPattern>> _patterns;
     private readonly List<Color> _switchColors = new List<Color>();
 
-    public LevelSpawner(int level = 1)
+    public LevelSpawner(int level = 0)
     {
         InitLevel(level);
         UnitedTint.Tint = _switchColors[0];
@@ -177,7 +177,7 @@ public class LevelSpawner
     {
         switch (level)
         {
-            case 1:
+            case 0:
             {
                 Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.Char;
                 Level.Instance.MusicStart = 9.7f;
@@ -219,7 +219,7 @@ public class LevelSpawner
                 };
                 break;
             }
-            case 2:
+            case 1:
             {
                 Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.Deicide;
                 Level.Instance.MusicStart = 3.4f;

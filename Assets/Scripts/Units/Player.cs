@@ -21,7 +21,7 @@ public class Player : Unit
 			rightDown = Input.GetButtonDown("Right");
 		if (Input.GetKeyDown(KeyCode.E))
 		{
-			CameraScript.Instance.SwitchScene();
+			WebUtils.FetchScores();
 		}
 		if (Input.touchCount > 0)
 		{

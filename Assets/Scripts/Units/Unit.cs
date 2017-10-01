@@ -169,12 +169,10 @@ public class Unit : MonoBehaviour
                 if (HP <= 0) return;
                 if (pos < Math.Floor(GridMarks.Instance.LeftBorder.transform.position.x) + 0.01f)
                 {
-                    Debug.Log("handle left");
                     GridMarks.Instance.HandlerLeft();
                 }
                 else if (pos > Math.Ceiling(GridMarks.Instance.RightBorder.transform.position.x) - 0.01f)
                 {
-                    Debug.Log("handle right");
                     GridMarks.Instance.HandlerRight();
                 }
             }, this);

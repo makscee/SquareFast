@@ -14,8 +14,10 @@ public class Menu : MonoBehaviour
     {
         public readonly Text Text;
         public readonly Action Action, OnSelect;
+        public readonly float Scale;
+        public readonly bool Fade;
 
-        public MenuItem(string text, Action action, Action onSelect = null)
+        public MenuItem(string text, Action action, Action onSelect = null, float scale = 1, bool fade = true)
         {
             Action = action;
             var go = MenuItemPrefab.Instantiate();
@@ -23,10 +25,41 @@ public class Menu : MonoBehaviour
             Text.text = text;
             go.transform.SetParent((Instance).WorldCanvas.transform);
             OnSelect = onSelect ?? (() => { });
+            Scale = scale;
+            Fade = fade;
         }
     }
 
-    private List<MenuItem> _items;
+    private List<MenuItem> _items, _prevItems;
+
+    private void SwitchItems(List<MenuItem> items)
+    {
+        _prevItems = _items;
+        foreach (var item in _items)
+        {
+            item.Text.gameObject.SetActive(false);
+        }
+        _items = items;
+        
+        RefreshItems(true);
+        OnEnable();
+    }
+
+    private void SwitchBack()
+    {
+        foreach (var item in _items)
+        {
+            item.Text.gameObject.SetActive(false);
+        }
+        _items = _prevItems;
+        
+        RefreshItems(true);
+        OnEnable();
+        var p = Pattern.Instance;
+        p.Reset();
+        UnitedTint.Tint = Color.white;
+        Camera.main.backgroundColor = Color.black;
+    }
 
     public void NextItem()
     {
@@ -42,6 +75,18 @@ public class Menu : MonoBehaviour
     }
 
     private const float AnimationWindow = 0.2f;
+
+    private void Update()
+    {
+        foreach (var item in _items)
+        {
+            if (!item.Fade)
+            {
+                item.Text.gameObject.SetActive(item.Text.GetComponent<UnitedTint>().Color.a > 0.5f);
+            }
+        }
+    }
+    
     public void RefreshItems(bool initial = false)
     {
         var i = 0;
@@ -51,12 +96,13 @@ public class Menu : MonoBehaviour
             foreach (var menuItem in _items)
             {
                 var t = menuItem.Text;
-                t.transform.position = new Vector3(i * 4, 7f - i * 1.5f);
-                var scale = 1f / (i + 1) + 0.5f;
+                t.transform.position = new Vector3(i * 4, 8.5f - i * 2f);
+                var scale = menuItem.Scale / (i + 1) + 0.5f;
                 t.transform.localScale = new Vector3(scale, scale, 1);
                 var c = t.color;
-                c.a = 1f / (i + 1);
+                c.a = menuItem.Fade ? 1f / (i + 1) : (i == 0 ? 1 : 0);
                 t.color = c;
+
                 t.gameObject.SetActive(true);
                 i++;
             }
@@ -66,18 +112,19 @@ public class Menu : MonoBehaviour
         {
             var t = menuItem.Text;
             var ib = (i + 1) % _items.Count;
-            Utils.Animate(new Vector3(ib * 4, 7f - ib * 1.5f), new Vector3(i * 4, 7f - i * 1.5f), AnimationWindow, (v) =>
+            Utils.Animate(new Vector3(ib * 4, 8.5f - ib * 2f), new Vector3(i * 4, 8.5f - i * 2f), AnimationWindow, (v) =>
             {
                 t.transform.position += v;
             });
-            var scale = 1f / (i + 1) + 0.5f;
-            var scaleb = 1f / (ib + 1) + 0.5f;
+            var scale = menuItem.Scale / (i + 1) + 0.5f;
+            var scaleb = menuItem.Scale / (ib + 1) + 0.5f;
             Utils.Animate(new Vector3(scaleb, scaleb), new Vector3(scale, scale), AnimationWindow, (v) =>
             {
                 t.transform.localScale += v;
             });
             var ut = t.GetComponent<UnitedTint>();
-            Utils.Animate(1f / (ib + 1), 1f / (i + 1), AnimationWindow, (v) =>
+            Utils.Animate(menuItem.Fade ? 1f / (ib + 1) : (ib == 0 ? 1 : 0),
+                menuItem.Fade ? 1f / (i + 1) : (i == 0 ? 1 : 0), AnimationWindow, (v) =>
             {
                 var c = ut.Color;
                 c.a += v;
@@ -105,18 +152,12 @@ public class Menu : MonoBehaviour
 
     private void Awake()
     {
+        Saves.Load();
+        WebUtils.FetchScores();
         Prefab.TouchStatics();
         Prefab.PreloadPrefabs();
         Instance = this;
-        
-        var secondList = new List<MenuItem>
-        {
-            new MenuItem("LEVEL 1", () =>
-            {
-                Level.CurrentLevel = 1;
-                gameObject.SetActive(false);
-                Level.Instance.gameObject.SetActive(true);
-            }, () =>
+        Action p0 = () =>
             {
                 var p = Pattern.Instance;
                 p.SetPatterns(1);
@@ -124,13 +165,8 @@ public class Menu : MonoBehaviour
                 p.NextLevel(2);
                 UnitedTint.Tint = new Color(1f, 0.63f, 0.31f);
                 CameraScript.ChangeColorTinted(UnitedTint.Tint);
-            }),
-            new MenuItem("LEVEL 2", () =>
-            {
-                Level.CurrentLevel = 2;
-                gameObject.SetActive(false);
-                Level.Instance.gameObject.SetActive(true);
-            }, () =>
+            },
+            p1 = () =>
             {
                 var p = Pattern.Instance;
                 p.SetPatterns(2);
@@ -138,40 +174,49 @@ public class Menu : MonoBehaviour
                 p.NextLevel(2);
                 UnitedTint.Tint = new Color(1f, 0.51f, 0.69f);
                 CameraScript.ChangeColorTinted(UnitedTint.Tint);
-            }),
+            },
+            pReset = () =>
+            {
+                var p = Pattern.Instance;
+                p.Reset();
+                UnitedTint.Tint = Color.white;
+                Camera.main.backgroundColor = Color.black;
+            };
+        
+        var secondList = new List<MenuItem>
+        {
+            new MenuItem("LEVEL 1", () =>
+            {
+                Level.CurrentLevel = 0;
+                gameObject.SetActive(false);
+                Level.Instance.gameObject.SetActive(true);
+            }, p0),
+            new MenuItem("LEVEL 2", () =>
+            {
+                Level.CurrentLevel = 1;
+                gameObject.SetActive(false);
+                Level.Instance.gameObject.SetActive(true);
+            }, p1),
+            new MenuItem("BACK", SwitchBack, pReset)
         };
 
         var firstList = new List<MenuItem>
         {
             new MenuItem("PLAY", () =>
             {
-                foreach (var item in _items)
-                {
-                    item.Text.gameObject.SetActive(false);
-                }
-                _items = secondList;
-                RefreshItems(true);
-                OnEnable();
+                SwitchItems(secondList);
             }),
-            new MenuItem("HIGH SCORES", () => SceneManager.LoadScene(0)),
+            new MenuItem("HIGH SCORES", () =>
+            {
+                SwitchItems(new List<MenuItem>
+                {
+                    new MenuItem(HighScores.GetString(0), SwitchBack, p0, 0.5f, false),
+                    new MenuItem(HighScores.GetString(1), SwitchBack, p1, 0.5f, false),
+                    new MenuItem("BACK", SwitchBack, pReset, 1f, false)
+                });
+            }),
             new MenuItem("QUIT", Application.Quit)
         };
-        secondList.Add(new MenuItem("BACK", () =>
-        {
-            foreach (var item in _items)
-            {
-                item.Text.gameObject.SetActive(false);
-            }
-            _items = firstList;
-            RefreshItems(true);
-            OnEnable();
-        }, () =>
-        {
-            var p = Pattern.Instance;
-            p.Reset();
-            UnitedTint.Tint = Color.white;
-            Camera.main.backgroundColor = Color.black;
-        }));
 
         _items = firstList;
         

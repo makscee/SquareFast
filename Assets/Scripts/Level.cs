@@ -15,7 +15,7 @@ public class Level : MonoBehaviour
 	public static bool Spawning = true;
 	public static int SaveTicks = -1;
 	public static bool IsFirstStart = true;
-	public static int CurrentLevel = 1;
+	public static int CurrentLevel = 0;
 	public int StartTicks = -1;
 	private LevelSpawner _levelSpawner;
 	private AudioSource _audioSource;
@@ -197,6 +197,13 @@ public class Level : MonoBehaviour
 	private const float GOAnimationTime = 1f;
 	public void EnterGameOver()
 	{
+		var score = TimeText.text;
+		if (string.IsNullOrEmpty(PlayerData.Instance.Scores[CurrentLevel]) || float.Parse(score) > float.Parse(PlayerData.Instance.Scores[CurrentLevel]))
+		{
+			PlayerData.Instance.Scores[CurrentLevel] = score;
+			Saves.Save();
+			WebUtils.SendScore(CurrentLevel);
+		}
 		Updating = false;
 		GameOver = true;
 		GridMarks.Instance.HandlerLeft += () =>
@@ -209,6 +216,7 @@ public class Level : MonoBehaviour
 		{
 			CameraScript.Instance.SwitchScene(() =>
 			{
+				WebUtils.FetchScores();
 				ExitGameover();
 				gameObject.SetActive(false);
 				Menu.Instance.gameObject.SetActive(true);
