@@ -50,7 +50,7 @@ public static class Utils
         yield return new WaitForSeconds(delay);
         var t = 0f;
         var result = from;
-        while (t - Time.deltaTime < over)
+        while (t < over)
         {
             var x = Interpolate(from.x, to.x, over, t);
             var y = Interpolate(from.y, to.y, over, t);
@@ -61,6 +61,7 @@ public static class Utils
             t += Time.deltaTime;
             yield return null;
         }
+        action(fullValue ? to : to - result);
         if (unit != null)
         {
             unit.RunningAnimations--;
