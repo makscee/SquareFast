@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Menu : MonoBehaviour
@@ -33,35 +32,22 @@ public class Menu : MonoBehaviour
         }
     }
 
-    private List<MenuItem> _items, _prevItems;
+    private List<MenuItem> _items;
 
     private void SwitchItems(List<MenuItem> items)
     {
-        _prevItems = _items;
         foreach (var item in _items)
         {
             item.Text.gameObject.SetActive(false);
         }
         _items = items;
         
-        RefreshItems(true);
-        OnEnable();
-    }
-
-    private void SwitchBack()
-    {
-        foreach (var item in _items)
-        {
-            item.Text.gameObject.SetActive(false);
-        }
-        _items = _prevItems;
-        
-        RefreshItems(true);
-        OnEnable();
         var p = Pattern.Instance;
         p.Reset();
         UnitedTint.Tint = Color.white;
         Camera.main.backgroundColor = Color.black;
+        RefreshItems(true);
+        OnEnable();
     }
 
     public void NextItem()
@@ -157,42 +143,9 @@ public class Menu : MonoBehaviour
         }
     }
 
-    private void Awake()
+    private List<MenuItem> getSecondList()
     {
-        leftPos = LeftText.transform.position;
-        rightPos = RightText.transform.position;
-        Saves.Load();
-        WebUtils.FetchScores();
-        Prefab.TouchStatics();
-        Prefab.PreloadPrefabs();
-        Instance = this;
-        Action p0 = () =>
-            {
-                var p = Pattern.Instance;
-                p.SetPatterns(1);
-                p.Reset();
-                p.NextLevel(2);
-                UnitedTint.Tint = new Color(1f, 0.63f, 0.31f);
-                CameraScript.ChangeColorTinted(UnitedTint.Tint);
-            },
-            p1 = () =>
-            {
-                var p = Pattern.Instance;
-                p.SetPatterns(2);
-                p.Reset();
-                p.NextLevel(2);
-                UnitedTint.Tint = new Color(1f, 0.51f, 0.69f);
-                CameraScript.ChangeColorTinted(UnitedTint.Tint);
-            },
-            pReset = () =>
-            {
-                var p = Pattern.Instance;
-                p.Reset();
-                UnitedTint.Tint = Color.white;
-                Camera.main.backgroundColor = Color.black;
-            };
-        
-        var secondList = new List<MenuItem>
+        return new List<MenuItem>
         {
             new MenuItem("LEVEL 1", () =>
             {
@@ -206,28 +159,67 @@ public class Menu : MonoBehaviour
                 gameObject.SetActive(false);
                 Level.Instance.gameObject.SetActive(true);
             }, p1),
-            new MenuItem("BACK", SwitchBack, pReset)
+            new MenuItem("BACK", () => SwitchItems(getFirstList()), pReset)
         };
+    }
 
-        var firstList = new List<MenuItem>
+    private List<MenuItem> getFirstList()
+    {
+        return new List<MenuItem>
         {
             new MenuItem("PLAY", () =>
             {
-                SwitchItems(secondList);
+                SwitchItems(getSecondList());
             }),
             new MenuItem("HIGH SCORES", () =>
             {
                 SwitchItems(new List<MenuItem>
                 {
-                    new MenuItem(HighScores.GetString(0), SwitchBack, p0, 0.5f, false),
-                    new MenuItem(HighScores.GetString(1), SwitchBack, p1, 0.5f, false),
-                    new MenuItem("BACK", SwitchBack, pReset, 1f, false)
+                    new MenuItem(HighScores.GetString(0), () => SwitchItems(getFirstList()), p0, 0.5f, false),
+                    new MenuItem(HighScores.GetString(1), () => SwitchItems(getFirstList()), p1, 0.5f, false),
+                    new MenuItem("BACK", () => SwitchItems(getFirstList()), pReset, 1f, false)
                 });
             }),
             new MenuItem("QUIT", Application.Quit)
         };
+    }
 
-        _items = firstList;
+    Action p0 = () =>
+        {
+            var p = Pattern.Instance;
+            p.SetPatterns(1);
+            p.Reset();
+            p.NextLevel(2);
+            UnitedTint.Tint = new Color(1f, 0.63f, 0.31f);
+            CameraScript.ChangeColorTinted(UnitedTint.Tint);
+        },
+        p1 = () =>
+        {
+            var p = Pattern.Instance;
+            p.SetPatterns(2);
+            p.Reset();
+            p.NextLevel(2);
+            UnitedTint.Tint = new Color(1f, 0.51f, 0.69f);
+            CameraScript.ChangeColorTinted(UnitedTint.Tint);
+        },
+        pReset = () =>
+        {
+            var p = Pattern.Instance;
+            p.Reset();
+            UnitedTint.Tint = Color.white;
+            Camera.main.backgroundColor = Color.black;
+        };
+    private void Awake()
+    {
+        leftPos = LeftText.transform.position;
+        rightPos = RightText.transform.position;
+        Saves.Load();
+        WebUtils.FetchScores();
+        Prefab.TouchStatics();
+        Prefab.PreloadPrefabs();
+        Instance = this;
+
+        _items = getFirstList();
         
         RefreshItems(true);
     }
