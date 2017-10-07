@@ -43,6 +43,11 @@ public class GridMarks : MonoBehaviour
         }
     }
 
+    public void Deactivate(int i)
+    {
+        _marks[i].SetActive(false);
+    }
+
     public void SetBorders(int l, int r)
     {
         LeftBorder.transform.position = new Vector3(l - 0.5f, 0, 0);

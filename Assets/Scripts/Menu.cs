@@ -9,6 +9,9 @@ public class Menu : MonoBehaviour
     private static readonly Prefab MenuItemPrefab = new Prefab("MenuItemText");
     public Canvas WorldCanvas;
     public static Menu Instance;
+    public static bool MovedBorder;
+    public GameObject LeftText, RightText;
+    private static Vector3 leftPos, rightPos;
 
     private class MenuItem
     {
@@ -138,6 +141,9 @@ public class Menu : MonoBehaviour
     private void OnEnable()
     {
         var gm = GridMarks.Instance;
+        MovedBorder = false;
+        LeftText.transform.position = leftPos;
+        RightText.transform.position = rightPos;
         gm.SetSize(1);
         gm.SetBorders(-1, 1);
         gm.SetBorderHandlers(() =>
@@ -153,6 +159,8 @@ public class Menu : MonoBehaviour
 
     private void Awake()
     {
+        leftPos = LeftText.transform.position;
+        rightPos = RightText.transform.position;
         Saves.Load();
         WebUtils.FetchScores();
         Prefab.TouchStatics();

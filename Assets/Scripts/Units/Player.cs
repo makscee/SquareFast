@@ -21,7 +21,6 @@ public class Player : Unit
 			rightDown = Input.GetButtonDown("Right");
 		if (Input.GetKeyDown(KeyCode.E))
 		{
-			WebUtils.FetchScores();
 		}
 		if (Input.touchCount > 0)
 		{
@@ -50,6 +49,27 @@ public class Player : Unit
 		}
 		var dir = leftDown ? -1 : (rightDown ? 1 : 0);
 		if (dir == 0) return;
+		if (!Menu.MovedBorder && Menu.Instance.isActiveAndEnabled)
+		{
+			Menu.MovedBorder = true;
+			if (dir == 1)
+			{
+				Utils.Animate(Vector3.zero, Vector3.right, AnimationWindow * 2, (v) =>
+				{
+					GridMarks.Instance.LeftBorder.transform.position += v;
+					Menu.Instance.LeftText.transform.position += v;
+				});
+				GridMarks.Instance.Deactivate(-1);
+			} else
+			{
+				Utils.Animate(Vector3.zero, Vector3.right, AnimationWindow * 2, (v) =>
+				{
+					GridMarks.Instance.RightBorder.transform.position -= v;
+					Menu.Instance.RightText.transform.position -= v;
+				});
+				GridMarks.Instance.Deactivate(1);
+			}
+		}
 		MoveOrAttack(dir);
 	}
 
