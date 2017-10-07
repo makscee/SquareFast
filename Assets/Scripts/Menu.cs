@@ -91,12 +91,13 @@ public class Menu : MonoBehaviour
     {
         var i = 0;
         _items[0].OnSelect();
+        const float offset = 1f;
         if (initial)
         {
             foreach (var menuItem in _items)
             {
                 var t = menuItem.Text;
-                t.transform.position = new Vector3(i * 4, 8.5f - i * 2f);
+                t.transform.position = new Vector3(i * 5 + offset, 8.5f - i * 2f);
                 var scale = menuItem.Scale / (i + 1) + 0.5f;
                 t.transform.localScale = new Vector3(scale, scale, 1);
                 var c = t.color;
@@ -112,7 +113,7 @@ public class Menu : MonoBehaviour
         {
             var t = menuItem.Text;
             var ib = (i + 1) % _items.Count;
-            Utils.Animate(new Vector3(ib * 4, 8.5f - ib * 2f), new Vector3(i * 4, 8.5f - i * 2f), AnimationWindow, (v) =>
+            Utils.Animate(new Vector3(ib * 5 + offset, 8.5f - ib * 2f), new Vector3(i * 5 + offset, 8.5f - i * 2f), AnimationWindow, (v) =>
             {
                 t.transform.position += v;
             });

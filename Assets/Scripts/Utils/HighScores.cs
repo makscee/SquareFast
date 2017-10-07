@@ -66,20 +66,22 @@ public class HighScores
         var result = new List<string>();
         var gotPlayer = false;
         var sincePlayer = 0;
+        var n = 1;
         foreach (var entry in Data[level].OrderByDescending(key => float.Parse(key.Value)))
         {
             if (entry.Key == PlayerData.Instance.ID)
             {
-                result.Add("<color=white>" + entry.Value + "</color>\n");
+                result.Add("<color=white>" + n + ". " + entry.Value + "</color>\n");
                 gotPlayer = true;
             }
             else
             {
-                result.Add(entry.Value + "\n");
+                result.Add(n + ". " + entry.Value + "\n");
             }
             if (gotPlayer) sincePlayer++;
             if (result.Count > 8) result.RemoveAt(0);
             if (sincePlayer >= 3 && result.Count > 7) break;
+            n++;
         }
         var strResult = result.Aggregate("", (current, str) => current + str);
         return strResult;
