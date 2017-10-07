@@ -10,6 +10,15 @@ public static class Utils
         return (int)v.x;
     }
 
+    public static float ToFloat(this string s)
+    {
+        if (string.IsNullOrEmpty(s)) return 0f;
+        float f;
+        var r = float.TryParse(s, out f);
+        if (!r) f = 0f;
+        return f;
+    }
+
     public static float Interpolate(float from, float to, float over, float t)
     {
         var delta = Time.deltaTime;

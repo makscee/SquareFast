@@ -15,7 +15,7 @@ public class InversePostFX : MonoBehaviour
     {
         var invProgress = CameraScript.Instance.InvProgress;
         
-        if (invProgress != 0)
+        if (invProgress > 0.001)
         {
             Inverse.SetFloat("_Progress", invProgress);
             Inverse.SetColor("_BG", Camera.main.backgroundColor);

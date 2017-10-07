@@ -11,6 +11,7 @@ public class HighScores
     {
         var levelNum = 0;
         Data = new List<Dictionary<string, string>>();
+        var pd = PlayerData.Instance;
         while (json.IndexOf('{') != -1)
         {
             var startLevel = json.IndexOf('{');
@@ -27,6 +28,23 @@ public class HighScores
             }
             levelNum++;
             json = json.Remove(0, endLevel + 1);
+        }
+        if (pd != null)
+        {
+            for (var i = 0; i < Data.Count; i++)
+            {
+                var pdScore = pd.Scores[i];
+                var fScore = Data[i].ContainsKey(pd.ID) ? Data[i][pd.ID] : "0";
+                if (pdScore.ToFloat() > fScore.ToFloat())
+                {
+                    Data[i][pd.ID] = pdScore;
+                    WebUtils.SendScore(i);
+                }
+                else
+                {
+                    pd.Scores[i] = fScore;
+                }
+            }
         }
         fetched = true;
     }

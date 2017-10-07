@@ -17,6 +17,7 @@ public class Level : MonoBehaviour
 	public static bool IsFirstStart = true;
 	public static int CurrentLevel = 0;
 	public int StartTicks = -1;
+	public const int LevelsAmount = 6; 
 	private LevelSpawner _levelSpawner;
 	private AudioSource _audioSource;
 	public Text RestartText;
