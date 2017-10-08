@@ -22,7 +22,6 @@ public class Level : MonoBehaviour
 	private AudioSource _audioSource;
 	public Text RestartText;
 	public Text QuitText;
-	public Text ControlsText;
 	public Text TimeText;
 	public AudioClip Char, Deicide;
 	public float MusicStart, MusicDelay;
@@ -97,16 +96,6 @@ public class Level : MonoBehaviour
 		
 		if (!IsFirstStart) return;
 		IsFirstStart = false;
-		var c = ControlsText.color;
-		c.a = 1;
-		var ut = ControlsText.GetComponent<UnitedTint>();
-		ut.Color = c;
-		c = new Color(c.r, c.g, c.b, 0);
-		Utils.Animate(1f, 0f, 3f, (v) =>
-		{
-			c.a = v;
-			ut.Color = c;
-		}, null, true, 2f);
 	}
 
 	public void Move(int pos, Unit unit)

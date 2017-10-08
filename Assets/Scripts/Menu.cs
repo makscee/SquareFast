@@ -11,6 +11,7 @@ public class Menu : MonoBehaviour
     public static bool MovedBorder;
     public GameObject LeftText, RightText;
     private static Vector3 leftPos, rightPos;
+    public Text ControlsText;
 
     private class MenuItem
     {
@@ -211,6 +212,16 @@ public class Menu : MonoBehaviour
         };
     private void Awake()
     {
+        var c = ControlsText.color;
+        c.a = 1;
+        var ut = ControlsText.GetComponent<UnitedTint>();
+        ut.Color = c;
+        c = new Color(c.r, c.g, c.b, 0);
+        Utils.Animate(1f, 0f, 3f, (v) =>
+        {
+            c.a = v;
+            ut.Color = c;
+        }, null, true, 2f);
         leftPos = LeftText.transform.position;
         rightPos = RightText.transform.position;
         Saves.Load();
