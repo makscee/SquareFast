@@ -69,14 +69,15 @@ public class HighScores
         var n = 1;
         foreach (var entry in Data[level].OrderByDescending(key => float.Parse(key.Value)))
         {
+            var s = "<color=grey>" + n + ". </color>";
             if (entry.Key == PlayerData.Instance.ID)
             {
-                result.Add("<color=white>" + n + ". " + entry.Value + "</color>\n");
+                result.Add(s + "<color=white>" + entry.Value + "</color>\n");
                 gotPlayer = true;
             }
             else
             {
-                result.Add(n + ". " + entry.Value + "\n");
+                result.Add(s + entry.Value + "\n");
             }
             if (gotPlayer) sincePlayer++;
             if (result.Count > 8) result.RemoveAt(0);
