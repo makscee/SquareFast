@@ -12,6 +12,8 @@ public class Menu : MonoBehaviour
     public GameObject LeftText, RightText;
     private static Vector3 leftPos, rightPos;
     public Text ControlsText;
+    public GameObject HintCanvas;
+    public Text HintText;
 
     private class MenuItem
     {
@@ -66,8 +68,17 @@ public class Menu : MonoBehaviour
 
     private const float AnimationWindow = 0.2f;
 
+    public bool CanvasHidden = false;
     private void Update()
     {
+        if (!CanvasHidden && (Input.anyKeyDown || Input.touchCount > 0))
+        {
+            CanvasHidden = true;
+            CameraScript.Instance.SwitchScene(() =>
+            {
+                HintCanvas.SetActive(false);
+            });
+        }
         foreach (var item in _items)
         {
             if (!item.Fade)
@@ -212,6 +223,16 @@ public class Menu : MonoBehaviour
         };
     private void Awake()
     {
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            HintText.text =
+                "<color=white>SQUARE FAST</color> CONTROLS ONLY WITH\n<color=white>LEFT</color> AND <color=white>RIGHT</color> TAP OF SCREEN\nEVEN IN MENU\n\n<color=white>TAP ANYWHERE TO CONTINUE</color>";
+        }
+        else
+        {
+            HintText.text =
+                "<color=white>SQUARE FAST</color> CONTROLS ONLY WITH\nBUTTONS <color=white>LEFT</color> AND <color=white>RIGHT</color>\nEVEN IN MENU\n\n<color=white>PRESS ANY KEY TO CONTINUE</color>";
+        }
         var c = ControlsText.color;
         c.a = 1;
         var ut = ControlsText.GetComponent<UnitedTint>();

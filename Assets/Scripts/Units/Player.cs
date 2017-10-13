@@ -17,6 +17,10 @@ public class Player : Unit
 
 	private void Update()
 	{
+		if (Menu.Instance.isActiveAndEnabled && !Menu.Instance.CanvasHidden)
+		{
+			return;
+		}
 		bool leftDown = Input.GetButtonDown("Left"),
 			rightDown = Input.GetButtonDown("Right");
 		if (Input.GetKeyDown(KeyCode.E))
