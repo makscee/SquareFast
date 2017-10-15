@@ -23,7 +23,7 @@ public class Level : MonoBehaviour
 	public Text RestartText;
 	public Text QuitText;
 	public Text TimeText;
-	public AudioClip Char, Deicide;
+	public AudioClip L1, L2;
 	public float MusicStart, MusicDelay;
 
 	public Level()

@@ -179,7 +179,7 @@ public class LevelSpawner
         {
             case 0:
             {
-                Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.Char;
+                Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L1;
                 Level.Instance.MusicStart = 9.7f;
                 Level.Instance.MusicDelay = 2f;
                 
@@ -221,10 +221,10 @@ public class LevelSpawner
             }
             case 1:
             {
-                Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.Deicide;
-                Level.Instance.MusicStart = 3.4f;
-                Level.Instance.MusicDelay = 2f;
-                Level.TickTime = 60f / 131 / 3f;
+                Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L2;
+                Level.Instance.MusicStart = 16.3f;
+                Level.Instance.MusicDelay = 2.5f;
+                Level.TickTime = 60f / 135 / 3f;
                 Distance = 5;
                 
                 _switchColors.Add(new Color(1f, 0.51f, 0.69f));
