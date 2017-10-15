@@ -136,8 +136,11 @@ public class Menu : MonoBehaviour
         }
     }
 
+    public Action Enter = () => { };
     private void OnEnable()
     {
+        Enter();
+        Level.IsFirstStart = true;
         var gm = GridMarks.Instance;
         MovedBorder = false;
         LeftText.transform.position = leftPos;

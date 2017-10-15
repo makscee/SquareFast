@@ -9,21 +9,28 @@ public class CounterScript : MonoBehaviour
     private void Start()
     {
         _text = GetComponent<Text>();
-        Level.Instance.StartAction += () => _started = true;
-        Level.Instance.ExitGameOverAction += () =>
+        Level.Instance.StartAction += () =>
+        {
+            _updating = true;
+            _t = 0;
+        };
+        Level.Instance.GameOverStartAction += () =>
+        {
+            _updating = false;
+        };
+        Menu.Instance.Enter += () =>
         {
             _t = 0;
-            _started = true;
+            _text.text = "0.00";
         };
     }
 
     private float _t = 0;
-    private bool _started;
+    private bool _updating;
     private void Update()
     {
-        if (!_started || Level.GameOver)
+        if (!_updating)
         {
-            _started = false;
             return;
         }
         var d = Level.TickTime * 3;

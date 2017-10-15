@@ -128,7 +128,7 @@ public class Level : MonoBehaviour
 	public int EnemiesCount { get; private set; }
 
 	private bool _started;
-	public Action StartAction, GameOverAction = () => { }, ExitGameOverAction = () => { };
+	public Action StartAction, GameOverStartAction = () => { }, GameOverAction = () => { }, ExitGameOverAction = () => { };
 
 	public void TickUpdate()
 	{
@@ -187,6 +187,7 @@ public class Level : MonoBehaviour
 	private const float GOAnimationTime = 1f;
 	public void EnterGameOver()
 	{
+		GameOverStartAction();
 		var score = TimeText.text;
 		if (string.IsNullOrEmpty(PlayerData.Instance.Scores[CurrentLevel]) || float.Parse(score) > float.Parse(PlayerData.Instance.Scores[CurrentLevel]))
 		{
