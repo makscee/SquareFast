@@ -14,6 +14,8 @@ public class Menu : MonoBehaviour
     public Text ControlsText;
     public GameObject HintCanvas;
     public Text HintText;
+    public AudioClip Click, Select;
+    private AudioSource _as;
 
     private class MenuItem
     {
@@ -55,6 +57,8 @@ public class Menu : MonoBehaviour
 
     public void NextItem()
     {
+        _as.clip = Click;
+        _as.Play();
         var item = _items[0];
         _items.RemoveAt(0);
         _items.Add(item);
@@ -63,6 +67,8 @@ public class Menu : MonoBehaviour
 
     public void Confirm()
     {
+        _as.clip = Select;
+        _as.Play();
         _items[0].Action();
     }
 
@@ -226,6 +232,7 @@ public class Menu : MonoBehaviour
         };
     private void Awake()
     {
+        _as = GetComponent<AudioSource>();
         if (Application.platform == RuntimePlatform.Android)
         {
             HintText.text =
