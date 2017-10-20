@@ -6,15 +6,32 @@
   <title>background-image</title>
   <style>
    body {
-	   background:url(img/tri_outer_rb.png) fixed no-repeat bottom right, 
+	   background:url(img/tri_inner_rb.png) fixed no-repeat bottom right, 
+			url(img/tri_inner_rt.png) fixed no-repeat top right,
+			url(img/tri_inner_lt.png) fixed no-repeat top left,
+			url(img/tri_inner_lb.png) fixed no-repeat bottom left,
+			url(img/tri_outer_rb.png) fixed no-repeat bottom right, 
 			url(img/tri_outer_rt.png) fixed no-repeat top right,
 			url(img/tri_outer_lt.png) fixed no-repeat top left,
 			url(img/tri_outer_lb.png) fixed no-repeat bottom left;
+	   background-size: 150px 150px, 150px 150px, 150px 150px, 150px 150px, 300px 300px, 300px 300px, 300px 300px, 300px 300px;
 	   background-color: #362211;
 	}
+   @font-face {
+    font-family: fff;
+    src: url(FFFFORWA.ttf);
+   }
+   P {
+    font-family: fff;
+   }
   </style>
    </head>
  <body>
-  <p></p>
- </body>
+  <div style="color: white;" align="center">
+		<p style="font-size: 5em;">SquareFast</p>
+		<p style="font-size: 1em;">A minimal rhythm game by <a href='https://vk.com/id31203950'>Maksim Chugunov</a></p>
+		<iframe width="560" height="315" src="https://www.youtube.com/embed/nSBPWTgMIXY" frameborder="0" allowfullscreen></iframe><br><br>
+		<iframe src="webgl/index.html" style="border:0px #000000 none;" name="Game name" scrolling="no" frameborder="1" marginheight="px" marginwidth="320px" height="320px" width="480px"></iframe><br><br>
+		<iframe src="http://vk.com/widget_community.php?gid=155152300&width=280&height=220" width="280" height="220" scrolling="no" frameborder="0"></iframe>
+  </div>
 </html>
