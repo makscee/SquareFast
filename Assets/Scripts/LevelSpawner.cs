@@ -90,6 +90,7 @@ public class LevelSpawner
     private static readonly Prefab Square = BasicEnemy.Prefab;
     private static readonly Prefab Triangle = TriangleEnemy.Prefab;
     private static readonly Prefab Rhombus = RhombusEnemy.Prefab;
+    private static readonly Prefab Circle = CircleEnemy.Prefab;
 
     private List<List<EnemyPattern>> _patterns;
     private readonly List<Color> _switchColors = new List<Color>();

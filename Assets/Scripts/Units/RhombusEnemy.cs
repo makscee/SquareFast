@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class RhombusEnemy : BasicEnemy
 {
     public new static readonly Prefab Prefab = new Prefab("Enemies/RhombusEnemy");
