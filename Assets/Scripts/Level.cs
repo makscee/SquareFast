@@ -23,7 +23,7 @@ public class Level : MonoBehaviour
 	public Text RestartText;
 	public Text QuitText;
 	public Text TimeText;
-	public AudioClip L1, L2;
+	public AudioClip L1, L2, Over;
 	public float MusicStart, MusicDelay;
 
 	public Level()
@@ -44,7 +44,6 @@ public class Level : MonoBehaviour
 
 	private void InvokeRestart()
 	{
-		
 		Updating = true;
 	}
 
@@ -216,6 +215,12 @@ public class Level : MonoBehaviour
 		};
 		
 		Utils.Animate(1f, 0f, 0.5f, (v) => _audioSource.volume += v);
+		Utils.InvokeDelayed(() =>
+		{
+			_audioSource.clip = Over;
+			_audioSource.Play();
+			Utils.Animate(0f, 0.5f, 2f, (v) => _audioSource.volume += v);
+		}, 0.5f);
 //		CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0f, 0.01f), GOAnimationTime / 2, true);
 		Utils.Animate(Camera.main.backgroundColor, Color.black, GOAnimationTime / 2, (v) => Camera.main.backgroundColor += v);
 		Utils.Animate(UnitedTint.Tint, Color.white, GOAnimationTime / 2, (v) => UnitedTint.Tint = v, null, true);
