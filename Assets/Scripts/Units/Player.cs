@@ -23,8 +23,10 @@ public class Player : Unit
 		}
 		bool leftDown = Input.GetButtonDown("Left"),
 			rightDown = Input.GetButtonDown("Right");
-		if (Input.GetKeyDown(KeyCode.E))
+		if (Input.GetKeyDown(KeyCode.R))
 		{
+		    SceneManager.LoadScene(0);
+			UnitedTint.Tint = Color.white;
 		}
 		if (Input.touchCount > 0)
 		{

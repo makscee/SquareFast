@@ -282,6 +282,10 @@ public class Level : MonoBehaviour
 		{
 			return;
 		}
+		if (Killer == null)
+		{
+			return;
+		}
 		var go = Killer.Instantiate();
 		var unit = go.GetComponent<Unit>();
 		KillerUnit = unit;
