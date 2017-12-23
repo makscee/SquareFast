@@ -29,12 +29,15 @@ public class UnitedTint : MonoBehaviour
         if (_spriteRenderer)
         {
             Color = _spriteRenderer.color;
+            _spriteRenderer.color = Color * Tint;
         } else if (_text = GetComponent<Text>())
         {
             Color = _text.color;
+            _text.color = Color * Tint;
         } else if (_image = GetComponent<RawImage>())
         {
             Color = _image.color;
+            _image.color = Color * Tint;
         }
     }
 

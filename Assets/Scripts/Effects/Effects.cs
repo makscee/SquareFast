@@ -36,7 +36,7 @@ public class SpawnEffect
         var ps = he.GetComponent<ParticleSystem>();
 
         var main = ps.main;
-        main.startColor = unit.GetComponent<SpriteRenderer>().color * (unit is Player ? Color.white : UnitedTint.Tint);
+        main.startColor = unit.GetComponent<SpriteRenderer>().color;
         Utils.InvokeDelayed(() =>
         {
             if (ps == null) return;

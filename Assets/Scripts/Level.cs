@@ -81,8 +81,10 @@ public class Level : MonoBehaviour
 
 		var delay = IsFirstStart ? MusicDelay : 0;
 
-		CancelInvoke("TickUpdate");
-		InvokeRepeating("TickUpdate", delay, TickTime);
+//		CancelInvoke("TickUpdate");
+//		InvokeRepeating("TickUpdate", delay, TickTime);
+		_ticking = false;
+		Utils.InvokeDelayed(() => _ticking = true, delay);
 		if (SaveTicks != -1)
 		{
 			StartTicks = SaveTicks;
@@ -127,8 +129,21 @@ public class Level : MonoBehaviour
 	public int EnemiesCount { get; private set; }
 
 	private bool _started;
-	public Action StartAction, GameOverStartAction = () => { }, GameOverAction = () => { }, ExitGameOverAction = () => { };
+	public Action StartAction, TickAction = () => { }, GameOverStartAction = () => { }, GameOverAction = () => { }, ExitGameOverAction = () => { };
 
+	private float _sampleTime = 0f;
+	private bool _ticking = false;
+	private void Update()
+	{
+		if (!_ticking) return;
+		var newST= 1.0f *_audioSource.timeSamples / 44100;
+		if (Math.Floor(newST / TickTime) > Math.Floor(_sampleTime / TickTime))
+		{
+			TickUpdate();
+		}
+		_sampleTime = newST;
+	}
+	
 	public void TickUpdate()
 	{
 		if (!Updating)
@@ -142,6 +157,7 @@ public class Level : MonoBehaviour
 			_started = true;
 		}
 		Ticks++;
+		TickAction();
 		Pattern.Instance.TickUpdate();
 		if (Spawning) _levelSpawner.TickUpdate();
 		var units = _grid.GetAllUnits();
@@ -234,6 +250,7 @@ public class Level : MonoBehaviour
 		Utils.InvokeDelayed(() =>
 		{
 			GridMarks.Instance.SetBorders(-3, 1);
+			GridMarks.Instance.SetSize(3, 1);
 			Utils.Animate(0f, 1f, GOAnimationTime / 4, (v) =>
 			{
 				CameraScript.Instance.InvProgress += v;
@@ -272,8 +289,9 @@ public class Level : MonoBehaviour
 		Updating = true;
 		Spawning = false;
 		TickTime = 0.5f;
-		CancelInvoke("TickUpdate");
-		InvokeRepeating("TickUpdate", 0f, TickTime);
+		_sampleTime = 0f;
+//		CancelInvoke("TickUpdate");
+//		InvokeRepeating("TickUpdate", 0f, TickTime);
 	}
 
 	private void RespawnKiller()
@@ -324,7 +342,8 @@ public class Level : MonoBehaviour
 			TimeText.color = tt;
 
 		});
-		CancelInvoke("TickUpdate");
+//		CancelInvoke("TickUpdate");
+		_ticking = false;
 	}
 
 	public void KillEverything()

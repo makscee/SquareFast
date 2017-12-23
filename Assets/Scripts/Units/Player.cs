@@ -28,6 +28,10 @@ public class Player : Unit
 		    SceneManager.LoadScene(0);
 			UnitedTint.Tint = Color.white;
 		}
+		if (Input.GetKeyDown(KeyCode.G))
+		{
+			Autopilot = true;
+		}
 		if (Input.touchCount > 0)
 		{
 			for (var i = 0; i < Input.touchCount; ++i)

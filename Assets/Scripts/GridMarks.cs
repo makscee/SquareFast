@@ -35,11 +35,15 @@ public class GridMarks : MonoBehaviour
         border.transform.SetParent(transform);
     }
 
-    public void SetSize(int size)
+    public void SetSize(int size, int sizer = 0)
     {
+        if (sizer == 0)
+        {
+            sizer = size;
+        }
         for (var i = -MaxSize; i <= MaxSize; i++)
         {
-            _marks[i].SetActive(i >= -size && i <= size);
+            _marks[i].SetActive(i >= -size && i <= sizer);
         }
     }
 
