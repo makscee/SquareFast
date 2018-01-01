@@ -55,10 +55,21 @@ public class Menu : MonoBehaviour
         OnEnable();
     }
 
-    public void NextItem()
+    public void PlayClick()
     {
         _as.clip = Click;
         _as.Play();
+    }
+
+    public void PlaySelect()
+    {
+        _as.clip = Select;
+        _as.Play();
+    }
+
+    public void NextItem()
+    {
+        PlayClick();
         var item = _items[0];
         _items.RemoveAt(0);
         _items.Add(item);
@@ -67,8 +78,6 @@ public class Menu : MonoBehaviour
 
     public void Confirm()
     {
-        _as.clip = Select;
-        _as.Play();
         _items[0].Action();
     }
 

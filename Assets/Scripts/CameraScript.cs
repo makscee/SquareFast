@@ -46,6 +46,7 @@ public class CameraScript : MonoBehaviour
     private const float SwitchTime = 0.2f;
     public void SwitchScene(Action a = null)
     {
+        Menu.Instance.PlaySelect();
         Utils.Animate(0, 1, SwitchTime, (v) => SwitchProgress = v, null, true);
         Utils.InvokeDelayed(() =>
         {
