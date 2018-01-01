@@ -13,9 +13,12 @@ public class CameraScript : MonoBehaviour
     public float InvProgress, SwitchProgress;
     public Color SwitchColor;
     public GameObject SwitchFollow;
+    private float _zoom;
+    public static float MenuZoomout = 3f;
 
     private void Awake()
     {
+        _zoom = Camera.main.orthographicSize;
         Instance = this;
         ColorSwitch = new Material(ColorSwitch);
     }
@@ -34,13 +37,15 @@ public class CameraScript : MonoBehaviour
         }
         if (Player.Instance == null) return;
         var needPos = Player.Instance.transform.position;
+        if (MenuZoomout < 0) MenuZoomout = 0;
         if (Menu.Instance.isActiveAndEnabled)
         {
-            needPos += Vector3.up * 4;
+            needPos += Vector3.up * (3.5f - 3.5f / 3f * MenuZoomout);
         }
         var dir =  needPos - transform.position;
         dir.z = 0;
         transform.position += dir * FollowSpeed * Time.deltaTime;
+        Camera.main.orthographicSize = _zoom / (1 + MenuZoomout / 2);
     }
 
     private const float SwitchTime = 0.2f;

@@ -20,8 +20,6 @@ public class Level : MonoBehaviour
 	public const int LevelsAmount = 6; 
 	private LevelSpawner _levelSpawner;
 	private AudioSource _audioSource;
-	public Text RestartText;
-	public Text QuitText;
 	public Text TimeText;
 	public AudioClip L1, L2, Over;
 	public float MusicStart, MusicDelay;
@@ -66,18 +64,13 @@ public class Level : MonoBehaviour
 		_started = false;
 		Pattern.Instance.Reset();
 		var offset = LevelSpawner.Distance;
-		GridMarks.Instance.SetSize(offset);
-		GridMarks.Instance.SetBorderHandlers(() =>
-			{
-				Player.Instance.DieEvent = () => { };
-				Player.Instance.TakeDmg(Player.Instance, 999);
-			},
-			() =>
-			{
-				Player.Instance.DieEvent = () => { };
-				Player.Instance.TakeDmg(Player.Instance, 999);
-			});
+		Action a = () =>
+		{
+			Player.Instance.DieEvent = () => { };
+			Player.Instance.TakeDmg(Player.Instance, 999);
+		};
 		GridMarks.Instance.SetBorders(-1, 1);
+		GridMarks.Instance.Set("", "", -1, 1, -offset, offset, a, a);
 
 		var delay = IsFirstStart ? MusicDelay : 0;
 
@@ -212,23 +205,6 @@ public class Level : MonoBehaviour
 		}
 		Updating = false;
 		GameOver = true;
-		GridMarks.Instance.HandlerLeft += () =>
-		{
-			if (!GameOver) return;
-			ExitGameover();
-			Utils.InvokeDelayed(OnEnable, GOAnimationTime / 4);
-		};
-		GridMarks.Instance.HandlerRight += () =>
-		{
-			CameraScript.Instance.SwitchScene(() =>
-			{
-				WebUtils.FetchScores();
-				ExitGameover();
-				gameObject.SetActive(false);
-				Menu.Instance.gameObject.SetActive(true);
-				Menu.Instance.RefreshItems(true);
-			});
-		};
 		
 		Utils.Animate(1f, 0f, 0.5f, (v) => _audioSource.volume += v);
 		Utils.InvokeDelayed(() =>
@@ -242,15 +218,31 @@ public class Level : MonoBehaviour
 		Utils.Animate(UnitedTint.Tint, Color.white, GOAnimationTime / 2, (v) => UnitedTint.Tint = v, null, true);
 		Pattern.Instance.Reset();
 		Utils.InvokeDelayed(KillEverything, GOAnimationTime / 2);
-		var rtut = RestartText.GetComponent<UnitedTint>();
-		var qtut = QuitText.GetComponent<UnitedTint>();
+		var gm = GridMarks.Instance;
+		var rtut = gm.LeftText.GetComponent<UnitedTint>();
+		var qtut = gm.RightText.GetComponent<UnitedTint>();
 		var ct = rtut.Color;
 		ct = new Color(ct.r, ct.g, ct.b, 0);
 		var tt = TimeText.color;
 		Utils.InvokeDelayed(() =>
 		{
-			GridMarks.Instance.SetBorders(-3, 1);
-			GridMarks.Instance.SetSize(3, 1);
+			gm.Set("< RESTART", "QUIT >", -3, 1, -3, 1, () =>
+			{
+				if (!GameOver) return;
+				ExitGameover();
+				Utils.InvokeDelayed(OnEnable, GOAnimationTime / 4);
+			}, () =>
+			{
+				CameraScript.Instance.SwitchScene(() =>
+				{
+					WebUtils.FetchScores();
+					ExitGameover();
+					gameObject.SetActive(false);
+					Menu.Instance.gameObject.SetActive(true);
+					Menu.Instance.RefreshItems(true);
+				});
+			});
+			
 			Utils.Animate(0f, 1f, GOAnimationTime / 4, (v) =>
 			{
 				CameraScript.Instance.InvProgress += v;
@@ -324,21 +316,16 @@ public class Level : MonoBehaviour
 		ExitGameOverAction();
 		Player.Instance.DieEvent = () => { };
 		KillEverything();
-		var rtut = RestartText.GetComponent<UnitedTint>();
-		var qtut = QuitText.GetComponent<UnitedTint>();
-		var ct = rtut.Color;
-		ct = new Color(ct.r, ct.g, ct.b, 1);
+		var ct = 1f;
 		var tt = TimeText.color;
 		
 		Utils.Animate(1f, 0f, GOAnimationTime / 4, (v) =>
 		{
 			CameraScript.Instance.InvProgress += v;
-			ct.a += v;
-			rtut.Color = ct;
-			qtut.Color= ct;
-			tt.r = 1 - ct.a;
-			tt.g = 1 - ct.a;
-			tt.b = 1 - ct.a;
+			ct += v;
+			tt.r = 1 - ct;
+			tt.g = 1 - ct;
+			tt.b = 1 - ct;
 			TimeText.color = tt;
 
 		});

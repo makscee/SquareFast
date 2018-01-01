@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GridMarks : MonoBehaviour
 {
     private static readonly Prefab GridSquare = new Prefab("GridSquare");
     public GameObject RightBorder;
     public GameObject LeftBorder;
+    public bool RightSolid, LeftSolid;
     public static GridMarks Instance;
     private const int MaxSize = 10;
     private readonly Dictionary<int, GameObject> _marks = new Dictionary<int, GameObject>();
+    public Text LeftText, RightText;
 
     [NonSerialized]
     public Action HandlerLeft, HandlerRight;
@@ -35,15 +38,73 @@ public class GridMarks : MonoBehaviour
         border.transform.SetParent(transform);
     }
 
-    public void SetSize(int size, int sizer = 0)
+    public void Set(string lText, string rText, int lPos, int rPos, int lSize, int rSize, Action lAction, Action rAction, bool lSolid = false,
+        bool rSolid = false)
     {
-        if (sizer == 0)
+        LeftText.text = lText;
+        RightText.text = rText;
+        SetBorders(lPos, rPos);
+        SetBorderHandlers(lAction, rAction);
+        SetGrids(lSize, rSize);
+        LeftSolid = lSolid;
+        RightSolid = rSolid;
+        var c = LeftText.GetComponent<UnitedTint>().Color;
+        LeftText.GetComponent<UnitedTint>().Color = new Color(c.r, c.g, c.b, 1);
+        c = RightText.GetComponent<UnitedTint>().Color;
+        RightText.GetComponent<UnitedTint>().Color = new Color(c.r, c.g, c.b, 1);
+    }
+
+    public void ShiftBorder(int dir)
+    {
+        if (dir == 1)
         {
-            sizer = size;
+            Utils.Animate(Vector3.zero, Vector3.right, Unit.AnimationWindow * 2, (v) =>
+            {
+                LeftBorder.transform.position += v;
+                LeftText.transform.position += v;
+            });
+            for (var i = -MaxSize; i <= MaxSize; i++)
+            {
+                if (!_marks[i].activeSelf) continue;
+                Deactivate(i);
+                break;
+            }
+        }
+        else
+        {
+            Utils.Animate(Vector3.zero, Vector3.right, Unit.AnimationWindow * 2, (v) =>
+            {
+                RightBorder.transform.position -= v;
+                RightText.transform.position -= v;
+            });
+            for (var i = MaxSize; i >= -MaxSize; i--)
+            {
+                if (!_marks[i].activeSelf) continue;
+                Deactivate(i);
+                break;
+            }
+        }
+    }
+
+    public int FieldSize()
+    {
+        var res = 0;
+        for (var i = -MaxSize; i <= MaxSize; i++)
+        {
+            if (_marks[i].activeSelf) res++;
+        }
+        return res;
+    }
+
+    public void SetGrids(int l, int r = 0)
+    {
+        if (r == 0)
+        {
+            r = l;
         }
         for (var i = -MaxSize; i <= MaxSize; i++)
         {
-            _marks[i].SetActive(i >= -size && i <= sizer);
+            _marks[i].SetActive(i >= l && i <= r);
         }
     }
 
@@ -56,6 +117,8 @@ public class GridMarks : MonoBehaviour
     {
         LeftBorder.transform.position = new Vector3(l - 0.5f, 0, 0);
         RightBorder.transform.position = new Vector3(r + 0.5f, 0, 0);
+        LeftText.transform.position = new Vector3(l - 0.5f - 0.2f, 0, 0);
+        RightText.transform.position = new Vector3(r + 0.5f + 0.2f, 0, 0);
     }
 
     public void SetBorderHandlers(Action l, Action r)

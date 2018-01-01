@@ -88,15 +88,18 @@ public class Unit : MonoBehaviour
 
     public void Move(int relDir)
     {
-        if (Menu.Instance.isActiveAndEnabled)
+        if (this is Player)
         {
-            if (GridMarks.Instance.RightBorder.transform.position.x < Position.x + relDir)
+            var gm = GridMarks.Instance;
+            if (gm.RightSolid && gm.RightBorder.transform.position.x < Position.x + relDir)
             {
                 AttackAnim(relDir);
-                if (this is Player)
-                {
-                    GridMarks.Instance.HandlerRight();
-                }
+                GridMarks.Instance.HandlerRight();
+                return;
+            } else if (gm.LeftSolid && gm.LeftBorder.transform.position.x > Position.x + relDir)
+            {
+                AttackAnim(relDir);
+                GridMarks.Instance.HandlerLeft();
                 return;
             }
         }
@@ -170,10 +173,14 @@ public class Unit : MonoBehaviour
                 if (pos < Math.Floor(GridMarks.Instance.LeftBorder.transform.position.x) + 0.01f)
                 {
                     GridMarks.Instance.HandlerLeft();
+                    Player.Instance.DieEvent = () => { };
+                    Player.Instance.TakeDmg(Player.Instance, 999);
                 }
                 else if (pos > Math.Ceiling(GridMarks.Instance.RightBorder.transform.position.x) - 0.01f)
                 {
                     GridMarks.Instance.HandlerRight();
+                    Player.Instance.DieEvent = () => { };
+                    Player.Instance.TakeDmg(Player.Instance, 999);
                 }
             }, this);
 

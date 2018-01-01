@@ -59,27 +59,20 @@ public class Player : Unit
 		}
 		var dir = leftDown ? -1 : (rightDown ? 1 : 0);
 		if (dir == 0) return;
-		if (!Menu.MovedBorder && Menu.Instance.isActiveAndEnabled)
+
+		var gm = GridMarks.Instance;
+		if (Menu.Instance.isActiveAndEnabled)
 		{
-			Menu.MovedBorder = true;
-			if (dir == 1)
+			if (gm.FieldSize() > 2)
 			{
-				Utils.Animate(Vector3.zero, Vector3.right, AnimationWindow * 2, (v) =>
-				{
-					GridMarks.Instance.LeftBorder.transform.position += v;
-					Menu.Instance.LeftText.transform.position += v;
-				});
-				GridMarks.Instance.Deactivate(-1);
-			} else
+				gm.ShiftBorder(dir);
+			}
+			if (CameraScript.MenuZoomout > 0)
 			{
-				Utils.Animate(Vector3.zero, Vector3.right, AnimationWindow * 2, (v) =>
-				{
-					GridMarks.Instance.RightBorder.transform.position -= v;
-					Menu.Instance.RightText.transform.position -= v;
-				});
-				GridMarks.Instance.Deactivate(1);
+				Utils.Animate(0f, 1f, 0.2f, (v) => CameraScript.MenuZoomout -= v);
 			}
 		}
+
 		MoveOrAttack(dir);
 	}
 

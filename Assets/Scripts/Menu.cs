@@ -8,14 +8,12 @@ public class Menu : MonoBehaviour
     private static readonly Prefab MenuItemPrefab = new Prefab("MenuItemText");
     public Canvas WorldCanvas;
     public static Menu Instance;
-    public static bool MovedBorder;
-    public GameObject LeftText, RightText;
-    private static Vector3 leftPos, rightPos;
     public Text ControlsText;
     public GameObject HintCanvas;
     public Text HintText;
     public AudioClip Click, Select;
     private AudioSource _as;
+    private static bool _firstEnable = true;
 
     private class MenuItem
     {
@@ -157,16 +155,12 @@ public class Menu : MonoBehaviour
         Enter();
         Level.IsFirstStart = true;
         var gm = GridMarks.Instance;
-        MovedBorder = false;
-        LeftText.transform.position = leftPos;
-        RightText.transform.position = rightPos;
-        gm.SetSize(1);
-        gm.SetBorders(-1, 1);
-        gm.SetBorderHandlers(() =>
+        var dist = _firstEnable ? 3 : 1;
+        gm.Set("< NEXT", "CONFIRM >", -dist, dist, -dist, dist, NextItem, () =>
         {
-            Player.Instance.TakeDmg(Player.Instance, 999);
             CameraScript.Instance.SwitchScene(Confirm);
-        }, NextItem);
+        }, true);
+        _firstEnable = false;
         if (Player.Instance == null)
         {
             Player.Prefab.Instantiate();
@@ -239,9 +233,10 @@ public class Menu : MonoBehaviour
             UnitedTint.Tint = Color.white;
             Camera.main.backgroundColor = Color.black;
         };
+
     private void Awake()
     {
-        _as = GetComponent<AudioSource>();
+        _as = CameraScript.Instance.GetComponent<AudioSource>();
         if (Application.platform == RuntimePlatform.Android)
         {
             HintText.text =
@@ -262,8 +257,6 @@ public class Menu : MonoBehaviour
             c.a = v;
             ut.Color = c;
         }, null, true, 2f);
-        leftPos = LeftText.transform.position;
-        rightPos = RightText.transform.position;
         Saves.Load();
         WebUtils.FetchScores();
         Prefab.TouchStatics();
