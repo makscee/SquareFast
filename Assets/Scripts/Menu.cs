@@ -90,6 +90,16 @@ public class Menu : MonoBehaviour
             CameraScript.Instance.SwitchScene(() =>
             {
                 HintCanvas.SetActive(false);
+                var c = ControlsText.color;
+                c.a = 1;
+                var ut = ControlsText.GetComponent<UnitedTint>();
+                ut.Color = c;
+                c = new Color(c.r, c.g, c.b, 0);
+                Utils.Animate(1f, 0f, 3f, (v) =>
+                {
+                    c.a = v;
+                    ut.Color = c;
+                }, null, true, 2f);
             });
         }
         foreach (var item in _items)
@@ -247,16 +257,6 @@ public class Menu : MonoBehaviour
             HintText.text =
                 "<color=white>SQUARE FAST</color> CONTROLS ONLY WITH\nBUTTONS <color=white>LEFT</color> AND <color=white>RIGHT</color>\nEVEN IN MENU\n\n<color=white>PRESS ANY KEY TO CONTINUE</color>";
         }
-        var c = ControlsText.color;
-        c.a = 1;
-        var ut = ControlsText.GetComponent<UnitedTint>();
-        ut.Color = c;
-        c = new Color(c.r, c.g, c.b, 0);
-        Utils.Animate(1f, 0f, 3f, (v) =>
-        {
-            c.a = v;
-            ut.Color = c;
-        }, null, true, 2f);
         Saves.Load();
         WebUtils.FetchScores();
         Prefab.TouchStatics();

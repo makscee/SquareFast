@@ -66,11 +66,8 @@ public class Level : MonoBehaviour
 		var offset = LevelSpawner.Distance;
 		Action a = () =>
 		{
-			Player.Instance.DieEvent = () => { };
-			Player.Instance.TakeDmg(Player.Instance, 999);
 		};
-		GridMarks.Instance.SetBorders(-1, 1);
-		GridMarks.Instance.Set("", "", -1, 1, -offset, offset, a, a);
+		GridMarks.Instance.Set("", "", -1, 1, -offset, offset, a, a, true, true);
 
 		var delay = IsFirstStart ? MusicDelay : 0;
 

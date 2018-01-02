@@ -11,19 +11,22 @@ public struct PatternImages
 [Serializable]
 public struct PatternsImages
 {
-    public List<PatternImages> Patterns;
+    public List<PatternImages> Levels;
 }
 
 public class Pattern : MonoBehaviour
 {
     public static Pattern Instance;
-    public List<PatternsImages> Images;
+    public List<PatternsImages> Patterns;
     private int _curLevel = 0;
     private int _patterns = 0;
+    private Vector3 _scale = Vector3.one;
 
     private void Awake()
     {
         Instance = this;
+        var t = Screen.width * 1f / 1600;
+        _scale = new Vector3(t, t, t);
     }
 
     public void NextLevel(int skip = 1)
@@ -34,7 +37,7 @@ public class Pattern : MonoBehaviour
         }
         _curLevel += skip;
         var c = 1;
-        foreach (var images in Images[_patterns].Patterns)
+        foreach (var images in Patterns[_patterns].Levels)
         {
             if (c > _curLevel) break;
             c++;
@@ -44,7 +47,7 @@ public class Pattern : MonoBehaviour
                 {
                     var from = _patterns == 1 ? new Vector3(0, 1, 1) : Vector3.zero;
                     image.rectTransform.localScale = from;
-                    Utils.Animate(from, Vector3.one, Level.TickTime / 2, (v) => image.rectTransform.localScale += v);
+                    Utils.Animate(from, _scale, Level.TickTime / 2, (v) => image.rectTransform.localScale += v);
                 }
                 image.gameObject.SetActive(true);
             }
@@ -59,9 +62,9 @@ public class Pattern : MonoBehaviour
     public void Reset()
     {
         _curLevel = 0;
-        foreach (var patterns in Images)
+        foreach (var patterns in Patterns)
         {
-            foreach (var images in patterns.Patterns)
+            foreach (var images in patterns.Levels)
             {
                 foreach (var image in images.Images)
                 {
@@ -78,15 +81,15 @@ public class Pattern : MonoBehaviour
             return;
         }
         var c = 1;
-        foreach (var images in Images[_patterns].Patterns)
+        foreach (var images in Patterns[_patterns].Levels)
         {
             if (c > _curLevel) break;
             c++;
             foreach (var image in images.Images)
             {
-                var t = 1.15f + c * 0.05f;
+                var t = _scale.x * 1.15f + c * 0.05f;
                 var from = new Vector3(t, t, t);
-                var to = Vector3.one;
+                var to = _scale;
                 var tImage = image;
                 tImage.rectTransform.localScale = from;
                 Utils.Animate(from, to, Level.TickTime * 2, (v) => tImage.rectTransform.localScale += v);
