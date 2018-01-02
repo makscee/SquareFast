@@ -41,11 +41,11 @@ public class CameraScript : MonoBehaviour
         if (Menu.Instance.isActiveAndEnabled)
         {
             needPos += Vector3.up * (3.5f - 3.5f / 3f * MenuZoomout);
+            Camera.main.orthographicSize = _zoom / (1 + MenuZoomout / 2);
         }
         var dir =  needPos - transform.position;
         dir.z = 0;
         transform.position += dir * FollowSpeed * Time.deltaTime;
-        Camera.main.orthographicSize = _zoom / (1 + MenuZoomout / 2);
     }
 
     private const float SwitchTime = 0.2f;
