@@ -36,11 +36,12 @@ public class WebUtils
     }
     
     public static void FetchScores() {
-        CameraScript.Instance.StartCoroutine(DownloadScores());
+        CameraScript.Instance.StartCoroutine(DownloadScores(0));
+        CameraScript.Instance.StartCoroutine(DownloadScores(1));
     }
  
-    private static IEnumerator DownloadScores() {
-        var www = UnityWebRequest.Get("https://squarefast-5127e.firebaseio.com/scores.json");
+    private static IEnumerator DownloadScores(int level) {
+        var www = UnityWebRequest.Get("https://squarefast-5127e.firebaseio.com/scores/" + level + ".json?orderBy=\"$value\"&limitToLast=1000");
         yield return www.Send();
  
         if(www.isNetworkError) {
@@ -48,7 +49,7 @@ public class WebUtils
         }
         else {
             Debug.Log(www.downloadHandler.text);
-            HighScores.SaveFromJson(www.downloadHandler.text);
+            HighScores.SaveFromJson(www.downloadHandler.text, level);
         }
     }
 }

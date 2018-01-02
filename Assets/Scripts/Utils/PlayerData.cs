@@ -30,7 +30,7 @@ public class Saves
 {
     public static void Save()
     {
-        SaveToFile();
+//        SaveToFile();
         SaveToPrefs();
         Debug.Log("Saved " + PlayerData.Instance);
     }
@@ -59,7 +59,7 @@ public class Saves
 
     public static void Load()
     {
-        TryLoadFromFile();
+//        TryLoadFromFile();
         TryLoadFromPrefs();
         if (PlayerData.Instance == null)
         {

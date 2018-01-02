@@ -1,67 +1,60 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.AccessControl;
+using UnityEngine;
 
 public class HighScores
 {
     public static List<Dictionary<string,string>> Data;
 
-    public static bool fetched = false;
-    public static void SaveFromJson(string json)
+    static HighScores()
     {
-        var levelNum = 0;
         Data = new List<Dictionary<string, string>>();
-        var pd = PlayerData.Instance;
-        while (json.IndexOf('{') != -1)
-        {
-            var startLevel = json.IndexOf('{');
-            var endLevel = json.IndexOf('}');
-            var level = json.Substring(startLevel + 1, endLevel - startLevel - 1);
+        for (var i = 0; i < Level.LevelsAmount; i++) 
             Data.Add(new Dictionary<string, string>());
-            var scores = level.Split(',');
-            foreach (var s in scores)
-            {
-                var t = s.Split(':');
-                var id = t[0].Trim('"');
-                var score = t[1];
-                Data[levelNum][id] = score;
-            }
-            levelNum++;
-            json = json.Remove(0, endLevel + 1);
-        }
-        if (pd != null)
+    }
+
+    private static bool[] _fetched = new bool[Level.LevelsAmount];
+    public static void SaveFromJson(string json, int l)
+    {
+        if (string.IsNullOrEmpty(json))
         {
-            for (var i = 0; i < Data.Count; i++)
+            return;
+        }
+        var pd = PlayerData.Instance;
+        json = json.Trim('{', '}');
+        var scores = json.Split(',');
+        foreach (var s in scores)
+        {
+            var t = s.Split(':');
+            var id = t[0].Trim('"');
+            var score = t[1];
+            Data[l][id] = score;
+        }
+        for (var i = 0; i < Data.Count; i++)
+        {
+            var pdScore = pd.Scores[i];
+            var fScore = Data[i].ContainsKey(pd.ID) ? Data[i][pd.ID] : "0";
+            if (pdScore.ToFloat() > fScore.ToFloat())
             {
-                var pdScore = pd.Scores[i];
-                var fScore = Data[i].ContainsKey(pd.ID) ? Data[i][pd.ID] : "0";
-                if (pdScore.ToFloat() > fScore.ToFloat())
-                {
-                    Data[i][pd.ID] = pdScore;
-                    WebUtils.SendScore(i);
-                }
-                else
-                {
-                    pd.Scores[i] = fScore;
-                }
+                Data[i][pd.ID] = pdScore;
+                WebUtils.SendScore(i);
+            }
+            else
+            {
+                pd.Scores[i] = fScore;
             }
         }
-        fetched = true;
+        _fetched[l] = true;
     }
 
     public static string GetString(int level)
     {
-        if (!fetched)
+        if (!_fetched[level])
         {
-            Data = new List<Dictionary<string, string>>();
-            var i = 0;
             var pd = PlayerData.Instance;
-            foreach (var score in pd.Scores)
-            {
-                Data.Add(new Dictionary<string, string>());
-                Data[i][pd.ID] = score;
-                i++;
-            }
+            Data[level][pd.ID] = pd.Scores[level];
         }
         var result = new List<string>();
         var gotPlayer = false;
