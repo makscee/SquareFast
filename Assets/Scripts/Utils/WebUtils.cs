@@ -41,7 +41,7 @@ public class WebUtils
     }
  
     private static IEnumerator DownloadScores(int level) {
-        var www = UnityWebRequest.Get("https://squarefast-5127e.firebaseio.com/scores/" + level + ".json?orderBy=\"$value\"&limitToLast=1000");
+        var www = UnityWebRequest.Get("https://squarefast-5127e.firebaseio.com/scores/" + level + ".json?orderBy=\"$value\"&limitToLast=998");
         yield return www.Send();
  
         if(www.isNetworkError) {

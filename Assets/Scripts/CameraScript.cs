@@ -28,6 +28,10 @@ public class CameraScript : MonoBehaviour
         if (SwitchFollow != null)
         {
             var pos = SwitchFollow.transform.position;
+            if (Math.Abs(pos.x) < Math.Abs(Player.Instance.Position.x))
+            {
+                pos = Player.Instance.Position;
+            }
             pos += pos.x > 0 ? new Vector3(1.5f, 0) : new Vector3(-1.5f, 0);
             pos.x = Math.Max(2f, Math.Abs(pos.x));
             var v = Camera.main.WorldToScreenPoint(pos).x;
