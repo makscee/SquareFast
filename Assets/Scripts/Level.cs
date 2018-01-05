@@ -54,6 +54,7 @@ public class Level : MonoBehaviour
 
 	private void OnEnable()
 	{
+		TickAction = () => { };
 		_levelSpawner = new LevelSpawner(CurrentLevel);
 		var size = LevelSpawner.Distance * 2 + 1;
 		_grid = new Grid(size);
