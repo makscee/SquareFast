@@ -180,6 +180,13 @@ public class LevelSpawner
         {
             case 0:
             {
+                Level.Instance.TickAction += () =>
+                {
+                    if (Level.Ticks % 3 == 0 && !Level.GameOver)
+                    {
+                        BeatBGEffect.Create(0);
+                    }
+                };
                 Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L1;
                 Level.Instance.MusicStart = 9.7f;
                 Level.Instance.MusicDelay = 2f;
@@ -222,6 +229,13 @@ public class LevelSpawner
             }
             case 1:
             {
+                Level.Instance.TickAction += () =>
+                {
+                    if (Level.Ticks % 3 == 0 && !Level.GameOver)
+                    {
+                        BeatBGEffect.Create(1);
+                    }
+                };
                 Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L2;
                 Level.Instance.MusicStart = 16.3f;
                 Level.Instance.MusicDelay = 2.5f;

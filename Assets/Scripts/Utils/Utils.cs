@@ -19,6 +19,12 @@ public static class Utils
         return f;
     }
 
+    public static Color ChangeAlpha(this Color c, float alpha)
+    {
+        c.a = alpha;
+        return c;
+    }
+
     public static float Interpolate(float from, float to, float over, float t)
     {
         var delta = Time.deltaTime;

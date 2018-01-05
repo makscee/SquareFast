@@ -119,7 +119,7 @@ public class Level : MonoBehaviour
 	public int EnemiesCount { get; private set; }
 
 	private bool _started;
-	public Action StartAction, TickAction = () => { }, GameOverStartAction = () => { }, GameOverAction = () => { }, ExitGameOverAction = () => { };
+	public Action StartAction, TickActionPerm = () => { }, TickAction = () => { }, GameOverStartAction = () => { }, GameOverAction = () => { }, ExitGameOverAction = () => { };
 
 	private float _sampleTime = 0f;
 	private bool _ticking = false;
@@ -147,6 +147,7 @@ public class Level : MonoBehaviour
 			_started = true;
 		}
 		Ticks++;
+		TickActionPerm();
 		TickAction();
 		Pattern.Instance.TickUpdate();
 		if (Spawning) _levelSpawner.TickUpdate();
