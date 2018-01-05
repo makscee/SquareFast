@@ -170,13 +170,13 @@ public class Unit : MonoBehaviour
                 if (player == null) return;
                 var pos = player.transform.position.x;
                 if (HP <= 0) return;
-                if (pos < Math.Floor(GridMarks.Instance.LeftBorder.transform.position.x) + 0.01f)
+                if (!GridMarks.Instance.LeftSolid && pos < Math.Floor(GridMarks.Instance.LeftBorder.transform.position.x) + 0.01f)
                 {
                     GridMarks.Instance.HandlerLeft();
                     Player.Instance.DieEvent = () => { };
                     Player.Instance.TakeDmg(Player.Instance, 999);
                 }
-                else if (pos > Math.Ceiling(GridMarks.Instance.RightBorder.transform.position.x) - 0.01f)
+                else if (!GridMarks.Instance.RightSolid && pos > Math.Ceiling(GridMarks.Instance.RightBorder.transform.position.x) - 0.01f)
                 {
                     GridMarks.Instance.HandlerRight();
                     Player.Instance.DieEvent = () => { };

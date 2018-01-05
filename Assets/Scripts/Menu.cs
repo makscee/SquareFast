@@ -29,6 +29,7 @@ public class Menu : MonoBehaviour
             Text = go.GetComponent<Text>();
             Text.text = text;
             go.transform.SetParent((Instance).WorldCanvas.transform);
+            go.transform.position = Vector3.zero;
             OnSelect = onSelect ?? (() => { });
             Scale = scale;
             Fade = fade;
@@ -41,7 +42,7 @@ public class Menu : MonoBehaviour
     {
         foreach (var item in _items)
         {
-            item.Text.gameObject.SetActive(false);
+            Destroy(item.Text.gameObject);
         }
         _items = items;
         
@@ -84,6 +85,10 @@ public class Menu : MonoBehaviour
     public bool CanvasHidden = false;
     private void Update()
     {
+        if (Player.Instance != null)
+        {
+            WorldCanvas.transform.position = Player.Instance.transform.position;
+        }
         if (!CanvasHidden && (Input.anyKeyDown || Input.touchCount > 0))
         {
             CanvasHidden = true;
@@ -116,19 +121,23 @@ public class Menu : MonoBehaviour
         var i = 0;
         _items[0].OnSelect();
         const float offset = 1f;
+        const float scaleT = 0.2f;
+        const float fadeT = 3f;
+        const float xT = 3.5f;
         if (initial)
         {
             foreach (var menuItem in _items)
             {
                 var t = menuItem.Text;
-                t.transform.position = new Vector3(i * 5 + offset, 8.5f - i * 2f);
-                var scale = menuItem.Scale / (i + 1) + 0.5f;
+                t.transform.position = new Vector3(i * xT + offset, 8.5f - i * 2f);
+                var scale = menuItem.Scale / (i + 1) + scaleT;
                 t.transform.localScale = new Vector3(scale, scale, 1);
                 var c = t.color;
-                c.a = menuItem.Fade ? 1f / (i + 1) : (i == 0 ? 1 : 0);
+                c.a = menuItem.Fade ? 1f / (i * fadeT + 1) : (i == 0 ? 1 : 0);
                 t.color = c;
 
                 t.gameObject.SetActive(true);
+                Debug.Log(t.transform.parent);
                 i++;
             }
             return;
@@ -137,19 +146,19 @@ public class Menu : MonoBehaviour
         {
             var t = menuItem.Text;
             var ib = (i + 1) % _items.Count;
-            Utils.Animate(new Vector3(ib * 5 + offset, 8.5f - ib * 2f), new Vector3(i * 5 + offset, 8.5f - i * 2f), AnimationWindow, (v) =>
+            Utils.Animate(new Vector3(ib * xT + offset, 8.5f - ib * 2f), new Vector3(i * xT + offset, 8.5f - i * 2f), AnimationWindow, (v) =>
             {
                 t.transform.position += v;
             });
-            var scale = menuItem.Scale / (i + 1) + 0.5f;
-            var scaleb = menuItem.Scale / (ib + 1) + 0.5f;
+            var scale = menuItem.Scale / (i + 1) + scaleT;
+            var scaleb = menuItem.Scale / (ib + 1) + scaleT;
             Utils.Animate(new Vector3(scaleb, scaleb), new Vector3(scale, scale), AnimationWindow, (v) =>
             {
                 t.transform.localScale += v;
             });
             var ut = t.GetComponent<UnitedTint>();
-            Utils.Animate(menuItem.Fade ? 1f / (ib + 1) : (ib == 0 ? 1 : 0),
-                menuItem.Fade ? 1f / (i + 1) : (i == 0 ? 1 : 0), AnimationWindow, (v) =>
+            Utils.Animate(menuItem.Fade ? 1f / (ib * fadeT + 1) : (ib == 0 ? 1 : 0),
+                menuItem.Fade ? 1f / (i * fadeT + 1) : (i == 0 ? 1 : 0), AnimationWindow, (v) =>
             {
                 var c = ut.Color;
                 c.a += v;
