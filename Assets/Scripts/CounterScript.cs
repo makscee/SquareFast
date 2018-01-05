@@ -23,7 +23,7 @@ public class CounterScript : MonoBehaviour
             _t = 0;
             _text.text = "0.00";
         };
-        Level.Instance.TickAction += () =>
+        Level.Instance.TickActionPerm += () =>
         {
             if (Level.Ticks % 3 != 0 || Level.GameOver) return;
             Utils.Animate(new Vector3(1.3f, 1.3f), Vector3.one, 0.15f, (v) =>
