@@ -137,7 +137,6 @@ public class Menu : MonoBehaviour
                 t.color = c;
 
                 t.gameObject.SetActive(true);
-                Debug.Log(t.transform.parent);
                 i++;
             }
             return;
@@ -202,6 +201,18 @@ public class Menu : MonoBehaviour
                 gameObject.SetActive(false);
                 Level.Instance.gameObject.SetActive(true);
             }, p1),
+            new MenuItem("LEVEL 4", () =>
+            {
+                Level.CurrentLevel = 3;
+                gameObject.SetActive(false);
+                Level.Instance.gameObject.SetActive(true);
+            }, p3),
+            new MenuItem("LEVEL 5", () =>
+            {
+                Level.CurrentLevel = 4;
+                gameObject.SetActive(false);
+                Level.Instance.gameObject.SetActive(true);
+            }, p4),
             new MenuItem("BACK", () => SwitchItems(getFirstList()), pReset)
         };
     }
@@ -243,6 +254,24 @@ public class Menu : MonoBehaviour
             p.Reset();
             p.NextLevel(2);
             UnitedTint.Tint = new Color(1f, 0.51f, 0.69f);
+            CameraScript.ChangeColorTinted(UnitedTint.Tint);
+        },
+        p3 = () =>
+        {
+            var p = Pattern.Instance;
+            p.SetPatterns(1);
+            p.Reset();
+            p.NextLevel(2);
+            UnitedTint.Tint = new Color(0.56f, 0.59f, 1f);
+            CameraScript.ChangeColorTinted(UnitedTint.Tint);
+        },
+        p4 = () =>
+        {
+            var p = Pattern.Instance;
+            p.SetPatterns(2);
+            p.Reset();
+            p.NextLevel(2);
+            UnitedTint.Tint = new Color(0.46f, 1f, 0.69f);
             CameraScript.ChangeColorTinted(UnitedTint.Tint);
         },
         pReset = () =>

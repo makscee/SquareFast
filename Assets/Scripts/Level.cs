@@ -13,6 +13,7 @@ public class Level : MonoBehaviour
 	public static bool Updating = true;
 	public static bool GameOver = false;
 	public static bool Spawning = true;
+	public static bool NextLevelStart = false;
 	public static int SaveTicks = -1;
 	public static bool IsFirstStart = true;
 	public static int CurrentLevel = 0;
@@ -52,18 +53,20 @@ public class Level : MonoBehaviour
 		_audioSource = GetComponent<AudioSource>();
 	}
 
-	private void OnEnable()
+	public void OnEnable()
 	{
 		TickAction = () => { };
 		_levelSpawner = new LevelSpawner(CurrentLevel);
 		var size = LevelSpawner.Distance * 2 + 1;
 		_grid = new Grid(size);
-		Player.Prefab.Instantiate();
+		if (!NextLevelStart)
+		{
+			Player.Prefab.Instantiate();
+		}
 		Updating = true;
 		GameOver = false;
 		Spawning = true;
 		_started = false;
-		Pattern.Instance.Reset();
 		var offset = LevelSpawner.Distance;
 		Action a = () =>
 		{
@@ -143,7 +146,14 @@ public class Level : MonoBehaviour
 		}
 		if (!_started && !GameOver)
 		{
-			StartAction();
+			if (!NextLevelStart)
+			{
+				StartAction();
+			}
+			else
+			{
+				NextLevelStart = false;
+			}
 			_levelSpawner.StartAction();
 			_started = true;
 		}
@@ -216,7 +226,7 @@ public class Level : MonoBehaviour
 		Utils.Animate(Camera.main.backgroundColor, Color.black, GOAnimationTime / 2, (v) => Camera.main.backgroundColor += v);
 		Utils.Animate(UnitedTint.Tint, Color.white, GOAnimationTime / 2, (v) => UnitedTint.Tint = v, null, true);
 		Pattern.Instance.Reset();
-		Utils.InvokeDelayed(KillEverything, GOAnimationTime / 2);
+		Utils.InvokeDelayed(() => KillEverything(), GOAnimationTime / 2);
 		var gm = GridMarks.Instance;
 		var rtut = gm.LeftText.GetComponent<UnitedTint>();
 		var qtut = gm.RightText.GetComponent<UnitedTint>();
@@ -332,10 +342,11 @@ public class Level : MonoBehaviour
 		_ticking = false;
 	}
 
-	public void KillEverything()
+	public void KillEverything(bool butPlayer = false)
 	{
 		GetAllUnits().ForEach((u) =>
 		{
+			if (butPlayer && u is Player) return;
 			u.TakeDmg(null, 999);
 		});
 	}
