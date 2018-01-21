@@ -4,19 +4,6 @@ using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public enum TickAction
-{
-    None, SimpleSquare, Square, Rhombus, Triangle, RhombusSSquare, Save
-}
-
-[Serializable]
-public struct Event
-{
-    public int Tick;
-    public TickAction TickAction;
-    public bool CountDistance;
-}
-
 public class EnemyPattern
 {
     private int _length = 3;
@@ -91,6 +78,7 @@ public class LevelSpawner
     private static readonly Prefab Triangle = TriangleEnemy.Prefab;
     private static readonly Prefab Rhombus = RhombusEnemy.Prefab;
     private static readonly Prefab Circle = CircleEnemy.Prefab;
+    private static readonly Prefab DownTriangle = DownTriangleEnemy.Prefab;
 
     private List<List<EnemyPattern>> _patterns;
     private readonly List<Color> _switchColors = new List<Color>();
