@@ -54,15 +54,25 @@ public class Unit : MonoBehaviour
                 atPos.Move(relDir);
                 return true;
             }
+            if (atPos is CircleEnemy)
+            {
+                (atPos as CircleEnemy).Swallow();
+                return true;
+            }
             if (class1)
             {
-//                Move(relDir);
                 if (this is DownTriangleEnemy)
                 {
                     Move(relDir, true);
                     Utils.InvokeDelayed(() => TakeDmg(this, 9999), AnimationWindow / 2);
                     return true;
                 }
+                if (this is CircleEnemy && Player.Instance.Swallowed == null)
+                {
+                    (this as CircleEnemy).Swallow();
+                    return false;
+                }
+                
                 Time.timeScale = 0.1f;
                 Utils.Animate(0.1f, 1f, 1f, (v) => Time.timeScale += v);
                 var camSize = Camera.main.orthographicSize;
@@ -138,7 +148,7 @@ public class Unit : MonoBehaviour
         }
     }
 
-    public virtual void TakeDmg(Unit source, int dmg = 1)
+    public virtual bool TakeDmg(Unit source, int dmg = 1)
     {
         Utils.InvokeDelayed(_TakeDmgAnim, AnimationWindow / 2, this);
         HP -= dmg;
@@ -146,7 +156,9 @@ public class Unit : MonoBehaviour
         if (HP <= 0)
         {
             Die();
+            return true;
         }
+        return false;
     }
 
     private GameObject _pe;
@@ -171,7 +183,7 @@ public class Unit : MonoBehaviour
         }
     }
 
-    private Vector3 _actPos;
+    protected Vector3 _actPos;
     public Vector3 Position
     {
         get { return _actPos; }
@@ -237,12 +249,6 @@ public class Unit : MonoBehaviour
     {
         Level.Instance.Clear(Position.IntX());
         DieEvent();
-        
-        if (Level.Instance.EnemiesCount == 0 && !(this is Player))
-        {
-//            CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0.43f, 0.43f), 1.5f, true);
-            
-        }
     }
 
     public virtual Prefab GetPrefab()

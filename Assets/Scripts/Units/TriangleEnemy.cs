@@ -31,7 +31,7 @@ public class TriangleEnemy : BasicEnemy
         return true;
     }
 
-    public override void TakeDmg(Unit source, int dmg = 1)
+    public override bool TakeDmg(Unit source, int dmg = 1)
     {
         if (HP - dmg > 0)
         {
@@ -41,6 +41,6 @@ public class TriangleEnemy : BasicEnemy
             dir = dir > 0 ? -1 : 1;
             Move(dir);
         }
-        base.TakeDmg(source, dmg);
+        return base.TakeDmg(source, dmg);
     }
 }

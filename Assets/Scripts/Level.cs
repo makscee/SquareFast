@@ -113,14 +113,14 @@ public class Level : MonoBehaviour
 
 	public void Clear(int pos)
 	{
-		if (!(Get(pos) is Player))
-		{
-			EnemiesCount--;
-		}
+//		if (!(Get(pos) is Player))
+//		{
+//			EnemiesCount--;
+//		}
 		_grid.Clear(pos);
 	}
 
-	public int EnemiesCount { get; private set; }
+//	public int EnemiesCount { get; private set; }
 
 	private bool _started;
 	public Action StartAction, TickActionPerm = () => { }, TickAction = () => { }, GameOverStartAction = () => { }, GameOverAction = () => { }, ExitGameOverAction = () => { };
@@ -190,10 +190,10 @@ public class Level : MonoBehaviour
 	public void InitPos(Unit unit)
 	{
 		_grid.Set(unit.Position.IntX(), unit);
-		if (!(unit is Player))
-		{
-			EnemiesCount++;
-		}
+//		if (!(unit is Player))
+//		{
+//			EnemiesCount++;
+//		}
 	}
 
 	public List<Unit> GetAllUnits()
@@ -266,9 +266,8 @@ public class Level : MonoBehaviour
 		}, GOAnimationTime * 0.75f);
 		Utils.InvokeDelayed(() =>
 		{
-//			Camera.main.GetComponent<SpritePainter>().Paint(Color.black);
 			RespawnGOUnits();
-			if (Killer != null) RespawnKiller();
+			RespawnKiller();
 			GameOverAction();
 		}, GOAnimationTime);
 	}
@@ -277,16 +276,13 @@ public class Level : MonoBehaviour
 	{
 		KillEverything();
 		CameraScript.Instance.SwitchProgress = 0;
-		Utils.InvokeDelayed(() =>
+		var pgo = Player.Prefab.Instantiate();
+		var p = pgo.GetComponent<Player>();
+		p.GameOverInstance = true;
+		p.DieEvent = () =>
 		{
-			var pgo = Player.Prefab.Instantiate();
-			var p = pgo.GetComponent<Player>();
-			p.GameOverInstance = true;
-			p.DieEvent = () =>
-			{
-				if (GameOver) Utils.InvokeDelayed(RespawnGOUnits, 1f);
-			};
-		}, 0.3f);
+			if (GameOver) Utils.InvokeDelayed(RespawnGOUnits, 1f);
+		};
 		Updating = true;
 		Spawning = false;
 		TickTime = 0.5f;

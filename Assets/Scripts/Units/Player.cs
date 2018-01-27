@@ -9,6 +9,7 @@ public class Player : Unit
 	public bool Autopilot;
 	public static Prefab Prefab = new Prefab("Player");
 	public bool GameOverInstance = false;
+	public Unit Swallowed;
 
 	private void Awake()
 	{
@@ -23,10 +24,15 @@ public class Player : Unit
 		}
 		bool leftDown = Input.GetButtonDown("Left"),
 			rightDown = Input.GetButtonDown("Right");
-		if (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.Escape))
+		if (Input.GetKeyDown(KeyCode.Escape))
 		{
 		    SceneManager.LoadScene(0);
 			UnitedTint.Tint = Color.white;
+		}
+		if (Input.GetKeyDown(KeyCode.R))
+		{
+			TakeDmg(this, 999);
+			return;
 		}
 		if (Input.GetKeyDown(KeyCode.G))
 		{
@@ -76,6 +82,24 @@ public class Player : Unit
 		MoveOrAttack(dir);
 	}
 
+	protected override bool MoveOrAttack(int relDir)
+	{
+		if (Swallowed != null)
+		{
+			AttackAnim(relDir);
+			Utils.InvokeDelayed(() =>
+			{
+				if (Swallowed == null) return;
+				if (Swallowed.TakeDmg(this, 1))
+				{
+					Swallowed = null;
+				}
+			}, AnimationWindow / 2);
+			return true;
+		}
+		return base.MoveOrAttack(relDir);
+	}
+
 	public void HandleBoundries(bool left)
 	{
 		if (Level.GameOver && GameOverInstance)
@@ -92,18 +116,22 @@ public class Player : Unit
 		TakeDmg(this, 9999);
 	}
 
-	public override void TakeDmg(Unit source, int dmg = 1)
+	public override bool TakeDmg(Unit source, int dmg = 1)
 	{
 		if (source != null)
 		{
 			Level.Instance.Killer = source.GetPrefab();
 			Level.Instance.KillerHP = source.MaxHP;
 		}
-		base.TakeDmg(source, dmg);
+		return base.TakeDmg(source, dmg);
 	}
 
 	public override void Die()
 	{
+		if (Swallowed != null)
+		{
+			Swallowed.TakeDmg(this, 999);
+		}
 		if (Menu.Instance.isActiveAndEnabled)
 		{
 			base.Die();

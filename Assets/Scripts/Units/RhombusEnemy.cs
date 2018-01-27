@@ -6,7 +6,7 @@ public class RhombusEnemy : BasicEnemy
         return Prefab;
     }
     
-    public override void TakeDmg(Unit source, int dmg = 1)
+    public override bool TakeDmg(Unit source, int dmg = 1)
     {
         if (HP - dmg > 0)
         {
@@ -14,6 +14,6 @@ public class RhombusEnemy : BasicEnemy
             var dir = Player.Instance.Position.IntX() - Position.IntX();
             Move(dir * 2);
         }
-        base.TakeDmg(source, dmg);
+        return base.TakeDmg(source, dmg);
     }
 }

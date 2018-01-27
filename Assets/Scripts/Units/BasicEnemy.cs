@@ -48,9 +48,9 @@ public class BasicEnemy : Unit
         return true;
     }
 
-    public override void TakeDmg(Unit source, int dmg = 1)
+    public override bool TakeDmg(Unit source, int dmg = 1)
     {
-        base.TakeDmg(source, dmg);
         MoveT = MovePeriod;
+        return base.TakeDmg(source, dmg);
     }
 }

@@ -12,6 +12,7 @@ public class AvengeText : MonoBehaviour
         {
             if (Level.Instance.Killer == null) return;
             _killer = Level.Instance.KillerUnit;
+            Debug.Log("entered " + _killer);
             var c = Tint.Color;
             c.a = 0;
             Tint.Color = c;
