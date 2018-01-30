@@ -24,6 +24,7 @@ public class Grid
     public void Clear(int pos)
     {
         pos += _gridOffset;
+        if (pos >= _units.Length || pos < 0) return;
         _units[pos] = Pop(pos);
     }
 

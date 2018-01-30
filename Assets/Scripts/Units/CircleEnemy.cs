@@ -7,18 +7,23 @@ public class CircleEnemy : BasicEnemy
     {
         return Prefab;
     }
-    
-    public override void TakeDmg(Unit source, int dmg = 1)
+
+    private bool _hasSwallowed;
+
+    public override bool TickUpdate()
     {
-        if (HP - dmg > 0)
-        {
-            if (Random.value > 0.5f)
-            {
-                var dir = Player.Instance.Position.IntX() - Position.IntX();
-                Move(dir * 2);
-            }
-        }
-        base.TakeDmg(source, dmg);
-        MoveT = 4;
+        return _hasSwallowed || base.TickUpdate();
+    }
+
+    public void Swallow()
+    {
+        Scale = new Vector3(1.5f, 1.5f, 1f);
+        var ut = GetComponent<UnitedTint>();
+        ut.Color = ut.Color.ChangeAlpha(0.4f);
+        Level.Instance.Clear(Position.IntX());
+        Player.Instance.Swallowed = this;
+        _hasSwallowed = true;
+        Position = Player.Instance.Position;
+        _actPos = new Vector3(100, 0, 0);
     }
 }

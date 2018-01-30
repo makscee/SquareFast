@@ -10,7 +10,7 @@ public class HitEffect
         var ps = he.GetComponent<ParticleSystem>();
 
         var main = ps.main;
-        main.startColor = unit.GetComponent<SpriteRenderer>().color;
+        main.startColor = unit.GetComponent<SpriteRenderer>().color.ChangeAlpha(1f);
         Object.Destroy(he, 5f);
     }
 }

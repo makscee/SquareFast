@@ -48,17 +48,39 @@ public class Unit : MonoBehaviour
         {
             bool class1 = atPos is Player, class2 = this is Player;
             if (class1 == class2) return false;
-            atPos.TakeDmg(this);
-            AttackAnim(relDir);
+            if (atPos is DownTriangleEnemy)
+            {
+                Move(relDir);
+                atPos.Move(relDir);
+                return true;
+            }
+            if (atPos is CircleEnemy)
+            {
+                (atPos as CircleEnemy).Swallow();
+                return true;
+            }
             if (class1)
             {
-//                Move(relDir);
+                if (this is DownTriangleEnemy)
+                {
+                    Move(relDir, true);
+                    Utils.InvokeDelayed(() => TakeDmg(this, 9999), AnimationWindow / 2);
+                    return true;
+                }
+                if (this is CircleEnemy && Player.Instance.Swallowed == null)
+                {
+                    (this as CircleEnemy).Swallow();
+                    return false;
+                }
+                
                 Time.timeScale = 0.1f;
                 Utils.Animate(0.1f, 1f, 1f, (v) => Time.timeScale += v);
                 var camSize = Camera.main.orthographicSize;
                 Utils.Animate(camSize, camSize / 1.5f, 0.07f, (v) => Camera.main.orthographicSize += v);
                 Utils.InvokeDelayed(() => Utils.Animate(Camera.main.orthographicSize, camSize, 0.2f, (v) => Camera.main.orthographicSize += v), 0.5f);
             }
+            atPos.TakeDmg(this);
+            AttackAnim(relDir);
             return true;
         }
 
@@ -86,7 +108,7 @@ public class Unit : MonoBehaviour
             this, false, awHalf);
     }
 
-    public void Move(int relDir)
+    public void Move(int relDir, bool onlyAnim = false)
     {
         if (this is Player)
         {
@@ -96,7 +118,8 @@ public class Unit : MonoBehaviour
                 AttackAnim(relDir);
                 GridMarks.Instance.HandlerRight();
                 return;
-            } else if (gm.LeftSolid && gm.LeftBorder.transform.position.x > Position.x + relDir)
+            }
+            if (gm.LeftSolid && gm.LeftBorder.transform.position.x > Position.x + relDir)
             {
                 AttackAnim(relDir);
                 GridMarks.Instance.HandlerLeft();
@@ -111,8 +134,9 @@ public class Unit : MonoBehaviour
             v => transform.localScale += v,
             this), AnimationWindow / 3 * 2, this);
 
-        Level.Instance.Move(Position.IntX() + relDir, this);
+        if (!onlyAnim) Level.Instance.Move(Position.IntX() + relDir, this);
         Position += new Vector3(relDir, 0, 0);
+        if (onlyAnim) _actPos -= new Vector3(relDir, 0, 0);
     }
 
     private void _TakeDmgAnim()
@@ -124,7 +148,7 @@ public class Unit : MonoBehaviour
         }
     }
 
-    public virtual void TakeDmg(Unit source, int dmg = 1)
+    public virtual bool TakeDmg(Unit source, int dmg = 1)
     {
         Utils.InvokeDelayed(_TakeDmgAnim, AnimationWindow / 2, this);
         HP -= dmg;
@@ -132,7 +156,9 @@ public class Unit : MonoBehaviour
         if (HP <= 0)
         {
             Die();
+            return true;
         }
+        return false;
     }
 
     private GameObject _pe;
@@ -157,7 +183,7 @@ public class Unit : MonoBehaviour
         }
     }
 
-    private Vector3 _actPos;
+    protected Vector3 _actPos;
     public Vector3 Position
     {
         get { return _actPos; }
@@ -223,12 +249,6 @@ public class Unit : MonoBehaviour
     {
         Level.Instance.Clear(Position.IntX());
         DieEvent();
-        
-        if (Level.Instance.EnemiesCount == 0 && !(this is Player))
-        {
-//            CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0.43f, 0.43f), 1.5f, true);
-            
-        }
     }
 
     public virtual Prefab GetPrefab()

@@ -4,22 +4,9 @@ using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public enum TickAction
-{
-    None, SimpleSquare, Square, Rhombus, Triangle, RhombusSSquare, Save
-}
-
-[Serializable]
-public struct Event
-{
-    public int Tick;
-    public TickAction TickAction;
-    public bool CountDistance;
-}
-
 public class EnemyPattern
 {
-    private int _length = 3;
+    private int _length = 0;
     private readonly List<Prefab> _left = new List<Prefab>(), _right = new List<Prefab>();
     private readonly List<int> _leftHp = new List<int>(), _rightHp = new List<int>();
 
@@ -27,18 +14,20 @@ public class EnemyPattern
     {
         _left.Add(p);
         _leftHp.Add(hp);
+        _length++;
         return this;
     }
     public EnemyPattern AddRight(Prefab p, int hp = 1)
     {
         _right.Add(p);
         _rightHp.Add(hp);
+        _length++;
         return this;
     }
 
-    public EnemyPattern SetLength(int l)
+    public EnemyPattern SetRepeats(int v)
     {
-        _length = l;
+        _length *= v;
         return this;
     }
 
@@ -72,7 +61,7 @@ public class EnemyPattern
 
     public bool Ended()
     {
-        return _produced >= _length * 2;
+        return _produced >= _length;
     }
 
     public void Reset()
@@ -91,6 +80,7 @@ public class LevelSpawner
     private static readonly Prefab Triangle = TriangleEnemy.Prefab;
     private static readonly Prefab Rhombus = RhombusEnemy.Prefab;
     private static readonly Prefab Circle = CircleEnemy.Prefab;
+    private static readonly Prefab DownTriangle = DownTriangleEnemy.Prefab;
 
     private List<List<EnemyPattern>> _patterns;
     private readonly List<Color> _switchColors = new List<Color>();
@@ -158,25 +148,25 @@ public class LevelSpawner
                     new List<EnemyPattern>
                     {
                         new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(Square).AddRight(Square)
-                            .AddLeft(Square, 2).AddRight(Square, 2).SetLength(3),
+                            .AddLeft(Square, 2).AddRight(Square, 2),
                     },
                     new List<EnemyPattern>
                     {
-                        new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(null).AddRight(Rhombus, 2).SetLength(2),
-                        new EnemyPattern().AddLeft(Square).AddRight(Rhombus, 2).SetLength(4),
-                        new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).AddLeft(null, 2).AddRight(Rhombus, 2).SetLength(2),
+                        new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(null).AddRight(Rhombus, 2),
+                        new EnemyPattern().AddLeft(Square).AddRight(Rhombus, 2).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).AddLeft(null, 2).AddRight(Rhombus, 2),
                     },
                     new List<EnemyPattern>
                     {
-                        new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(null).AddRight(Rhombus, 2).SetLength(2),
-                        new EnemyPattern().AddLeft(Square,2).AddRight(Square, 2).SetLength(2),
-                        new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Rhombus, 2).SetLength(2),
+                        new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(null).AddRight(Rhombus, 2),
+                        new EnemyPattern().AddLeft(Square,2).AddRight(Square, 2).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Rhombus, 2).SetRepeats(2),
                     },
                     new List<EnemyPattern>
                     {
-                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetLength(2),
-                        new EnemyPattern().AddLeft(Square).AddRight(Square).SetLength(2),
-                        new EnemyPattern().AddRight(Rhombus, 2).AddLeft(Rhombus, 2).SetLength(2),
+                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Square).AddRight(Square).SetRepeats(2),
+                        new EnemyPattern().AddRight(Rhombus, 2).AddLeft(Rhombus, 2).SetRepeats(2),
                     }
                 };
                 break;
@@ -209,29 +199,29 @@ public class LevelSpawner
                     {
                         
                         new EnemyPattern().AddLeft(Square, 2).AddRight(Square).AddLeft(Square, 2).AddRight(Square)
-                            .AddLeft(Square, 2).AddRight(Square, 2).SetLength(3),
-                        new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Square, 2).SetLength(2),
-                        new EnemyPattern().AddLeft(Square, 2).AddRight(Rhombus, 2).AddLeft(Rhombus, 2).AddRight(Square, 2).SetLength(2),
+                            .AddLeft(Square, 2).AddRight(Square, 2),
+                        new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Square, 2).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Square, 2).AddRight(Rhombus, 2).AddLeft(Rhombus, 2).AddRight(Square, 2),
                     },
                     new List<EnemyPattern>
                     {
-                        new EnemyPattern().AddLeft(Square).AddRight(Square).SetLength(2),
-                        new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetLength(4),
+                        new EnemyPattern().AddLeft(Square).AddRight(Square).SetRepeats(2),
+                        new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetRepeats(3),
                     },
                     new List<EnemyPattern>
                     {
-                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetLength(2),
-                        new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Rhombus, 2).SetLength(2),
-                        new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetLength(2),
-                        new EnemyPattern().AddLeft(Triangle, 2).AddRight(Rhombus, 2).AddRight(null).AddLeft(Square, 3).SetLength(2),
+                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Rhombus, 2).SetRepeats(2),
+                        new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Triangle, 2).AddRight(Rhombus, 2).AddRight(null).AddLeft(Square, 3),
                     },
                     new List<EnemyPattern>
                     {
-                        new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).SetLength(2),
-                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetLength(1),
-                        new EnemyPattern().AddRight(Rhombus, 3).AddLeft(Rhombus, 3).SetLength(2),
-                        new EnemyPattern().AddLeft(Triangle, 2).AddRight(Rhombus, 2).AddRight(null).AddLeft(Square, 3).SetLength(2),
-                        new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetLength(2),
+                        new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3),
+                        new EnemyPattern().AddRight(Rhombus, 3).AddLeft(Rhombus, 3).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Triangle, 2).AddRight(Rhombus, 2).AddRight(null).AddLeft(Square, 3),
+                        new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetRepeats(2),
                     }
                 };
                 break;
@@ -262,30 +252,34 @@ public class LevelSpawner
                 {
                     new List<EnemyPattern>
                     {
-                        new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).SetLength(2),
-                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetLength(2),
-                        new EnemyPattern().AddRight(Rhombus, 2).AddLeft(Rhombus, 2).SetLength(2),
-                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetLength(2),
+                        new EnemyPattern().AddRight(Circle).AddLeft(null).AddLeft(Circle).AddRight(null),
+                        new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetRepeats(2),
+                        new EnemyPattern().AddRight(Rhombus, 2).AddLeft(Rhombus, 2).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetRepeats(2),
                     },
                     new List<EnemyPattern>
                     {
-                        new EnemyPattern().AddRight(Rhombus, 3).AddLeft(Rhombus, 2).SetLength(2),
-                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetLength(2),
-                        new EnemyPattern().AddRight(Rhombus, 2).AddLeft(Rhombus, 2).SetLength(2),
-                        new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).SetLength(2),
+                        new EnemyPattern().AddRight(Rhombus, 3).AddLeft(Rhombus, 2).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetRepeats(2),
+                        new EnemyPattern().AddRight(Rhombus, 2).AddLeft(Rhombus, 2).SetRepeats(2),
+                        new EnemyPattern().AddRight(Circle).AddLeft(Circle),
+                        new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).SetRepeats(2),
                     },
                     new List<EnemyPattern>
                     {
-                        new EnemyPattern().AddRight(Square, 3).AddLeft(Square, 2).SetLength(2),
-                        new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 3).SetLength(2),
-                        new EnemyPattern().AddRight(Rhombus, 3).AddLeft(Rhombus, 3).SetLength(2),
+                        new EnemyPattern().AddRight(Square, 3).AddLeft(Square, 2).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 3).SetRepeats(2),
+                        new EnemyPattern().AddRight(Circle).AddLeft(Circle),
+                        new EnemyPattern().AddRight(Rhombus, 3).AddLeft(Rhombus, 3).SetRepeats(2),
                     },
                     new List<EnemyPattern>
                     {
-                        new EnemyPattern().AddRight(Square, 3).AddLeft(Square, 3).SetLength(2),
-                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetLength(2),
-                        new EnemyPattern().AddRight(Rhombus, 3).AddLeft(Rhombus, 3).SetLength(2),
-                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetLength(2),
+                        new EnemyPattern().AddRight(Square, 3).AddLeft(Square, 3).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetRepeats(2),
+                        new EnemyPattern().AddRight(Circle, 2).AddLeft(Square, 2),
+                        new EnemyPattern().AddRight(Rhombus, 3).AddLeft(Rhombus, 3).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetRepeats(2),
                     },
                 };
                 var p = Pattern.Instance;
@@ -320,29 +314,33 @@ public class LevelSpawner
                 {
                     new List<EnemyPattern>
                     {
-                        new EnemyPattern().AddLeft(Square, 2).AddRight(Square).AddLeft(Square, 2).AddRight(Square)
-                            .AddLeft(Square, 2).AddRight(Square, 2).SetLength(3),
-                        new EnemyPattern().AddLeft(Rhombus, 3).AddRight(Square, 3).SetLength(2),
-                        new EnemyPattern().AddLeft(Square, 2).AddRight(Rhombus, 3).AddLeft(Rhombus, 3).AddRight(Square, 2).SetLength(2),
+                        new EnemyPattern().AddLeft(Square, 2).AddRight(Square).AddLeft(Square, 2).AddRight(Square),
+                        new EnemyPattern().AddLeft(Rhombus, 3).AddRight(Square, 2).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Square, 2).AddRight(Rhombus, 2).AddLeft(Rhombus, 2).AddRight(Square, 2),
                     },
                     new List<EnemyPattern>
                     {
-                        new EnemyPattern().AddLeft(Square).AddRight(Square).SetLength(2),
-                        new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetLength(4),
+                        new EnemyPattern().AddLeft(DownTriangle).AddRight(DownTriangle),
+                        new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).SetRepeats(2),
+                        new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetRepeats(3),
+                        new EnemyPattern().AddLeft(DownTriangle).AddRight(Square, 3).SetRepeats(2),
                     },
                     new List<EnemyPattern>
                     {
-                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetLength(2),
-                        new EnemyPattern().AddLeft(Rhombus, 3).AddRight(Rhombus, 2).SetLength(2),
-                        new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetLength(2),
-                        new EnemyPattern().AddLeft(Triangle, 2).AddRight(Rhombus, 3).AddRight(null).AddLeft(Square, 3).SetLength(2),
+                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Rhombus, 3).AddRight(Rhombus, 2).SetRepeats(2),
+                        new EnemyPattern().AddLeft(DownTriangle).AddRight(Rhombus, 3).SetRepeats(2),
+                        new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Triangle, 2).AddRight(Rhombus, 3).AddRight(null).AddLeft(Square, 3),
                     },
                     new List<EnemyPattern>
                     {
-                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetLength(1),
-                        new EnemyPattern().AddRight(Rhombus, 3).AddLeft(Rhombus, 3).SetLength(2),
-                        new EnemyPattern().AddLeft(Triangle, 2).AddRight(Rhombus, 2).AddRight(null).AddLeft(Square, 3).SetLength(2),
-                        new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetLength(2),
+                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3),
+                        new EnemyPattern().AddRight(Rhombus, 3).AddLeft(Rhombus, 3).SetRepeats(2),
+                        new EnemyPattern().AddLeft(DownTriangle).AddRight(Square, 3),
+                        new EnemyPattern().AddLeft(Triangle, 2).AddRight(Rhombus, 2).AddRight(null).AddLeft(Square, 3),
+                        new EnemyPattern().AddLeft(DownTriangle).AddRight(Triangle, 2).SetRepeats(2),
+                        new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetRepeats(2),
                     }
                 };
                 var p = Pattern.Instance;
