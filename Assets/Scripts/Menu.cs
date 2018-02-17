@@ -213,6 +213,12 @@ public class Menu : MonoBehaviour
                 gameObject.SetActive(false);
                 Level.Instance.gameObject.SetActive(true);
             }, p4),
+            new MenuItem("LEVEL 7", () =>
+            {
+                Level.CurrentLevel = 6;
+                gameObject.SetActive(false);
+                Level.Instance.gameObject.SetActive(true);
+            }, p6),
             new MenuItem("BACK", () => SwitchItems(getFirstList()), pReset)
         };
     }
@@ -238,7 +244,7 @@ public class Menu : MonoBehaviour
         };
     }
 
-    Action p0 = () =>
+    private Action p0 = () =>
         {
             var p = Pattern.Instance;
             p.SetPatterns(1);
@@ -273,6 +279,14 @@ public class Menu : MonoBehaviour
             p.NextLevel(2);
             UnitedTint.Tint = new Color(0.46f, 1f, 0.69f);
             CameraScript.ChangeColorTinted(UnitedTint.Tint);
+        },
+        p6 = () =>
+        {
+            var p = Pattern.Instance;
+            p.SetPatterns(7);
+            p.Reset();
+            UnitedTint.Tint = Color.white;
+            Camera.main.backgroundColor = Color.black;
         },
         pReset = () =>
         {

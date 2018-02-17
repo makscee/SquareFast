@@ -301,7 +301,7 @@ public class LevelSpawner
                 Level.Instance.MusicStart = 16.3f;
                 Level.Instance.MusicDelay = 2.5f;
                 Level.TickTime = 60f / 135 / 3f;
-                _nextLevel = 4;
+                _nextLevel = 6;
                 Distance = 5;
                 
                 _switchColors.Add(new Color(0.46f, 1f, 0.69f));
@@ -349,12 +349,50 @@ public class LevelSpawner
                 p.NextLevel(3);
                 break;
             }
+            case 6:
+            {
+//                Level.Instance.TickAction += () =>
+//                {
+//                    if (Level.Ticks % 3 == 0 && !Level.GameOver)
+//                    {
+//                        BeatBGEffect.Create(1);
+//                    }
+//                };
+                Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L2;
+                Level.Instance.MusicStart = 16.3f;
+                Level.Instance.MusicDelay = 2.5f;
+                Level.TickTime = 60f / 150 / 3f;
+                _nextLevel = 6;
+                Distance = 3;
+                
+                UnitedTint.Tint = Color.white;
+                Camera.main.backgroundColor = Color.black;
+
+                _patterns = new List<List<EnemyPattern>>
+                {
+                    new List<EnemyPattern>
+                    {
+                        new EnemyPattern().AddLeft(Square, 2).AddRight(Rhombus, 3),
+                        new EnemyPattern().AddLeft(DownTriangle, 1).AddRight(Square, 3),
+                        new EnemyPattern().AddLeft(Circle, 2).AddRight(Square, 2),
+                        new EnemyPattern().AddLeft(Rhombus, 3).AddRight(Rhombus, 2),
+                    },
+                };
+                var p = Pattern.Instance;
+                p.SetPatterns(7);
+                p.Reset();
+                Camera.main.orthographicSize /= 1.5f;
+                break;
+            }
             default: break;
         }
-        UnitedTint.Tint = _switchColors[0];
-        CameraScript.ChangeColorTinted(UnitedTint.Tint);
-        _switchColors.RemoveAt(0);
-        
+        if (_switchColors.Count > 0)
+        {
+            UnitedTint.Tint = _switchColors[0];
+            CameraScript.ChangeColorTinted(UnitedTint.Tint);
+            _switchColors.RemoveAt(0);
+        }
+
         _curPattern = _patterns[_cl][_ci];
         var distTime = Distance * Level.TickTime * 3;
         const float sublevelTime = 15f;
@@ -363,6 +401,7 @@ public class LevelSpawner
             Utils.InvokeDelayed(() =>
             {
                 if (Level.GameOver) return;
+                if (Level.CurrentLevel == 6) return;
 
                 if (_cl >= _patterns.Count - 1)
                 {

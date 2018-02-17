@@ -54,7 +54,7 @@ public class Unit : MonoBehaviour
                 atPos.Move(relDir);
                 return true;
             }
-            if (atPos is CircleEnemy)
+            if (atPos is CircleEnemy && !Player.Godmode)
             {
                 (atPos as CircleEnemy).Swallow();
                 return true;
@@ -64,7 +64,9 @@ public class Unit : MonoBehaviour
                 if (this is DownTriangleEnemy)
                 {
                     Move(relDir, true);
-                    Utils.InvokeDelayed(() => TakeDmg(this, 9999), AnimationWindow / 2);
+                    Level.Instance.Clear(Position.IntX());
+                    Utils.InvokeDelayed(_TakeDmgAnim, AnimationWindow / 2, this);
+                    DieEvent();
                     return true;
                 }
                 if (this is CircleEnemy && Player.Instance.Swallowed == null)

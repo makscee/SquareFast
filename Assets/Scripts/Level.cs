@@ -18,7 +18,7 @@ public class Level : MonoBehaviour
 	public static bool IsFirstStart = true;
 	public static int CurrentLevel = 0;
 	public int StartTicks = -1;
-	public const int LevelsAmount = 6; 
+	public const int LevelsAmount = 7; 
 	private LevelSpawner _levelSpawner;
 	private AudioSource _audioSource;
 	public Text TimeText;
@@ -57,8 +57,7 @@ public class Level : MonoBehaviour
 	{
 		TickAction = () => { };
 		_levelSpawner = new LevelSpawner(CurrentLevel);
-		var size = LevelSpawner.Distance * 2 + 1;
-		_grid = new Grid(size);
+		_grid = new Grid(15);
 		if (!NextLevelStart)
 		{
 			Player.Prefab.Instantiate();

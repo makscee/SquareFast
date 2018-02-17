@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class Player : Unit
 {
 	public static Player Instance;
-	public bool Autopilot;
+	public static bool Godmode;
 	public static Prefab Prefab = new Prefab("Player");
 	public bool GameOverInstance = false;
 	public Unit Swallowed;
@@ -36,7 +36,7 @@ public class Player : Unit
 		}
 		if (Input.GetKeyDown(KeyCode.G))
 		{
-			Autopilot = true;
+			Godmode = !Godmode;
 		}
 		if (Input.touchCount > 0)
 		{
@@ -50,17 +50,25 @@ public class Player : Unit
 					leftDown = true;
 			}
 		}
-		if (Autopilot)
+		if (Godmode)
 		{
 			Unit u;
+			// ReSharper disable once AssignmentInConditionalExpression
 			if (u = Level.Instance.Get(Position.IntX() + 1))
 			{
-				u.HP = 1;
-				rightDown = true;
+				if (!(u is DownTriangleEnemy))
+				{
+					u.HP = 1;
+					rightDown = true;
+				}
+				// ReSharper disable once AssignmentInConditionalExpression
 			} else if (u = Level.Instance.Get(Position.IntX() - 1))
 			{
-				u.HP = 1;
-				leftDown = true;
+				if (!(u is DownTriangleEnemy))
+				{
+					u.HP = 1;
+					leftDown = true;
+				}
 			}
 		}
 		var dir = leftDown ? -1 : (rightDown ? 1 : 0);
