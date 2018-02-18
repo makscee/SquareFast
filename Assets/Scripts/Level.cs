@@ -57,11 +57,16 @@ public class Level : MonoBehaviour
 	{
 		TickAction = () => { };
 		_levelSpawner = new LevelSpawner(CurrentLevel);
-		_grid = new Grid(15);
+		_grid = new Grid(30);
 		if (!NextLevelStart)
 		{
 			Player.Prefab.Instantiate();
 		}
+		else
+		{
+			InitPos(Player.Instance);
+		}
+		
 		Updating = true;
 		GameOver = false;
 		Spawning = true;
