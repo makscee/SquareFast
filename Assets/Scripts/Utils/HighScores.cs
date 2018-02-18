@@ -15,7 +15,8 @@ public class HighScores
             Data.Add(new Dictionary<string, string>());
     }
 
-    private static bool[] _fetched = new bool[Level.LevelsAmount];
+    private static readonly bool[] Fetched = new bool[Level.LevelsAmount];
+    public static Action[] WhenFetched = new Action[Level.LevelsAmount];
     public static void SaveFromJson(string json, int l)
     {
         if (string.IsNullOrEmpty(json))
@@ -46,12 +47,17 @@ public class HighScores
                 pd.Scores[i] = fScore;
             }
         }
-        _fetched[l] = true;
+        Fetched[l] = true;
+        if (WhenFetched[l] != null)
+        {
+            WhenFetched[l]();
+            WhenFetched[l] = null;
+        }
     }
 
     public static string GetString(int level)
     {
-        if (!_fetched[level])
+        if (!Fetched[level])
         {
             var pd = PlayerData.Instance;
             Data[level][pd.ID] = pd.Scores[level];

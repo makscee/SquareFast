@@ -233,10 +233,24 @@ public class Menu : MonoBehaviour
             }),
             new MenuItem("HIGH SCORES", () =>
             {
+                WebUtils.FetchScores();
+                var item0 = new MenuItem(HighScores.GetString(0), () => SwitchItems(getFirstList()), p0, 0.5f, false); 
+                var item1 = new MenuItem(HighScores.GetString(1), () => SwitchItems(getFirstList()), p1, 0.5f, false);
+                var item3 = new MenuItem(HighScores.GetString(3), () => SwitchItems(getFirstList()), p3, 0.5f, false);
+                var item4 = new MenuItem(HighScores.GetString(4), () => SwitchItems(getFirstList()), p4, 0.5f, false);
+                var item6 = new MenuItem(HighScores.GetString(6), () => SwitchItems(getFirstList()), p6, 0.5f, false);
+                HighScores.WhenFetched[0] = () => item0.Text.text = HighScores.GetString(0);
+                HighScores.WhenFetched[1] = () => item1.Text.text = HighScores.GetString(1);
+                HighScores.WhenFetched[3] = () => item1.Text.text = HighScores.GetString(3);
+                HighScores.WhenFetched[4] = () => item1.Text.text = HighScores.GetString(4);
+                HighScores.WhenFetched[6] = () => item1.Text.text = HighScores.GetString(6);
                 SwitchItems(new List<MenuItem>
                 {
-                    new MenuItem(HighScores.GetString(0), () => SwitchItems(getFirstList()), p0, 0.5f, false),
-                    new MenuItem(HighScores.GetString(1), () => SwitchItems(getFirstList()), p1, 0.5f, false),
+                    item0,
+                    item1,
+                    item3,
+                    item4,
+                    item6,
                     new MenuItem("BACK", () => SwitchItems(getFirstList()), pReset, 1f, false)
                 });
             }),
@@ -310,7 +324,6 @@ public class Menu : MonoBehaviour
                 "<color=white>SQUARE FAST</color> CONTROLS ONLY WITH\nBUTTONS <color=white>LEFT</color> AND <color=white>RIGHT</color>\nEVEN IN MENU\n\n<color=white>PRESS ANY KEY TO CONTINUE</color>";
         }
         Saves.Load();
-        WebUtils.FetchScores();
         Prefab.TouchStatics();
         Prefab.PreloadPrefabs();
         Instance = this;
