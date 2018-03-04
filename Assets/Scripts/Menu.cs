@@ -201,6 +201,12 @@ public class Menu : MonoBehaviour
                 gameObject.SetActive(false);
                 Level.Instance.gameObject.SetActive(true);
             }, p1),
+            new MenuItem("LEVEL 3", () =>
+            {
+                Level.CurrentLevel = 2;
+                gameObject.SetActive(false);
+                Level.Instance.gameObject.SetActive(true);
+            }, p2),
             new MenuItem("LEVEL 4", () =>
             {
                 Level.CurrentLevel = 3;
@@ -213,6 +219,12 @@ public class Menu : MonoBehaviour
                 gameObject.SetActive(false);
                 Level.Instance.gameObject.SetActive(true);
             }, p4),
+            new MenuItem("LEVEL 6", () =>
+            {
+                Level.CurrentLevel = 5;
+                gameObject.SetActive(false);
+                Level.Instance.gameObject.SetActive(true);
+            }, p5),
             new MenuItem("LEVEL 7", () =>
             {
                 Level.CurrentLevel = 6;
@@ -276,6 +288,15 @@ public class Menu : MonoBehaviour
             UnitedTint.Tint = new Color(1f, 0.51f, 0.69f);
             CameraScript.ChangeColorTinted(UnitedTint.Tint);
         },
+        p2 = () =>
+        {
+            var p = Pattern.Instance;
+            p.SetPatterns(3);
+            p.Reset();
+            p.NextLevel(2);
+            UnitedTint.Tint = new Color(1f, 0.9f, 0.54f);
+            CameraScript.ChangeColorTinted(UnitedTint.Tint);
+        },
         p3 = () =>
         {
             var p = Pattern.Instance;
@@ -292,6 +313,15 @@ public class Menu : MonoBehaviour
             p.Reset();
             p.NextLevel(2);
             UnitedTint.Tint = new Color(0.46f, 1f, 0.69f);
+            CameraScript.ChangeColorTinted(UnitedTint.Tint);
+        },
+        p5 = () =>
+        {
+            var p = Pattern.Instance;
+            p.SetPatterns(3);
+            p.Reset();
+            p.NextLevel(2);
+            UnitedTint.Tint = new Color(0.81f, 0.78f, 1f);
             CameraScript.ChangeColorTinted(UnitedTint.Tint);
         },
         p6 = () =>

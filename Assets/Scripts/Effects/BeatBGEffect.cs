@@ -29,6 +29,7 @@ public class BeatBGEffect : MonoBehaviour
     private static Prefab[] _prefab = new Prefab[] {
         new Prefab("BeatBGRhombus"),
         new Prefab("BeatBGSquare"),
+        new Prefab("BeatBGCircle"),
     };
     public static void Create(int i)
     {
