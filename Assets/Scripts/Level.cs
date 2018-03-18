@@ -17,6 +17,7 @@ public class Level : MonoBehaviour
 	public static int SaveTicks = -1;
 	public static bool IsFirstStart = true;
 	public static int CurrentLevel = 0;
+	private static readonly List<Unit> Enemies = new List<Unit>();
 	public int StartTicks = -1;
 	public const int LevelsAmount = 7; 
 	private LevelSpawner _levelSpawner;
@@ -55,6 +56,7 @@ public class Level : MonoBehaviour
 
 	public void OnEnable()
 	{
+		Enemies.Clear();
 		TickAction = () => { };
 		_levelSpawner = new LevelSpawner(CurrentLevel);
 		_grid = new Grid(30);
@@ -117,14 +119,9 @@ public class Level : MonoBehaviour
 
 	public void Clear(int pos)
 	{
-//		if (!(Get(pos) is Player))
-//		{
-//			EnemiesCount--;
-//		}
 		_grid.Clear(pos);
 	}
 
-//	public int EnemiesCount { get; private set; }
 
 	private bool _started;
 	public Action StartAction, TickActionPerm = () => { }, TickAction = () => { }, GameOverStartAction = () => { }, GameOverAction = () => { }, ExitGameOverAction = () => { };
@@ -193,16 +190,13 @@ public class Level : MonoBehaviour
 
 	public void InitPos(Unit unit)
 	{
+		Enemies.Add(unit);
 		_grid.Set(unit.Position.IntX(), unit);
-//		if (!(unit is Player))
-//		{
-//			EnemiesCount++;
-//		}
 	}
 
-	public List<Unit> GetAllUnits()
+	public List<Unit> GetAllEnemies()
 	{
-		return _grid.GetAllUnitsWithPushed();
+		return Enemies.FindAll(unit => unit != null);
 	}
 
 	private const float GOAnimationTime = 1f;
@@ -325,6 +319,7 @@ public class Level : MonoBehaviour
 		ExitGameOverAction();
 		Player.Instance.DieEvent = () => { };
 		KillEverything();
+		Enemies.Clear();
 		var ct = 1f;
 		var tt = TimeText.color;
 		
@@ -344,10 +339,10 @@ public class Level : MonoBehaviour
 
 	public void KillEverything(bool butPlayer = false)
 	{
-		GetAllUnits().ForEach((u) =>
+		GetAllEnemies().ForEach((u) =>
 		{
-			if (butPlayer && u is Player) return;
-			u.TakeDmg(null, 999);
+			if (u != null) u.TakeDmg(null, 999);
 		});
+		if (!butPlayer && Player.Instance != null) Player.Instance.TakeDmg(null, 999);
 	}
 }

@@ -65,7 +65,11 @@ public class Unit : MonoBehaviour
                 {
                     Move(relDir, true);
                     Level.Instance.Clear(Position.IntX());
-                    Utils.InvokeDelayed(_TakeDmgAnim, AnimationWindow / 2, this);
+                    Utils.InvokeDelayed(() =>
+                    {
+                        HitEffect.Create(transform.position, this);
+                        Destroy(gameObject);
+                    }, AnimationWindow / 2, this);
                     DieEvent();
                     return true;
                 }
