@@ -10,16 +10,6 @@ public class BasicEnemy : Unit
     {
         return Prefab;
     }
-
-    private void Awake()
-    {
-        var sr = GetComponent<SpriteRenderer>();
-        var c = sr.color;
-//        c.b += Random.value;
-        c *= 0.6f;
-        c.a = 1f;
-        sr.color = c;
-    }
     
     public override bool TickUpdate()
     {

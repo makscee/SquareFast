@@ -31,6 +31,10 @@ public class Pattern : MonoBehaviour
 
     public void NextLevel(int skip = 1)
     {
+        if (_patterns == 6)
+        {
+            return;
+        }
         if (Level.GameOver)
         {
             return;
@@ -61,6 +65,7 @@ public class Pattern : MonoBehaviour
 
     public void Reset()
     {
+        Camera.main.orthographicSize = 5.87f;
         _curLevel = 0;
         foreach (var patterns in Patterns)
         {
@@ -76,6 +81,10 @@ public class Pattern : MonoBehaviour
 
     public void TickUpdate()
     {
+        if (_patterns == 6)
+        {
+            return;
+        }
         if (Level.Ticks % 3 != 0)
         {
             return;
