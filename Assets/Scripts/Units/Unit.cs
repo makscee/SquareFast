@@ -161,6 +161,12 @@ public class Unit : MonoBehaviour
         HpMat.SetInt("_CurHp", HP);
         if (HP <= 0)
         {
+            if (Level.Tutorial && MaxHP > 1 && source is Player)
+            {
+                Level.Tutorial = false;
+                PlayerData.Instance.TutorialComplete = true;
+                Saves.Save();
+            }
             Die();
             return true;
         }

@@ -8,12 +8,11 @@ public class Menu : MonoBehaviour
     private static readonly Prefab MenuItemPrefab = new Prefab("MenuItemText");
     public Canvas WorldCanvas;
     public static Menu Instance;
-    public Text ControlsText;
     public GameObject HintCanvas;
     public Text HintText;
     public AudioClip Click, Select;
     private AudioSource _as;
-    private static bool _firstEnable = true;
+    private static bool _firstEnable = false;
 
     private class MenuItem
     {
@@ -94,17 +93,14 @@ public class Menu : MonoBehaviour
             CanvasHidden = true;
             CameraScript.Instance.SwitchScene(() =>
             {
-                HintCanvas.SetActive(false);
-                var c = ControlsText.color;
-                c.a = 1;
-                var ut = ControlsText.GetComponent<UnitedTint>();
-                ut.Color = c;
-                c = new Color(c.r, c.g, c.b, 0);
-                Utils.Animate(1f, 0f, 3f, (v) =>
+                if (Level.Tutorial)
                 {
-                    c.a = v;
-                    ut.Color = c;
-                }, null, true, 2f);
+                    Destroy(Player.Instance.gameObject);
+                    Level.CurrentLevel = 0;
+                    gameObject.SetActive(false);
+                    Level.Instance.gameObject.SetActive(true);
+                }
+                HintCanvas.SetActive(false);
             });
         }
         foreach (var item in _items)
@@ -354,12 +350,12 @@ public class Menu : MonoBehaviour
                 "<color=white>SQUARE FAST</color> CONTROLS ONLY WITH\nBUTTONS <color=white>LEFT</color> AND <color=white>RIGHT</color>\nEVEN IN MENU\n\n<color=white>PRESS ANY KEY TO CONTINUE</color>";
         }
         Saves.Load();
+        Level.Tutorial = !PlayerData.Instance.TutorialComplete;
         Prefab.TouchStatics();
         Prefab.PreloadPrefabs();
-        Instance = this;
-
-        _items = getFirstList();
         
+        Instance = this;
+        _items = getFirstList();
         RefreshItems(true);
     }
 }

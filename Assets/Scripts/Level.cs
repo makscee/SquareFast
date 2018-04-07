@@ -12,19 +12,20 @@ public class Level : MonoBehaviour
 	public static int Ticks = -1;
 	public static bool Updating = true;
 	public static bool GameOver = false;
-	public static bool Spawning = true;
+	public static bool Spawning = false;
 	public static bool NextLevelStart = false;
-	public static int SaveTicks = -1;
 	public static bool IsFirstStart = true;
 	public static int CurrentLevel = 0;
 	private static readonly List<Unit> Enemies = new List<Unit>();
 	public int StartTicks = -1;
 	public const int LevelsAmount = 7; 
 	private LevelSpawner _levelSpawner;
-	private AudioSource _audioSource;
+	public AudioSource AudioSource;
 	public Text TimeText;
 	public AudioClip L1, L2, Over;
+	public Text ControlsText;
 	public float MusicStart, MusicDelay;
+	public static bool Tutorial;
 
 	public Level()
 	{
@@ -51,7 +52,7 @@ public class Level : MonoBehaviour
 	{
 		Prefab.TouchStatics();
 		Prefab.PreloadPrefabs();
-		_audioSource = GetComponent<AudioSource>();
+		AudioSource = GetComponent<AudioSource>();
 	}
 
 	public void OnEnable()
@@ -71,29 +72,50 @@ public class Level : MonoBehaviour
 		
 		Updating = true;
 		GameOver = false;
-		Spawning = true;
 		_started = false;
 		var offset = LevelSpawner.Distance;
 		Action a = () =>
 		{
 		};
 		GridMarks.Instance.Set("", "", -1, 1, -offset, offset, a, a, true, true);
+		if (Tutorial && ControlsText.isActiveAndEnabled)
+		{
+			var c = ControlsText.color;
+			c.a = 1;
+			var ut = ControlsText.GetComponent<UnitedTint>();
+			ut.Color = c;
+		}
+		else
+		{
+			StartLevel();
+		}
+	}
 
+	public void StartLevel()
+	{
+		Spawning = true;
 		var delay = IsFirstStart ? MusicDelay : 0;
 
-//		CancelInvoke("TickUpdate");
-//		InvokeRepeating("TickUpdate", delay, TickTime);
 		_ticking = false;
 		Utils.InvokeDelayed(() => _ticking = true, delay);
-		if (SaveTicks != -1)
-		{
-			StartTicks = SaveTicks;
-		}
-		_audioSource.volume = 0f;
-		Utils.Animate(0f, 1f, 0.9f, (v) => _audioSource.volume += v);
-		_audioSource.time = (StartTicks + 1) * TickTime + MusicStart - delay;
-		_audioSource.Play();
+		
+		AudioSource.volume = 0f;
+		Utils.Animate(0f, 1f, 0.9f, (v) => AudioSource.volume += v);
+		AudioSource.time = (StartTicks + 1) * TickTime + MusicStart - delay;
+		AudioSource.Play();
 		Ticks = StartTicks;
+		if (Tutorial && ControlsText.isActiveAndEnabled)
+		{
+			var ut = ControlsText.GetComponent<UnitedTint>();
+			var c = ut.Color;
+			c = new Color(c.r, c.g, c.b, 0);
+			Utils.Animate(1f, 0f, 1f, (v) =>
+			{
+				c.a = v;
+				ut.Color = c;
+			}, null, true, 1f);
+			Utils.InvokeDelayed(() => ControlsText.gameObject.SetActive(false), 2f);
+		}
 		
 		if (!IsFirstStart) return;
 		IsFirstStart = false;
@@ -131,7 +153,7 @@ public class Level : MonoBehaviour
 	private void Update()
 	{
 		if (!_ticking) return;
-		var newST= 1.0f *_audioSource.timeSamples / 44100;
+		var newST= 1.0f *AudioSource.timeSamples / 44100;
 		if (Math.Floor(newST / TickTime) > Math.Floor(_sampleTime / TickTime))
 		{
 			TickUpdate();
@@ -213,12 +235,12 @@ public class Level : MonoBehaviour
 		Updating = false;
 		GameOver = true;
 		
-		Utils.Animate(1f, 0f, 0.5f, (v) => _audioSource.volume += v);
+		Utils.Animate(1f, 0f, 0.5f, (v) => AudioSource.volume += v);
 		Utils.InvokeDelayed(() =>
 		{
-			_audioSource.clip = Over;
-			_audioSource.Play();
-			Utils.Animate(0f, 0.5f, 2f, (v) => _audioSource.volume += v);
+			AudioSource.clip = Over;
+			AudioSource.Play();
+			Utils.Animate(0f, 0.5f, 2f, (v) => AudioSource.volume += v);
 		}, 0.5f);
 //		CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0f, 0.01f), GOAnimationTime / 2, true);
 		Utils.Animate(Camera.main.backgroundColor, Color.black, GOAnimationTime / 2, (v) => Camera.main.backgroundColor += v);

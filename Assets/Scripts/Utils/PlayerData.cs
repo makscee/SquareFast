@@ -10,6 +10,7 @@ public class PlayerData
 {
     public static PlayerData Instance;
     public string ID;
+    public bool TutorialComplete;
     public string[] Scores = new string[Level.LevelsAmount];
 
     public PlayerData()
@@ -22,7 +23,7 @@ public class PlayerData
     public override string ToString()
     {
         var scores = Scores.Aggregate("", (current, score) => current + (" " + score));
-        return "ID: " + ID + " " + scores;
+        return "ID: " + ID + " " + scores + " " + TutorialComplete;
     }
 }
 
@@ -47,6 +48,7 @@ public class Saves
     {
         var pd = PlayerData.Instance;
         PlayerPrefs.SetString("id", pd.ID);
+        PlayerPrefs.SetInt("tutorial", pd.TutorialComplete ? 1 : 0);
         for (var i = 0; i < pd.Scores.Length; i++)
         {
             var score = PlayerPrefs.GetString("score" + i, "0").ToFloat();
@@ -81,6 +83,7 @@ public class Saves
             return;
         }
         var id = PlayerPrefs.GetString("id");
+        var tutorial = PlayerPrefs.GetInt("tutorial", 0) == 1;
         Debug.Log("Prefs id: " + id);
         if (PlayerData.Instance == null)
         {
@@ -88,6 +91,7 @@ public class Saves
         }
         var pd = PlayerData.Instance;
         pd.ID = id;
+        pd.TutorialComplete = tutorial;
         for (var i = 0; i < Level.LevelsAmount; i++)
         {
             var scoreStr = PlayerPrefs.GetString("score" + i, "0");

@@ -74,9 +74,9 @@ public class Player : Unit
 		var dir = leftDown ? -1 : (rightDown ? 1 : 0);
 		if (dir == 0) return;
 
-		var gm = GridMarks.Instance;
 		if (Menu.Instance.isActiveAndEnabled)
 		{
+			var gm = GridMarks.Instance;
 			if (gm.FieldSize() > 2)
 			{
 				gm.ShiftBorder(dir);
@@ -85,6 +85,10 @@ public class Player : Unit
 			{
 				Utils.Animate(0f, 1f, 0.2f, (v) => CameraScript.MenuZoomout -= v);
 			}
+		}
+		if (Level.Tutorial && !Level.Spawning)
+		{
+			Level.Instance.StartLevel();
 		}
 
 		MoveOrAttack(dir);
@@ -145,7 +149,19 @@ public class Player : Unit
 			base.Die();
 			return;
 		}
-		if (!Level.GameOver && !GameOverInstance)
+		if (Level.Tutorial)
+		{
+			Utils.Animate(1f, 0f, 0.5f, (v) => Level.Instance.AudioSource.volume += v);
+			Level.Updating = false;
+			Utils.InvokeDelayed(() =>
+			{
+				Level.Instance.KillEverything(true);
+				CameraScript.Instance.SwitchScene(() =>
+				{
+					Level.Instance.OnEnable();
+				});
+			}, 1f);
+		} else if (!Level.GameOver && !GameOverInstance)
 		{
 			Level.Instance.EnterGameOver();
 		}

@@ -14,7 +14,7 @@ public class CameraScript : MonoBehaviour
     public Color SwitchColor;
     public GameObject SwitchFollow;
     private float _zoom;
-    public static float MenuZoomout = 3f;
+    public static float MenuZoomout = 0f;
 
     private void Awake()
     {
@@ -45,7 +45,7 @@ public class CameraScript : MonoBehaviour
         if (Menu.Instance.isActiveAndEnabled)
         {
             needPos += Vector3.up * (3.5f - 3.5f / 3f * MenuZoomout);
-            Camera.main.orthographicSize = _zoom / (1 + MenuZoomout / 2);
+//            Camera.main.orthographicSize = _zoom / (1 + MenuZoomout / 2);
         }
         var dir =  needPos - transform.position;
         dir.z = 0;
