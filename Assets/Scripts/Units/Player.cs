@@ -10,6 +10,8 @@ public class Player : Unit
 	public static Prefab Prefab = new Prefab("Player");
 	public bool GameOverInstance = false;
 	public Unit Swallowed;
+	public bool HasTutorialHitChance = true;
+	public bool IsInTutorialHitChance = false;
 
 	private void Awake()
 	{
@@ -37,6 +39,12 @@ public class Player : Unit
 		if (Input.GetKeyDown(KeyCode.G))
 		{
 			Godmode = !Godmode;
+		}
+		if (Input.GetKeyDown(KeyCode.T))
+		{
+			PlayerData.Instance.TutorialComplete = false;
+			Saves.Save();
+			SceneManager.LoadScene(0);
 		}
 		if (Input.touchCount > 0)
 		{

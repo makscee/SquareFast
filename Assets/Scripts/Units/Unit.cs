@@ -80,10 +80,26 @@ public class Unit : MonoBehaviour
                 }
                 
                 Time.timeScale = 0.1f;
-                Utils.Animate(0.1f, 1f, 1f, (v) => Time.timeScale += v);
+                Utils.Animate(0.1f, 1f, 1f, (v) => Time.timeScale = v, null, true);
                 var camSize = Camera.main.orthographicSize;
                 Utils.Animate(camSize, camSize / 1.5f, 0.07f, (v) => Camera.main.orthographicSize += v);
                 Utils.InvokeDelayed(() => Utils.Animate(Camera.main.orthographicSize, camSize, 0.2f, (v) => Camera.main.orthographicSize += v), 0.5f);
+            }
+            if (Player.Instance.IsInTutorialHitChance)
+            {
+                Player.Instance.IsInTutorialHitChance = false;
+                if (!this is Player)
+                {
+                    Level.Instance.AudioSource.pitch = 1f;
+                }
+                else
+                {
+                    Utils.Animate(0.1f, 1f, 0.3f, (v) =>
+                    {
+                        Time.timeScale = v;
+                        Level.Instance.AudioSource.pitch = v;
+                    }, null, true);
+                }
             }
             atPos.TakeDmg(this);
             AttackAnim(relDir);
@@ -130,6 +146,16 @@ public class Unit : MonoBehaviour
                 AttackAnim(relDir);
                 GridMarks.Instance.HandlerLeft();
                 return;
+            }
+        } else if (Level.Tutorial && Player.Instance.HasTutorialHitChance)
+        {
+            var near = Level.Instance.Get(Position.IntX() + relDir * 2);
+            if (near is Player)
+            {
+                Player.Instance.HasTutorialHitChance = false;
+                Player.Instance.IsInTutorialHitChance = true;
+                Time.timeScale = 0.1f;
+                Utils.Animate(1f, 0.1f, 0.05f, (v) => Level.Instance.AudioSource.pitch = v, null, true);
             }
         }
 
