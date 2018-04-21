@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +12,7 @@ public class Menu : MonoBehaviour
     public GameObject HintCanvas;
     public Text HintText;
     public AudioClip Click, Select;
+    public GameObject LockIcon;
     private AudioSource _as;
     private static bool _firstEnable = false;
 
@@ -272,7 +274,7 @@ public class Menu : MonoBehaviour
             p.SetPatterns(1);
             p.Reset();
             p.NextLevel(2);
-            UnitedTint.Tint = new Color(1f, 0.63f, 0.31f);
+            UnlockLevel(new Color(1f, 0.63f, 0.31f));
             CameraScript.ChangeColorTinted(UnitedTint.Tint);
         },
         p1 = () =>
@@ -281,61 +283,96 @@ public class Menu : MonoBehaviour
             p.SetPatterns(2);
             p.Reset();
             p.NextLevel(2);
-            UnitedTint.Tint = new Color(1f, 0.51f, 0.69f);
+            UnlockLevel(new Color(1f, 0.51f, 0.69f));
             CameraScript.ChangeColorTinted(UnitedTint.Tint);
         },
         p2 = () =>
         {
+            const bool locked = true; // todo: unlock after song add
             var p = Pattern.Instance;
             p.SetPatterns(3);
             p.Reset();
             p.NextLevel(2);
-            UnitedTint.Tint = new Color(1f, 0.9f, 0.54f);
+            if (locked) LockLevel();
+            else UnlockLevel(new Color(1f, 0.9f, 0.54f));
             CameraScript.ChangeColorTinted(UnitedTint.Tint);
         },
         p3 = () =>
         {
+            var locked = float.Parse(PlayerData.Instance.Scores[0]) < 60f;
             var p = Pattern.Instance;
             p.SetPatterns(1);
             p.Reset();
             p.NextLevel(2);
-            UnitedTint.Tint = new Color(0.56f, 0.59f, 1f);
+            if (locked) LockLevel();
+            else UnlockLevel(new Color(0.56f, 0.59f, 1f));
             CameraScript.ChangeColorTinted(UnitedTint.Tint);
         },
         p4 = () =>
         {
+            var locked = float.Parse(PlayerData.Instance.Scores[1]) < 60f;
             var p = Pattern.Instance;
             p.SetPatterns(2);
             p.Reset();
             p.NextLevel(2);
-            UnitedTint.Tint = new Color(0.46f, 1f, 0.69f);
+            if (locked) LockLevel();
+            else UnlockLevel(new Color(0.46f, 1f, 0.69f));
             CameraScript.ChangeColorTinted(UnitedTint.Tint);
         },
         p5 = () =>
         {
+            var locked = float.Parse(PlayerData.Instance.Scores[2]) < 60f;
             var p = Pattern.Instance;
             p.SetPatterns(3);
             p.Reset();
             p.NextLevel(2);
-            UnitedTint.Tint = new Color(0.81f, 0.78f, 1f);
+            if (locked) LockLevel();
+            else UnlockLevel(new Color(0.81f, 0.78f, 1f));
             CameraScript.ChangeColorTinted(UnitedTint.Tint);
         },
         p6 = () =>
         {
+            var locked = float.Parse(PlayerData.Instance.Scores[5]) < 60f;
             var p = Pattern.Instance;
             p.SetPatterns(7);
             p.Reset();
-            UnitedTint.Tint = Color.white;
-            Camera.main.backgroundColor = Color.black;
+            if (locked) LockLevel();
+            else
+            {
+                UnlockLevel(Color.white);
+                Camera.main.backgroundColor = Color.black;
+            }
         },
         pReset = () =>
         {
             var p = Pattern.Instance;
             p.Reset();
-            UnitedTint.Tint = Color.white;
+            UnlockLevel(Color.white);
             Camera.main.backgroundColor = Color.black;
         };
 
+    private static void LockLevel()
+    {
+        UnitedTint.Tint = new Color(0.57f, 0.57f, 0.57f);
+        Instance.LockIcon.SetActive(true);
+        var gm = GridMarks.Instance;
+        gm.SetText("< NEXT", "");
+        gm.SetBorderHandlers(Instance.NextItem, () => { });
+        gm.RightSolid = true;
+    }
+
+    private static void UnlockLevel(Color c)
+    {
+        UnitedTint.Tint = c;
+        Instance.LockIcon.SetActive(false);
+        var gm = GridMarks.Instance;
+        gm.SetText("< NEXT", "CONFIRM >");
+        gm.SetBorderHandlers(Instance.NextItem, () =>
+        {
+            CameraScript.Instance.SwitchScene(Instance.Confirm);
+        });
+        gm.RightSolid = false;
+    }
     private void Awake()
     {
         _as = CameraScript.Instance.GetComponent<AudioSource>();

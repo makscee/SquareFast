@@ -54,6 +54,12 @@ public class GridMarks : MonoBehaviour
         RightText.GetComponent<UnitedTint>().Color = new Color(c.r, c.g, c.b, 1);
     }
 
+    public void SetText(string lText, string rText)    
+    {
+        LeftText.text = lText;
+        RightText.text = rText;
+    }
+
     public void ShiftBorder(int dir)
     {
         if (dir == 1)
