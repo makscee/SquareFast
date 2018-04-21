@@ -57,6 +57,7 @@ public class Level : MonoBehaviour
 
 	public void OnEnable()
 	{
+		Spawning = false;
 		Enemies.Clear();
 		TickAction = () => { };
 		_levelSpawner = new LevelSpawner(CurrentLevel);
@@ -264,7 +265,6 @@ public class Level : MonoBehaviour
 			{
 				CameraScript.Instance.SwitchScene(() =>
 				{
-					WebUtils.FetchScores();
 					ExitGameover();
 					gameObject.SetActive(false);
 					Menu.Instance.gameObject.SetActive(true);

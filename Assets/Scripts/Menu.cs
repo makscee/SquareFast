@@ -392,7 +392,14 @@ public class Menu : MonoBehaviour
         Prefab.PreloadPrefabs();
         
         Instance = this;
-        _items = getFirstList();
-        RefreshItems(true);
+        if (Level.Tutorial)
+        {
+            _items = getSecondList();
+        }
+        else
+        {
+            _items = getFirstList();
+            RefreshItems(true);
+        }
     }
 }
