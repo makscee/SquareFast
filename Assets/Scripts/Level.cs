@@ -16,6 +16,7 @@ public class Level : MonoBehaviour
 	public static bool NextLevelStart = false;
 	public static bool IsFirstStart = true;
 	public static int CurrentLevel = 0;
+	public static int StartedLevel = 0;
 	private static readonly List<Unit> Enemies = new List<Unit>();
 	public int StartTicks = -1;
 	public const int LevelsAmount = 7; 
@@ -58,6 +59,9 @@ public class Level : MonoBehaviour
 	public void OnEnable()
 	{
 		Spawning = false;
+		Updating = true;
+		GameOver = false;
+		_started = false;
 		Enemies.Clear();
 		TickAction = () => { };
 		_levelSpawner = new LevelSpawner(CurrentLevel);
@@ -65,15 +69,13 @@ public class Level : MonoBehaviour
 		if (!NextLevelStart)
 		{
 			Player.Prefab.Instantiate();
+			StartedLevel = CurrentLevel;
 		}
 		else
 		{
 			InitPos(Player.Instance);
 		}
 		
-		Updating = true;
-		GameOver = false;
-		_started = false;
 		var offset = LevelSpawner.Distance;
 		Action a = () =>
 		{
@@ -185,6 +187,7 @@ public class Level : MonoBehaviour
 		TickActionPerm();
 		TickAction();
 		Pattern.Instance.TickUpdate();
+		UnitedTint.TickUpdate();
 		if (Spawning) _levelSpawner.TickUpdate();
 		var units = _grid.GetAllUnits();
 		var ticked = false;
@@ -227,11 +230,11 @@ public class Level : MonoBehaviour
 	{
 		GameOverStartAction();
 		var score = TimeText.text;
-		if (string.IsNullOrEmpty(PlayerData.Instance.Scores[CurrentLevel]) || float.Parse(score) > float.Parse(PlayerData.Instance.Scores[CurrentLevel]))
+		if (string.IsNullOrEmpty(PlayerData.Instance.Scores[StartedLevel]) || float.Parse(score) > float.Parse(PlayerData.Instance.Scores[StartedLevel]))
 		{
-			PlayerData.Instance.Scores[CurrentLevel] = score;
+			PlayerData.Instance.Scores[StartedLevel] = score;
 			Saves.Save();
-			WebUtils.SendScore(CurrentLevel);
+			WebUtils.SendScore(StartedLevel);
 		}
 		Updating = false;
 		GameOver = true;
