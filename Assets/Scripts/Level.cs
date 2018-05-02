@@ -263,6 +263,7 @@ public class Level : MonoBehaviour
 			{
 				if (!GameOver) return;
 				ExitGameover();
+				CurrentLevel = StartedLevel;
 				Utils.InvokeDelayed(OnEnable, GOAnimationTime / 4);
 			}, () =>
 			{

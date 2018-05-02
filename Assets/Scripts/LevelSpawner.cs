@@ -495,7 +495,6 @@ public class LevelSpawner
                 CameraScript.Instance.SwitchProgress = 0f;
                 break;
             }
-            default: break;
         }
         if (_switchColors.Count > 0)
         {
