@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Menu : MonoBehaviour
@@ -14,7 +14,6 @@ public class Menu : MonoBehaviour
     public AudioClip Click, Select;
     public GameObject LockIcon;
     private AudioSource _as;
-    private static bool _firstEnable = false;
 
     private class MenuItem
     {
@@ -171,13 +170,13 @@ public class Menu : MonoBehaviour
         Enter();
         Level.IsFirstStart = true;
         var gm = GridMarks.Instance;
-        var dist = _firstEnable ? 3 : 1;
+        var dist = 1;
         gm.Set("< NEXT", "CONFIRM >", -dist, dist, -dist, dist, NextItem, () =>
         {
             CameraScript.Instance.SwitchScene(Confirm);
         }, true);
-        _firstEnable = false;
-        if (Player.Instance == null)
+        Debug.Log(Player.Instance);
+        if (Player.Instance == null && !Level.Tutorial)
         {
             Player.Prefab.Instantiate();
         }
@@ -263,6 +262,13 @@ public class Menu : MonoBehaviour
                     item6,
                     new MenuItem("BACK", () => SwitchItems(getFirstList()), pReset, 1f, false)
                 });
+            }),
+            new MenuItem("RESET", () =>
+            {
+                PlayerData.Instance.TutorialComplete = false;
+                UnitedTint.Tint = Color.white;
+                Saves.Save();
+                SceneManager.LoadScene(0);
             }),
             new MenuItem("QUIT", Application.Quit)
         };

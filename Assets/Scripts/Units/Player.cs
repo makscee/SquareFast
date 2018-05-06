@@ -40,7 +40,7 @@ public class Player : Unit
 		{
 			Godmode = !Godmode;
 		}
-		if (Input.GetKeyDown(KeyCode.T) || Input.touchCount > 3)
+		if (Input.GetKeyDown(KeyCode.T))
 		{
 			PlayerData.Instance.TutorialComplete = false;
 			UnitedTint.Tint = Color.white;
