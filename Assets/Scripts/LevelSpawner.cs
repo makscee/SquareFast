@@ -35,7 +35,7 @@ public class EnemyPattern
     public GameObject GetNext()
     {
         GameObject go = null;
-        if (_produced % 2 != 0)
+        if (_produced % 2 == 0)
         {
             if (_left[_li] != null)
             {
@@ -95,14 +95,15 @@ public class LevelSpawner
     private EnemyPattern _curPattern;
     private int _ci = 0, _cl = 0, _nextLevel;
     private bool _spawning = true;
-    private GameObject _lastSpawned;
+    private GameObject _lastSpawned1, _lastSpawned2;
     public void TickUpdate()
     {
         if (Level.Ticks % 3 != 0 || !_spawning) return;
         var next = _curPattern.GetNext();
         if (next != null)
         {
-            _lastSpawned = next;
+            _lastSpawned2 = _lastSpawned1;
+            _lastSpawned1 = next;
         }
         if (!_curPattern.Ended()) return;
         
@@ -491,7 +492,8 @@ public class LevelSpawner
                 p.SetPatterns(7);
                 p.Reset();
                 Camera.main.orthographicSize /= 1.5f;
-                CameraScript.Instance.SwitchFollow = null;
+                CameraScript.Instance.SwitchFollow1 = null;
+                CameraScript.Instance.SwitchFollow2 = null;
                 CameraScript.Instance.SwitchProgress = 0f;
                 break;
             }
@@ -517,35 +519,37 @@ public class LevelSpawner
                 {
                     _spawning = false;
                 }
-                
-                if (_lastSpawned != null)
+                Action dieEvent = () => Utils.InvokeDelayed(() =>
                 {
-                    CameraScript.Instance.SwitchFollow = _lastSpawned;
-                    var u = _lastSpawned.GetComponent<Unit>();
-                    u.DieEvent += () =>
+                    if (Level.GameOver) return;
+                    if (CameraScript.Instance.SwitchFollow1 != null || CameraScript.Instance.SwitchFollow2 != null)
                     {
-                        Utils.InvokeDelayed(() =>
+                        return;
+                    }
+                    var cs = CameraScript.Instance;
+                    Utils.Animate(cs.SwitchProgress, 1f, 0.1f, (v) => cs.SwitchProgress = v, null, true);
+                    Utils.InvokeDelayed(() =>
+                    {
+                        Utils.Animate(1f, 0f, 0.2f, (v) => cs.SwitchProgress = v, null, true);
+                        if (_cl >= _patterns.Count)
                         {
-                            if (Level.GameOver) return;
-                            var cs = CameraScript.Instance;
-                            Utils.Animate(cs.SwitchProgress, 1f, 0.1f, (v) => cs.SwitchProgress = v, null, true);
-                            Utils.InvokeDelayed(() =>
-                            {
-                                Utils.Animate(1f, 0f, 0.2f, (v) => cs.SwitchProgress = v, null, true);
-                                if (_cl >= _patterns.Count)
-                                {
-                                    Level.CurrentLevel = _nextLevel;
-                                    Level.NextLevelStart = true;
-                                    Level.Instance.OnEnable();
-                                    return;
-                                }
-                                UnitedTint.Tint = _switchColors[0];
-                                CameraScript.ChangeColorTinted(UnitedTint.Tint);
-                                _switchColors.RemoveAt(0);
-                                Pattern.Instance.NextLevel();
-                            }, 0.2f);
-                        }, Level.TickTime * 2);
-                    };
+                            Level.CurrentLevel = _nextLevel;
+                            Level.NextLevelStart = true;
+                            Level.Instance.OnEnable();
+                            return;
+                        }
+                        UnitedTint.Tint = _switchColors[0];
+                        CameraScript.ChangeColorTinted(UnitedTint.Tint);
+                        _switchColors.RemoveAt(0);
+                        Pattern.Instance.NextLevel();
+                    }, 0.2f);
+                }, Level.TickTime * 2);
+                if (_lastSpawned1 != null || _lastSpawned2 != null)
+                {
+                    CameraScript.Instance.SwitchFollow1 = _lastSpawned1;
+                    CameraScript.Instance.SwitchFollow2 = _lastSpawned2;
+                    _lastSpawned1.GetComponent<Unit>().DieEvent += dieEvent;
+                    _lastSpawned2.GetComponent<Unit>().DieEvent += dieEvent;
                 }
 
                 _cl++;

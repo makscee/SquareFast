@@ -1,4 +1,5 @@
 using System;
+using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,7 +13,7 @@ public class CameraScript : MonoBehaviour
     public Material ColorSwitch;
     public float InvProgress, SwitchProgress;
     public Color SwitchColor;
-    public GameObject SwitchFollow;
+    public GameObject SwitchFollow1, SwitchFollow2;
     private float _zoom;
     public static float MenuZoomout = 0f;
 
@@ -23,23 +24,57 @@ public class CameraScript : MonoBehaviour
         ColorSwitch = new Material(ColorSwitch);
     }
 
+    private float getSwitchProgress(Vector3 pos)
+    {
+        pos += pos.x > 0 ? new Vector3(1.5f, 0) : new Vector3(-1.5f, 0);
+        if (pos.x > -1.5f && pos.x < 1.5f)
+        {
+            pos.x = Player.Instance.transform.position.x > 0 ? -1.5f : 1.5f;
+        }
+        var v = Camera.main.WorldToScreenPoint(pos).x;
+        var w = (float) Camera.main.pixelWidth / 2;
+        return (1 - Math.Abs(v - w) / w);
+    }
+
+    private float _still = 0, _before = 0;
     private void Update()
     {
-        if (SwitchFollow != null)
-        {
-            var pos = SwitchFollow.transform.position;
-            if (Math.Abs(pos.x) < Math.Abs(Player.Instance.Position.x))
-            {
-                pos = Player.Instance.Position;
-            }
-            pos += pos.x > 0 ? new Vector3(1.5f, 0) : new Vector3(-1.5f, 0);
-            pos.x = Math.Max(2f, Math.Abs(pos.x));
-            var v = Camera.main.WorldToScreenPoint(pos).x;
-            var w = (float) Camera.main.pixelWidth / 2;
-            var needSP = (1 - Math.Abs(v - w) / w) - SwitchProgress;
-            SwitchProgress += needSP / 2;
-        }
         if (Player.Instance == null) return;
+        if (SwitchFollow1 != null || SwitchFollow2 != null)
+        {
+            float pg1 = 1, pg2 = 1;
+            if (SwitchFollow1 != null)
+            {
+                pg1 = getSwitchProgress(SwitchFollow1.transform.position);
+            }
+            if (SwitchFollow2 != null)
+            {
+                pg2 = getSwitchProgress(SwitchFollow2.transform.position);
+            }
+            SwitchProgress += (Math.Min(pg1, pg2) - SwitchProgress) / 2;
+        }
+        if (SwitchProgress <= 0)
+        {
+            _still = 0f;
+            _before = 0f;
+        }
+        else
+        {
+            if (SwitchProgress == _before)
+            {
+                _still += Time.deltaTime;
+            }
+            else
+            {
+                _before = SwitchProgress;
+                _still = 0f;
+            }
+        }
+        if (_still >= 0.5f)
+        {
+            Debug.LogWarning("Switch progress still more than 0.5 sec. Returning.");
+            Utils.Animate(SwitchProgress, 0f, 0.1f, (v) => SwitchProgress = v, null, true);
+        }
         var needPos = Player.Instance.transform.position;
         if (MenuZoomout < 0) MenuZoomout = 0;
         if (Menu.Instance.isActiveAndEnabled)
