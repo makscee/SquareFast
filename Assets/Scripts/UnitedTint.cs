@@ -12,6 +12,7 @@ public class UnitedTint : MonoBehaviour
     [SerializeField]
     private Color _color;
     private bool _initedColor;
+    public Color OverrideColor = Color.black;
 
     public Color Color
     {
@@ -62,15 +63,16 @@ public class UnitedTint : MonoBehaviour
 
     private void Update()
     {
+        var c = OverrideColor == Color.black ? Color * Tint * Multiplier : OverrideColor;
         if (_spriteRenderer)
         {
-            _spriteRenderer.color = Color * Tint * Multiplier;
+            _spriteRenderer.color = c;
         } else if (_text)
         {
-            _text.color = Color * Tint * Multiplier;
+            _text.color = c;
         } else if (_image)
         {
-            _image.color = Color * Tint * Multiplier;
+            _image.color = c;
         }
     }
 }

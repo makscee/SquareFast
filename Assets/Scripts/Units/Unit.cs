@@ -85,10 +85,10 @@ public class Unit : MonoBehaviour
                 Utils.Animate(camSize, camSize / 1.5f, 0.07f, (v) => Camera.main.orthographicSize += v);
                 Utils.InvokeDelayed(() => Utils.Animate(Camera.main.orthographicSize, camSize, 0.2f, (v) => Camera.main.orthographicSize += v), 0.5f);
             }
-            if (Player.Instance.IsInTutorialHitChance)
+            if (Player.Instance.TutorialHitChanceDir != 0)
             {
-                Player.Instance.IsInTutorialHitChance = false;
-                if (!this is Player)
+                Player.Instance.TutorialHitChanceDir = 0;
+                if (!(this is Player))
                 {
                     Level.Instance.AudioSource.pitch = 1f;
                 }
@@ -150,10 +150,11 @@ public class Unit : MonoBehaviour
         } else if (Level.Tutorial && Player.Instance.HasTutorialHitChance)
         {
             var near = Level.Instance.Get(Position.IntX() + relDir * 2);
+            
             if (near is Player)
             {
                 Player.Instance.HasTutorialHitChance = false;
-                Player.Instance.IsInTutorialHitChance = true;
+                Player.Instance.TutorialHitChanceDir = -relDir;
                 Time.timeScale = 0.1f;
                 Utils.Animate(1f, 0.1f, 0.05f, (v) => Level.Instance.AudioSource.pitch = v, null, true);
             }

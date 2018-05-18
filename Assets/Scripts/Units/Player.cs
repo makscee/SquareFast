@@ -11,7 +11,7 @@ public class Player : Unit
 	public bool GameOverInstance = false;
 	public Unit Swallowed;
 	public bool HasTutorialHitChance = true;
-	public bool IsInTutorialHitChance = false;
+	public int TutorialHitChanceDir = 0;
 
 	private void Awake()
 	{
@@ -81,6 +81,10 @@ public class Player : Unit
 			}
 		}
 		var dir = leftDown ? -1 : (rightDown ? 1 : 0);
+		if (TutorialHitChanceDir != 0 && TutorialHitChanceDir != dir)
+		{
+			dir = 0;
+		}
 		if (dir == 0) return;
 
 		if (Menu.Instance.isActiveAndEnabled)

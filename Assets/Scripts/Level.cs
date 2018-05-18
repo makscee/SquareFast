@@ -81,6 +81,10 @@ public class Level : MonoBehaviour
 		{
 		};
 		GridMarks.Instance.Set("", "", -1, 1, -offset, offset, a, a, true, true);
+		GridMarks.Instance.DisplayBorders(false);
+		GridMarks.Instance.RemoveTint(0);
+		GridMarks.Instance.RemoveTint(-1);
+		GridMarks.Instance.RemoveTint(1);
 		if (Tutorial && ControlsText.isActiveAndEnabled)
 		{
 			var c = ControlsText.color;

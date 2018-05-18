@@ -96,14 +96,32 @@ public class LevelSpawner
     private int _ci = 0, _cl = 0, _nextLevel;
     private bool _spawning = true;
     private GameObject _lastSpawned1, _lastSpawned2;
+    private bool _firstTick = true;
     public void TickUpdate()
     {
         if (Level.Ticks % 3 != 0 || !_spawning) return;
+        if (_firstTick)
+        {
+            for (var i = Distance - 3; i >= 0; i--)
+            {
+                SpawnNext(i);
+            }
+            _firstTick = false;
+            return;
+        }
+        SpawnNext();
+    }
+
+    private void SpawnNext(int centerOffset = 0)
+    {
         var next = _curPattern.GetNext();
         if (next != null)
         {
             _lastSpawned2 = _lastSpawned1;
             _lastSpawned1 = next;
+            var v = next.transform.position;
+            v.x += v.x > 0 ? -centerOffset : centerOffset;
+            next.transform.position = v;
         }
         if (!_curPattern.Ended()) return;
         
@@ -207,11 +225,13 @@ public class LevelSpawner
                     new List<EnemyPattern>
                     {
                         new EnemyPattern().AddLeft(Square).AddRight(Square).SetRepeats(2),
-                        new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetRepeats(3),
+                        new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetRepeats(1),
+                        new EnemyPattern().AddRight(null).AddLeft(Triangle, 2).SetRepeats(1),
+                        new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Square, 2).SetRepeats(1),
                     },
                     new List<EnemyPattern>
                     {
-                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetRepeats(1),
                         new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Rhombus, 2).SetRepeats(2),
                         new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetRepeats(2),
                         new EnemyPattern().AddLeft(Triangle, 2).AddRight(Rhombus, 2).AddRight(null).AddLeft(Square, 3),
@@ -220,7 +240,7 @@ public class LevelSpawner
                     {
                         new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2).SetRepeats(2),
                         new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3),
-                        new EnemyPattern().AddRight(Rhombus, 3).AddLeft(Rhombus, 3).SetRepeats(2),
+                        new EnemyPattern().AddRight(Rhombus, 2).AddLeft(Rhombus, 2).SetRepeats(2),
                         new EnemyPattern().AddLeft(Triangle, 2).AddRight(Rhombus, 2).AddRight(null).AddLeft(Square, 3),
                         new EnemyPattern().AddRight(Triangle, 2).AddLeft(null).SetRepeats(2),
                     }

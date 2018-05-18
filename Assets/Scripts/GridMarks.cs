@@ -60,6 +60,17 @@ public class GridMarks : MonoBehaviour
         RightText.text = rText;
     }
 
+    public void DisplayBorders(bool v)
+    {
+        LeftBorder.SetActive(v);
+        RightBorder.SetActive(v);
+    }
+
+    public void RemoveTint(int i)
+    {
+        _marks[i].GetComponent<UnitedTint>().OverrideColor = Color.white;
+    }
+
     public void ShiftBorder(int dir)
     {
         if (dir == 1)
@@ -111,6 +122,7 @@ public class GridMarks : MonoBehaviour
         for (var i = -MaxSize; i <= MaxSize; i++)
         {
             _marks[i].SetActive(i >= l && i <= r);
+            _marks[i].GetComponent<UnitedTint>().OverrideColor = Color.black;
         }
     }
 
