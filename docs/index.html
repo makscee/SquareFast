@@ -23,7 +23,7 @@
    P {
     font-family: fff;
    }
-   a:link, a:visited {
+   .button:link, .button:visited {
 		font-family: fff;
 		background-color: #B27037;
 		color: white;
@@ -33,20 +33,63 @@
 		display: inline-block;
 	}
 
-	a:hover, a:active {
+	.button:hover, .button:active {
 		background-color: #FFA14F;
 	}
+      
   </style>
+
+<style>
+#mc_embed_signup form {text-align:center; padding:10px 0 10px 0; color: white}
+.mc-field-group { display: inline-block; } /* positions input field horizontally */
+#mc_embed_signup input.email {font-family:"Open Sans","Helvetica Neue",Arial,Helvetica,Verdana,sans-serif; font-size: 15px; border: 1px solid #ABB0B2;  -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; color: #343434; background-color: #fff; box-sizing:border-box; height:32px; padding: 0px 0.4em; display: inline-block; margin: 0; width:350px; vertical-align:top;}
+#mc_embed_signup label {display:block; font-size:16px; padding-bottom:10px; font-weight:bold;}
+#mc_embed_signup .clear {display: inline-block;} /* positions button horizontally in line with input */
+#mc_embed_signup .button {font-size: 13px; border: none; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; letter-spacing: .03em; color: #fff; background-color: #aaa; box-sizing:border-box; height:32px; line-height:32px; padding:0 18px; display: inline-block; margin: 0; transition: all 0.23s ease-in-out 0s;}
+#mc_embed_signup .button:hover {background-color:#777; cursor:pointer;}
+#mc_embed_signup div#mce-responses {float:left; top:-1.4em; padding:0em .5em 0em .5em; overflow:hidden; width:90%;margin: 0 5%; clear: both;}
+#mc_embed_signup div.response {margin:1em 0; padding:1em .5em .5em 0; font-weight:bold; float:left; top:-1.5em; z-index:1; width:80%;}
+#mc_embed_signup #mce-error-response {display:none;}
+#mc_embed_signup #mce-success-response {color:#529214; display:none;}
+#mc_embed_signup label.error {display:block; float:none; width:auto; margin-left:1.05em; text-align:left; padding:.5em 0;}
+@media (max-width: 768px) {
+    #mc_embed_signup input.email {width:100%; margin-bottom:5px;}
+    #mc_embed_signup .clear {display: block; width: 100% }
+    #mc_embed_signup .button {width: 100%; margin:0; }
+}
+</style>
+<style type="text/css">
+	#mc_embed_signup{background:#fff; clear:left; font:14px fff; letter-spacing: 1.5px; width:100%;}
+	/* Add your own MailChimp form style overrides in your site stylesheet or in this style block.
+	   We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */
+</style>
  </head>
  <body>
   <div style="color: white;" align="center">
-		<p style="font-size: 5em;">SquareFast</p>
-		<p style="font-size: 1em; color: #FFA14F">A minimal rhythm game by <a style="background-color: transparent;" onmouseover="this.style.color='#FFA14F';" onmouseout="this.style.color='#FFFFFF';" href='https://vk.com/id31203950'>Maksim Chugunov</a></p>
-        <a style="background-color: transparent;" onmouseover="this.style.color='#FFA14F';" onmouseout="this.style.color='#FFFFFF';" href="mailto:maksim.chugunov.c@gmail.com">maksim.chugunov.c@gmail.com</a><br>
-		<a href='#' id="showWebglButton" onclick="document.getElementById('webglPlayer').innerHTML =  '&lt;iframe src=&quot;webgl/index.html&quot; style=&quot;border:0px #000000 none;&quot; name=&quot;SquareFast&quot; scrolling=&quot;no&quot; frameborder=&quot;1&quot; height=&quot;600px&quot; width=&quot;1000px&quot;&gt;&lt;/iframe&gt;';  document.getElementById('showWebglButton').style.display = 'none';" onmouseout="if (this.style.display === 'none') document.getElementById('webglPlayer').scrollIntoView(true);">Try it now!</a>
+		<p style="font-size: 5em;">Square Fast</p>
+		<p style="font-size: 1em; color: #FFA14F">A minimal rhythm game by <a class="button" style="background-color: transparent;" onmouseover="this.style.color='#FFA14F';" onmouseout="this.style.color='#FFFFFF';" href='https://vk.com/id31203950'  target="_blank">Maksim Chugunov</a></p>
+      <a href="mailto:maksim.chugunov.c@gmail.com"><img  src="img/mail.svg"  width="50" alt="e-mail"/></a>
+      <a href="https://vk.com/squarefast" target="_blank"><img  src="img/vk.svg"  width="50" alt="vk"/></a>
+      <a href="https://t.me/Maks_C" target="_blank"><img src="img/telegram.svg"  width="50" alt="telegram"/></a>
+      <a href="https://www.facebook.com/makscee" target="_blank"><img src="img/fb.svg"  width="50" alt="facebook"/></a>
+      <br><br>
+		<a class="button" href='#' id="showWebglButton" onclick="document.getElementById('webglPlayer').innerHTML =  '&lt;iframe src=&quot;webgl/index.html&quot; style=&quot;border:0px #000000 none;&quot; name=&quot;SquareFast&quot; scrolling=&quot;no&quot; frameborder=&quot;1&quot; height=&quot;600px&quot; width=&quot;1000px&quot;&gt;&lt;/iframe&gt;';  document.getElementById('showWebglButton').style.display = 'none';" onmouseout="if (this.style.display === 'none') document.getElementById('webglPlayer').scrollIntoView(true);">Try it now!</a>
 		<div id="webglPlayer"></div><br>
 		<div style="padding: 50px"><iframe width="560" height="315" src="https://www.youtube.com/embed/nSBPWTgMIXY" frameborder="0" allowfullscreen></iframe></div><br>
-		<div id='asdasd' style="padding-top: 100px"><iframe src="http://vk.com/widget_community.php?gid=155152300&width=280&height=220" width="280" height="220" scrolling="no" frameborder="0"></iframe></div>
   </div>
+     <!-- Begin MailChimp Signup Form -->
+<div id="mc_embed_signup" style='background-color: #B27037; width: 560px; margin: auto' >
+<form action="https://squarefast.us18.list-manage.com/subscribe/post?u=17518135ebc5e7bd1dd56a657&amp;id=62263f8d59" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<label for="mce-EMAIL">Subscribe to our mailing list</label>
+	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_17518135ebc5e7bd1dd56a657_62263f8d59" tabindex="-1" value=""></div>
+    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+    </div>
+</form>
+</div>
+
+<!--End mc_embed_signup-->
   </body>
 </html>

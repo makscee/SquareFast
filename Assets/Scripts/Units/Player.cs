@@ -12,6 +12,7 @@ public class Player : Unit
 	public Unit Swallowed;
 	public bool HasTutorialHitChance = true;
 	public int TutorialHitChanceDir = 0;
+	private bool _tutSpawned;
 
 	private void Awake()
 	{
@@ -99,11 +100,24 @@ public class Player : Unit
 				Utils.Animate(0f, 1f, 0.2f, (v) => CameraScript.MenuZoomout -= v);
 			}
 		}
-		if (Level.Tutorial && !Level.Spawning)
+		if (Level.Tutorial && !Level.Spawning && !_tutSpawned)
 		{
-			Level.Instance.StartLevel();
+			_tutSpawned = true;
+			var e = BasicEnemy.Prefab.Instantiate();
+			e.transform.position = new Vector3(-dir, 0, 0);
+			var u = e.GetComponent<Unit>();
+			u.HP = 1;
+			u.DieEvent += () => {
+				var e1 = BasicEnemy.Prefab.Instantiate();
+				e1.transform.position = new Vector3(dir, 0, 0);
+				var u1 = e1.GetComponent<Unit>();
+				u1.HP = 1;
+				u1.DieEvent += () =>
+				{
+					Level.Instance.StartLevel();
+				};
+			};
 		}
-
 		MoveOrAttack(dir);
 	}
 
