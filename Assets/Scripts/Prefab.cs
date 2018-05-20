@@ -45,7 +45,6 @@ public class Prefab
 
     public GameObject Instantiate()
     {
-        if (_path == "Enemies/SquareEnemy") Debug.LogWarning("spawn " + _resource);
         if (_resource == null)
         {
             Debug.Log("Resource " + _path + " was null. Loading.");

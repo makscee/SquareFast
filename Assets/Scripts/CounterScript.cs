@@ -5,9 +5,11 @@ using UnityEngine.UI;
 public class CounterScript : MonoBehaviour
 {
     private Text _text;
+    private Vector3 _scale;
 
     private void Start()
     {
+        _scale = transform.localScale;
         _text = GetComponent<Text>();
         Level.Instance.StartAction += () =>
         {
@@ -26,7 +28,7 @@ public class CounterScript : MonoBehaviour
         Level.Instance.TickActionPerm += () =>
         {
             if (Level.Ticks % 3 != 0 || Level.GameOver) return;
-            Utils.Animate(new Vector3(1.3f, 1.3f), Vector3.one, 0.15f, (v) =>
+            Utils.Animate(_scale + new Vector3(0.3f, 0.3f), _scale, 0.15f, (v) =>
             {
                 _text.transform.localScale = v;
             }, null, true);

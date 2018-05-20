@@ -24,7 +24,7 @@ public class Level : MonoBehaviour
 	public AudioSource AudioSource;
 	public Text TimeText;
 	public AudioClip L1, L2, Over;
-	public GameObject BT;
+	public Text BT;
 	public Text ControlsText, BestTimeText;
 	public float MusicStart, MusicDelay;
 	public static bool Tutorial;
@@ -66,20 +66,19 @@ public class Level : MonoBehaviour
 		Debug.Log(PlayerData.Instance.Scores[CurrentLevel]);
 		if (PlayerData.Instance.Scores[CurrentLevel] != "0")
 		{
-			BT.SetActive(true);
+			BT.gameObject.SetActive(true);
 			BestTimeText.gameObject.SetActive(true);
 			BestTimeText.text = PlayerData.Instance.Scores[CurrentLevel];
 		}
 		else
 		{
-			BT.SetActive(false);
+			BT.gameObject.SetActive(false);
 			BestTimeText.gameObject.SetActive(false);
 		}
 		Enemies.Clear();
 		TickAction = () => { };
 		GameOverAction += () =>
 		{
-			Debug.LogWarning(KillerUnit);
 			if (KillerUnit != null)
 			{
 				UnitHint.CreateUnitText("^\nAVENGE", KillerUnit);
@@ -311,6 +310,8 @@ public class Level : MonoBehaviour
 				tt.g = 1 - ct.a;
 				tt.b = 1 - ct.a;
 				TimeText.color = tt;
+				BT.color = tt;
+				BestTimeText.color = tt;
 			});
 		}, GOAnimationTime * 0.75f);
 		Utils.InvokeDelayed(() =>
@@ -382,6 +383,8 @@ public class Level : MonoBehaviour
 			tt.g = 1 - ct;
 			tt.b = 1 - ct;
 			TimeText.color = tt;
+			BT.color = tt;
+			BestTimeText.color = tt;
 
 		});
 //		CancelInvoke("TickUpdate");
