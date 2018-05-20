@@ -112,6 +112,7 @@ public class LevelSpawner
         SpawnNext();
     }
 
+    private int _2hpTutorialSpawned = 0;
     private void SpawnNext(int centerOffset = 0)
     {
         var next = _curPattern.GetNext();
@@ -122,6 +123,12 @@ public class LevelSpawner
             var v = next.transform.position;
             v.x += v.x > 0 ? -centerOffset : centerOffset;
             next.transform.position = v;
+            Unit u;
+            if (Level.Tutorial && _2hpTutorialSpawned < 2 && (u = next.GetComponent<Unit>()).HP == 2)
+            {
+                _2hpTutorialSpawned++;
+                UnitHint.CreateUnitText("^\n2 HP", u);
+            }
         }
         if (!_curPattern.Ended()) return;
         

@@ -12,7 +12,7 @@ public class CameraScript : MonoBehaviour
     public Material ColorSwitch;
     public float InvProgress, SwitchProgress;
     public Color SwitchColor;
-    public GameObject SwitchFollow1, SwitchFollow2;
+    public GameObject SwitchFollow1, SwitchFollow2, UnitHintCanvas;
     private float _zoom;
     public static float MenuZoomout = 0f;
 

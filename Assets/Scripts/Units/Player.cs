@@ -88,33 +88,58 @@ public class Player : Unit
 		}
 		if (dir == 0) return;
 
-		if (Menu.Instance.isActiveAndEnabled)
+		if (Menu.Instance.isActiveAndEnabled && !Level.Tutorial)
 		{
 			var gm = GridMarks.Instance;
 			if (gm.FieldSize() > 2)
 			{
 				gm.ShiftBorder(dir);
 			}
-			if (CameraScript.MenuZoomout > 0)
-			{
-				Utils.Animate(0f, 1f, 0.2f, (v) => CameraScript.MenuZoomout -= v);
-			}
-		}
-		if (Level.Tutorial && !Level.Spawning && !_tutSpawned)
+		} else if (Level.Tutorial && !Level.Spawning && !_tutSpawned && !Menu.Instance.HintCanvas.activeSelf)
 		{
+			Debug.LogWarning("tutorial spawn");
 			_tutSpawned = true;
 			var e = BasicEnemy.Prefab.Instantiate();
 			e.transform.position = new Vector3(-dir, 0, 0);
 			var u = e.GetComponent<Unit>();
 			u.HP = 1;
+			UnitHint.CreateUnitText("^\nKILL", u);
 			u.DieEvent += () => {
 				var e1 = BasicEnemy.Prefab.Instantiate();
-				e1.transform.position = new Vector3(dir, 0, 0);
-				var u1 = e1.GetComponent<Unit>();
-				u1.HP = 1;
-				u1.DieEvent += () =>
+				e1.transform.position = new Vector3(dir * 2, 0, 0);
+				var ud1 = e1.GetComponent<Unit>();
+				UnitHint.CreateUnitText("^\nKILL", ud1);
+				ud1.HP = 1;
+				e1 = BasicEnemy.Prefab.Instantiate();
+				e1.transform.position = new Vector3(-dir * 2, 0, 0);
+				var ud2 = e1.GetComponent<Unit>();
+				UnitHint.CreateUnitText("^\nKILL", ud2);
+				ud2.HP = 1;
+				ud2.DieEvent += () =>
 				{
-					Level.Instance.StartLevel();
+					if (ud1 != null) return;
+					var e2 = BasicEnemy.Prefab.Instantiate();
+					e2.transform.position = new Vector3(dir, 0, 0);
+					var u2 = e2.GetComponent<Unit>();
+					UnitHint.CreateUnitText("^\nKILL", u2);
+					u2.HP = 1;
+					u2.DieEvent += () =>
+					{
+						Level.Instance.StartLevel();
+					};
+				};
+				ud1.DieEvent += () =>
+				{
+					if (ud2 != null) return;
+					var e2 = BasicEnemy.Prefab.Instantiate();
+					e2.transform.position = new Vector3(-dir, 0, 0);
+					var u2 = e2.GetComponent<Unit>();
+					UnitHint.CreateUnitText("^\nKILL", u2);
+					u2.HP = 1;
+					u2.DieEvent += () =>
+					{
+						Level.Instance.StartLevel();
+					};
 				};
 			};
 		}

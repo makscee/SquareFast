@@ -24,7 +24,8 @@ public class Level : MonoBehaviour
 	public AudioSource AudioSource;
 	public Text TimeText;
 	public AudioClip L1, L2, Over;
-	public Text ControlsText;
+	public GameObject BT;
+	public Text ControlsText, BestTimeText;
 	public float MusicStart, MusicDelay;
 	public static bool Tutorial;
 
@@ -62,8 +63,28 @@ public class Level : MonoBehaviour
 		Updating = true;
 		GameOver = false;
 		_started = false;
+		Debug.Log(PlayerData.Instance.Scores[CurrentLevel]);
+		if (PlayerData.Instance.Scores[CurrentLevel] != "0")
+		{
+			BT.SetActive(true);
+			BestTimeText.gameObject.SetActive(true);
+			BestTimeText.text = PlayerData.Instance.Scores[CurrentLevel];
+		}
+		else
+		{
+			BT.SetActive(false);
+			BestTimeText.gameObject.SetActive(false);
+		}
 		Enemies.Clear();
 		TickAction = () => { };
+		GameOverAction += () =>
+		{
+			Debug.LogWarning(KillerUnit);
+			if (KillerUnit != null)
+			{
+				UnitHint.CreateUnitText("^\nAVENGE", KillerUnit);
+			}
+		};
 		_levelSpawner = new LevelSpawner(CurrentLevel);
 		_grid = new Grid(30);
 		if (!NextLevelStart)

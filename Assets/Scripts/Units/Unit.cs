@@ -155,6 +155,15 @@ public class Unit : MonoBehaviour
             {
                 Player.Instance.HasTutorialHitChance = false;
                 Player.Instance.TutorialHitChanceDir = -relDir;
+                var str = Player.Instance.TutorialHitChanceDir == 1 ? ">" : "<";
+                var hintGo = UnitHint.CreateUnitText(str, this, 0f, 0f, 2f, Color.white);
+                Utils.Animate(0f, 1f, 1f, (v) =>
+                {
+                    if (hintGo == null) return;
+                    var d = Math.Round(v / 0.05f) % 2 == 0;
+                    var k = 0.1f;
+                    hintGo.transform.position += Vector3.right * (d ? k : -k);
+                }, hintGo, true);
                 Time.timeScale = 0.1f;
                 Utils.Animate(1f, 0.1f, 0.05f, (v) => Level.Instance.AudioSource.pitch = v, null, true);
             }
