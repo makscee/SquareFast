@@ -157,8 +157,8 @@ public class LevelSpawner
                     }
                 };
                 Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L1;
-                Level.Instance.MusicStart = 9.7f;
-                Level.Instance.MusicDelay = 2f;
+                Level.Instance.MusicStart = 0f;
+                Level.Instance.MusicDelay = 2.88f;
                 _nextLevel = 3;
                 
                 Level.TickTime = 60f / 100 / 3f;
@@ -207,7 +207,7 @@ public class LevelSpawner
                     }
                 };
                 Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L2;
-                Level.Instance.MusicStart = 16.3f;
+                Level.Instance.MusicStart = 13.8f;
                 Level.Instance.MusicDelay = 2.5f;
                 Level.TickTime = 60f / 135 / 3f;
                 _nextLevel = 4;
@@ -263,9 +263,11 @@ public class LevelSpawner
                         BeatBGEffect.Create(2);
                     }
                 };
-                Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L2;
-                Level.Instance.MusicStart = 16.3f;
-                Level.Instance.MusicDelay = 2.5f;
+                Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L3;
+                Level.Instance.MusicStart = 0f;
+                Level.Instance.MusicDelay = 2f;
+                Level.Instance.BeatOffset = 0.137f;
+                
                 Level.TickTime = 60f / 150 / 3f;
                 _nextLevel = 5;
                 Distance = 5;
@@ -441,10 +443,13 @@ public class LevelSpawner
                         BeatBGEffect.Create(2);
                     }
                 };
-                Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L2;
-                Level.Instance.MusicStart = 16.3f;
-                Level.Instance.MusicDelay = 2.5f;
-                Level.TickTime = 60f / 150 / 3f;
+                if (!Level.NextLevelStart)
+                {
+                    Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L3;
+                    Level.Instance.MusicStart = 16.3f;
+                    Level.Instance.MusicDelay = 2.5f;
+                    Level.TickTime = 60f / 150 / 3f;
+                }
                 _nextLevel = 6;
                 Distance = 5;
                 

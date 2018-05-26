@@ -23,10 +23,10 @@ public class Level : MonoBehaviour
 	private LevelSpawner _levelSpawner;
 	public AudioSource AudioSource;
 	public Text TimeText;
-	public AudioClip L1, L2, Over;
+	public AudioClip L1, L2, L3, Over;
 	public Text BT;
 	public Text ControlsText, BestTimeText;
-	public float MusicStart, MusicDelay;
+	public float MusicStart, MusicDelay, BeatOffset = 0f;
 	public static bool Tutorial;
 
 	public Level()
@@ -121,15 +121,11 @@ public class Level : MonoBehaviour
 	public void StartLevel()
 	{
 		Spawning = true;
-		var delay = IsFirstStart ? MusicDelay : 0;
+		var delay = NextLevelStart ?  0 : MusicDelay;
 
 		_ticking = false;
 		Utils.InvokeDelayed(() => _ticking = true, delay);
 		
-		AudioSource.volume = 0f;
-		Utils.Animate(0f, 1f, 0.9f, (v) => AudioSource.volume += v);
-		AudioSource.time = (StartTicks + 1) * TickTime + MusicStart - delay;
-		AudioSource.Play();
 		Ticks = StartTicks;
 		if (Tutorial && ControlsText.isActiveAndEnabled)
 		{
@@ -144,8 +140,11 @@ public class Level : MonoBehaviour
 			Utils.InvokeDelayed(() => ControlsText.gameObject.SetActive(false), 2f);
 		}
 		
-		if (!IsFirstStart) return;
-		IsFirstStart = false;
+		if (NextLevelStart) return;
+		AudioSource.volume = 0f;
+		Utils.Animate(0f, 1f, 0.9f, (v) => AudioSource.volume += v);
+		AudioSource.time = MusicStart;
+		AudioSource.Play();
 	}
 
 	public void Move(int pos, Unit unit)
@@ -180,7 +179,7 @@ public class Level : MonoBehaviour
 	private void Update()
 	{
 		if (!_ticking) return;
-		var newST= 1.0f *AudioSource.timeSamples / 44100;
+		var newST= 1.0f *AudioSource.timeSamples / 44100 + BeatOffset;
 		if (Math.Floor(newST / TickTime) > Math.Floor(_sampleTime / TickTime))
 		{
 			TickUpdate();
@@ -264,9 +263,11 @@ public class Level : MonoBehaviour
 		GameOver = true;
 		
 		Utils.Animate(1f, 0f, 0.5f, (v) => AudioSource.volume += v);
+		float[] starts = {0f, 13f, 43f, 66f, 90f};
 		Utils.InvokeDelayed(() =>
 		{
 			AudioSource.clip = Over;
+			AudioSource.time = starts[UnityEngine.Random.Range(0, starts.Length)];
 			AudioSource.Play();
 			Utils.Animate(0f, 0.5f, 2f, (v) => AudioSource.volume += v);
 		}, 0.5f);

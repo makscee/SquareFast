@@ -293,13 +293,11 @@ public class Menu : MonoBehaviour
         },
         p2 = () =>
         {
-            const bool locked = true; // todo: unlock after song add
             var p = Pattern.Instance;
             p.SetPatterns(3);
             p.Reset();
             p.NextLevel(2);
-            if (locked) LockLevel();
-            else UnlockLevel(new Color(1f, 0.9f, 0.54f));
+            UnlockLevel(new Color(1f, 0.9f, 0.54f));
             CameraScript.ChangeColorTinted(UnitedTint.Tint);
         },
         p3 = () =>
