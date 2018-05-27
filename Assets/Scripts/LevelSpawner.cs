@@ -159,6 +159,7 @@ public class LevelSpawner
                 Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L1;
                 Level.Instance.MusicStart = 0f;
                 Level.Instance.MusicDelay = 2.88f;
+                Level.Instance.LevelBridge = 2.5f;
                 _nextLevel = 3;
                 
                 Level.TickTime = 60f / 100 / 3f;
@@ -207,9 +208,10 @@ public class LevelSpawner
                     }
                 };
                 Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L2;
-                Level.Instance.MusicStart = 13.8f;
-                Level.Instance.MusicDelay = 2.5f;
-                Level.TickTime = 60f / 135 / 3f;
+//                Level.Instance.MusicStart = 13.8f;
+                Level.Instance.MusicDelay = 2.0f;
+                Level.Instance.LevelBridge = 2.5f;
+                Level.TickTime = 60f / 130 / 3f;
                 _nextLevel = 4;
                 Distance = 5;
                 
@@ -266,7 +268,8 @@ public class LevelSpawner
                 Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L3;
                 Level.Instance.MusicStart = 0f;
                 Level.Instance.MusicDelay = 2f;
-                Level.Instance.BeatOffset = 0.137f;
+                Level.Instance.BeatOffset = 0.167f;
+                Level.Instance.LevelBridge = 2.5f;
                 
                 Level.TickTime = 60f / 150 / 3f;
                 _nextLevel = 5;
@@ -560,14 +563,38 @@ public class LevelSpawner
                     }
                     var cs = CameraScript.Instance;
                     Utils.Animate(cs.SwitchProgress, 1f, 0.1f, (v) => cs.SwitchProgress = v, null, true);
-                    Utils.InvokeDelayed(() =>
+                    var nextLevel = _cl >= _patterns.Count;
+                    if (nextLevel)
                     {
-                        Utils.Animate(1f, 0f, 0.2f, (v) => cs.SwitchProgress = v, null, true);
-                        if (_cl >= _patterns.Count)
+                        Utils.InvokeDelayed(() =>
+                        {                            
+                            var p = Pattern.Instance;
+                            p.Reset();
+                            p.NextLevel(2);
+                        }, Level.Instance.LevelBridge / 4);
+                        Utils.InvokeDelayed(() =>
+                        {
+                            var p = Pattern.Instance;
+                            p.Reset();
+                            p.NextLevel(1);
+                        }, Level.Instance.LevelBridge / 2);
+                        Utils.InvokeDelayed(() =>
+                        {    
+                            var p = Pattern.Instance;
+                            p.Reset();
+                        }, Level.Instance.LevelBridge / 4 * 3);
+                        Utils.InvokeDelayed(() =>
                         {
                             Level.CurrentLevel = _nextLevel;
                             Level.NextLevelStart = true;
                             Level.Instance.OnEnable();
+                        }, Level.Instance.LevelBridge);
+                    }
+                    Utils.InvokeDelayed(() =>
+                    {
+                        Utils.Animate(1f, 0f, 0.2f, (v) => cs.SwitchProgress = v, null, true);
+                        if (nextLevel)
+                        {
                             return;
                         }
                         UnitedTint.Tint = _switchColors[0];

@@ -26,7 +26,7 @@ public class Level : MonoBehaviour
 	public AudioClip L1, L2, L3, Over;
 	public Text BT;
 	public Text ControlsText, BestTimeText;
-	public float MusicStart, MusicDelay, BeatOffset = 0f;
+	public float MusicStart, MusicDelay, BeatOffset, LevelBridge;
 	public static bool Tutorial;
 
 	public Level()
