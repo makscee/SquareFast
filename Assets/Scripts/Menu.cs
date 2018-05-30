@@ -91,16 +91,16 @@ public class Menu : MonoBehaviour
         }
         if (!CanvasHidden && (Input.anyKeyDown || Input.touchCount > 0))
         {
-            CanvasHidden = true;
             CameraScript.Instance.SwitchScene(() =>
             {
                 if (Level.Tutorial)
                 {
-                    Destroy(Player.Instance.gameObject);
+//                    Destroy(Player.Instance.gameObject);
                     Level.CurrentLevel = 0;
                     gameObject.SetActive(false);
                     Level.Instance.gameObject.SetActive(true);
                 }
+                CanvasHidden = true;
                 HintCanvas.SetActive(false);
             });
         }
@@ -175,6 +175,7 @@ public class Menu : MonoBehaviour
         {
             CameraScript.Instance.SwitchScene(Confirm);
         }, true);
+        Debug.Log(Player.Instance);
         if (Player.Instance == null && !Level.Tutorial)
         {
             Player.Prefab.Instantiate();
@@ -264,7 +265,12 @@ public class Menu : MonoBehaviour
             }),
             new MenuItem("RESET", () =>
             {
-                PlayerData.Instance.TutorialComplete = false;
+                PlayerData.Instance = new PlayerData();
+                var pd = PlayerData.Instance;
+                for (var i = 0; i < pd.Scores.Length; i++)
+                {
+                    PlayerPrefs.SetString("score" + i, "0");
+                }
                 UnitedTint.Tint = Color.white;
                 Saves.Save();
                 SceneManager.LoadScene(0);

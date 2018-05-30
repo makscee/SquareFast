@@ -43,7 +43,12 @@ public class Player : Unit
 		}
 		if (Input.GetKeyDown(KeyCode.T))
 		{
-			PlayerData.Instance.TutorialComplete = false;
+			PlayerData.Instance = new PlayerData();
+			var pd = PlayerData.Instance;
+			for (var i = 0; i < pd.Scores.Length; i++)
+			{
+				PlayerPrefs.SetString("score" + i, "0");
+			}
 			UnitedTint.Tint = Color.white;
 			Saves.Save();
 			SceneManager.LoadScene(0);

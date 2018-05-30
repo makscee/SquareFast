@@ -19,6 +19,11 @@ public class PlayerData
         {
             Scores[i] = "0";
         }
+        ID = SystemInfo.deviceUniqueIdentifier;
+        if (ID == SystemInfo.unsupportedIdentifier)
+        {
+            ID = UnityEngine.Random.Range(int.MinValue, int.MaxValue).ToString();
+        }
     }
     public override string ToString()
     {
@@ -66,9 +71,6 @@ public class Saves
         if (PlayerData.Instance == null)
         {
             var pd = new PlayerData();
-            pd.ID = SystemInfo.deviceUniqueIdentifier;
-            if (pd.ID == SystemInfo.unsupportedIdentifier)
-                pd.ID = UnityEngine.Random.Range(int.MinValue, int.MaxValue).ToString();
             PlayerData.Instance = pd;
             Debug.Log("Created " + PlayerData.Instance);
             Save();
