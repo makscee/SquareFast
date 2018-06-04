@@ -31,6 +31,7 @@ public class Player : Unit
 		{
 		    SceneManager.LoadScene(0);
 			UnitedTint.Tint = Color.white;
+			Time.timeScale = 1;
 		}
 		if (Input.GetKeyDown(KeyCode.R))
 		{
@@ -52,6 +53,8 @@ public class Player : Unit
 			UnitedTint.Tint = Color.white;
 			Saves.Save();
 			SceneManager.LoadScene(0);
+			Time.timeScale = 1;
+			UnitedTint.Multiplier = Color.white;
 		}
 		if (Input.touchCount > 0)
 		{
@@ -180,6 +183,7 @@ public class Player : Unit
 			else
 			{
 				SceneManager.LoadScene(0);
+				Time.timeScale = 1;
 			}
 		}
 		TakeDmg(this, 9999);
@@ -210,12 +214,14 @@ public class Player : Unit
 		{
 			Utils.Animate(1f, 0f, 0.5f, (v) => Level.Instance.AudioSource.volume += v);
 			Level.Updating = false;
+			CounterScript.Instance.Updating = false;
 			Utils.InvokeDelayed(() =>
 			{
 				Level.Instance.KillEverything(true);
 				CameraScript.Instance.SwitchScene(() =>
 				{
 					Level.Instance.OnEnable();
+					CounterScript.Instance.Text.text = "0.00";
 				});
 			}, 1f);
 		} else if (!Level.GameOver && !GameOverInstance)

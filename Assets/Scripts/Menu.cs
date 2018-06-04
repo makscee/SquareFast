@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -10,7 +11,7 @@ public class Menu : MonoBehaviour
     public Canvas WorldCanvas;
     public static Menu Instance;
     public GameObject HintCanvas;
-    public Text HintText;
+    public Text HintText, PressAnyKeyText;
     public AudioClip Click, Select;
     public GameObject LockIcon;
     private AudioSource _as;
@@ -82,17 +83,27 @@ public class Menu : MonoBehaviour
 
     private const float AnimationWindow = 0.2f;
 
-    public bool CanvasHidden = false;
+    public bool CanvasHidden;
+    private float _t;
     private void Update()
     {
         if (Player.Instance != null)
         {
             WorldCanvas.transform.position = Player.Instance.transform.position;
         }
+        if (!CanvasHidden)
+        {
+            _t += Time.deltaTime;
+            var k = (float)Math.Abs(Math.Sin(_t * 5) / 6) + 1f;
+            PressAnyKeyText.transform.localScale = new Vector3(k, k);
+        }
         if (!CanvasHidden && (Input.anyKeyDown || Input.touchCount > 0))
         {
             CameraScript.Instance.SwitchScene(() =>
             {
+                var p = Pattern.Instance; 
+                p.Reset();
+                UnitedTint.Tint = Color.white;
                 if (Level.Tutorial)
                 {
 //                    Destroy(Player.Instance.gameObject);
@@ -274,6 +285,7 @@ public class Menu : MonoBehaviour
                 UnitedTint.Tint = Color.white;
                 Saves.Save();
                 SceneManager.LoadScene(0);
+                Time.timeScale = 1;
             }),
             new MenuItem("QUIT", Application.Quit)
         };
@@ -410,5 +422,10 @@ public class Menu : MonoBehaviour
             _items = getFirstList();
             RefreshItems(true);
         }
+        var p = Pattern.Instance; 
+        p.SetPatterns(1);
+        p.Reset();
+        p.NextLevel(2);
+        UnitedTint.Tint = new Color(1f, 0.63f, 0.31f);
     }
 }

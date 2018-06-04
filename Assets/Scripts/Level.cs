@@ -105,6 +105,12 @@ public class Level : MonoBehaviour
 		GridMarks.Instance.RemoveTint(0);
 		GridMarks.Instance.RemoveTint(-1);
 		GridMarks.Instance.RemoveTint(1);
+		if (!IsFirstStart && Tutorial)
+		{
+			MusicDelay = 0.88f;
+			MusicStart = 2f;
+		}
+		IsFirstStart = false;
 		if (Tutorial && ControlsText.isActiveAndEnabled)
 		{
 			var c = ControlsText.color;
