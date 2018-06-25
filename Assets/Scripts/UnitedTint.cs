@@ -13,6 +13,7 @@ public class UnitedTint : MonoBehaviour
     private Color _color;
     private bool _initedColor;
     public Color OverrideColor = Color.black;
+    public bool Debug;
 
     public Color Color
     {
@@ -73,6 +74,10 @@ public class UnitedTint : MonoBehaviour
         } else if (_image)
         {
             _image.color = c;
+        }
+        if (Debug)
+        {
+            UnityEngine.Debug.Log(c);
         }
     }
 }

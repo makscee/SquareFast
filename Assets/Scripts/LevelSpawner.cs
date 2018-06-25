@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -127,7 +126,11 @@ public class LevelSpawner
             if (Level.Tutorial && _2hpTutorialSpawned < 2 && (u = next.GetComponent<Unit>()).HP == 2)
             {
                 _2hpTutorialSpawned++;
-                UnitHint.CreateUnitText("^\n2 HP", u);
+                var uh = UnitHint.CreateUnitText("^\n2 HP", u);
+                Utils.Animate(new Color(0.3f, 0.3f, 0.3f), new Color(0.9f, 0.9f, 0.9f), 3f, (c) =>
+                {
+                    uh.Tint.Color = c;
+                }, null, true);
             }
         }
         if (!_curPattern.Ended()) return;
