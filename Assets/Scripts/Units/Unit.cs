@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -80,9 +81,9 @@ public class Unit : MonoBehaviour
                 }
                 
                 Time.timeScale = 0.1f;
-                Utils.Animate(0.1f, 1f, 1f, (v) => Time.timeScale = v, null, true);
+                Utils.Animate(0.1f, 1f, 0.5f, (v) => Time.timeScale = v, null, true);
                 var camSize = Camera.main.orthographicSize;
-                Utils.Animate(camSize, camSize / 1.5f, 0.07f, (v) => Camera.main.orthographicSize += v);
+                Utils.Animate(camSize, camSize / 1.5f, 0.07f, (v) => Camera.main.orthographicSize += v, null, false, 0f, InterpolationType.InvSquare);
                 Utils.InvokeDelayed(() => Utils.Animate(Camera.main.orthographicSize, camSize, 0.2f, (v) => Camera.main.orthographicSize += v), 0.5f);
             }
             if (Player.Instance.TutorialHitChanceDir != 0)
@@ -94,7 +95,7 @@ public class Unit : MonoBehaviour
                 }
                 else
                 {
-                    Utils.Animate(0.1f, 1f, 0.3f, (v) =>
+                    Utils.Animate(0.1f, 1f, 0.1f, (v) =>
                     {
                         Time.timeScale = v;
                         Level.Instance.AudioSource.pitch = v;

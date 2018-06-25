@@ -156,13 +156,13 @@ public class Menu : MonoBehaviour
             Utils.Animate(new Vector3(ib * xT + offset, 8.5f - ib * 2f), new Vector3(i * xT + offset, 8.5f - i * 2f), AnimationWindow, (v) =>
             {
                 t.transform.position += v;
-            });
+            }, null, false, 0f, InterpolationType.InvSquare);
             var scale = menuItem.Scale / (i + 1) + scaleT;
             var scaleb = menuItem.Scale / (ib + 1) + scaleT;
             Utils.Animate(new Vector3(scaleb, scaleb), new Vector3(scale, scale), AnimationWindow, (v) =>
             {
                 t.transform.localScale += v;
-            });
+            }, null, false, 0f, InterpolationType.Square);
             var ut = t.GetComponent<UnitedTint>();
             Utils.Animate(menuItem.Fade ? 1f / (ib * fadeT + 1) : (ib == 0 ? 1 : 0),
                 menuItem.Fade ? 1f / (i * fadeT + 1) : (i == 0 ? 1 : 0), AnimationWindow, (v) =>
@@ -170,7 +170,7 @@ public class Menu : MonoBehaviour
                 var c = ut.Color;
                 c.a += v;
                 ut.Color = c;
-            });
+            }, null, false, 0f, InterpolationType.Square);
             i++;
         }
     }

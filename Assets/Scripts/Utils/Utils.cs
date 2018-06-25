@@ -3,6 +3,11 @@ using System.Collections;
 using System.Security.Cryptography;
 using UnityEngine;
 
+public enum InterpolationType
+{
+    Square, InvSquare, Linear
+}
+
 public static class Utils
 {
     public static int IntX(this Vector3 v)
@@ -25,37 +30,63 @@ public static class Utils
         return c;
     }
 
-    public static float Interpolate(float from, float to, float over, float t)
+    public static float Interpolate(float from, float to, float over, float t, InterpolationType type = InterpolationType.Linear)
     {
         var delta = Time.deltaTime;
         if (t + delta > over)
         {
             delta = Math.Max(0, over - t);
         }
-        return (to - from) / over * delta;
+        var segment = to - from;
+        var unit = t / over;
+        var val = 0f;
+        var deltaUnit = (t + delta) / over;
+        switch (type)
+        {
+            case InterpolationType.Linear:
+                val = delta / over;
+                break;
+            case InterpolationType.Square:
+                val = SquareVal(deltaUnit) - SquareVal(unit);
+                break;
+            case InterpolationType.InvSquare:
+                val = InvSquareVal(deltaUnit) - InvSquareVal(unit);
+                break;
+        }
+        return val * segment;
     }
 
-    public static void Animate(Vector3 from, Vector3 to, float over, Action<Vector3> onChange, MonoBehaviour obj = null, bool fullValue = false, float delay = 0f)
+    private static float InvSquareVal(float t)
+    {
+        return 1 - (1 - t) * (1 - t);
+    }
+
+    private static float SquareVal(float t)
+    {
+        return t * t;
+    }
+
+    public static void Animate(Vector3 from, Vector3 to, float over, Action<Vector3> onChange, MonoBehaviour obj = null, bool fullValue = false, float delay = 0f, InterpolationType type = InterpolationType.Linear)
     {
         obj = obj == null ? CameraScript.Instance : obj;
-        obj.StartCoroutine(Animation(from, to, over, onChange, fullValue, delay));
+        obj.StartCoroutine(Animation(from, to, over, onChange, fullValue, delay, type));
     }
 
-    public static void Animate(Color from, Color to, float over, Action<Color> onChange, MonoBehaviour obj = null, bool fullValue = false, float delay = 0f)
+    public static void Animate(Color from, Color to, float over, Action<Color> onChange, MonoBehaviour obj = null, bool fullValue = false, float delay = 0f, InterpolationType type = InterpolationType.Linear)
     {
         obj = obj == null ? CameraScript.Instance : obj;
         var fromVec = new Vector3(from.r, from.g, from.b);
         var toVec = new Vector3(to.r, to.g, to.b);
-        obj.StartCoroutine(Animation(fromVec, toVec, over, v => onChange(new Color(v.x, v.y, v.z)), fullValue, delay));
+        obj.StartCoroutine(Animation(fromVec, toVec, over, v => onChange(new Color(v.x, v.y, v.z)), fullValue, delay, type));
     }
 
-    public static void Animate(float from, float to, float over, Action<float> onChange, MonoBehaviour obj = null, bool fullValue = false, float delay = 0f)
+    public static void Animate(float from, float to, float over, Action<float> onChange, MonoBehaviour obj = null, bool fullValue = false, float delay = 0f, InterpolationType type = InterpolationType.Linear)
     {
         obj = obj == null ? CameraScript.Instance : obj;
-        obj.StartCoroutine(Animation(new Vector3(from, 0), new Vector3(to, 0), over, v => onChange(v.x), fullValue, delay));
+        obj.StartCoroutine(Animation(new Vector3(from, 0), new Vector3(to, 0), over, v => onChange(v.x), fullValue, delay, type));
     }
 
-    private static IEnumerator Animation(Vector3 from, Vector3 to, float over, Action<Vector3> action, bool fullValue, float delay)
+    private static IEnumerator Animation(Vector3 from, Vector3 to, float over, Action<Vector3> action, bool fullValue, float delay, InterpolationType type)
     {
         var unit = action.Target as Unit;
         if (unit != null)
@@ -67,9 +98,9 @@ public static class Utils
         var result = from;
         while (t < over)
         {
-            var x = Interpolate(from.x, to.x, over, t);
-            var y = Interpolate(from.y, to.y, over, t);
-            var z = Interpolate(from.z, to.z, over, t);
+            var x = Interpolate(from.x, to.x, over, t, type);
+            var y = Interpolate(from.y, to.y, over, t, type);
+            var z = Interpolate(from.z, to.z, over, t, type);
             var temp = new Vector3(x, y, z);
             result += temp;
             action(fullValue ? result : temp);
