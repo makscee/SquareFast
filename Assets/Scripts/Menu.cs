@@ -85,6 +85,7 @@ public class Menu : MonoBehaviour
 
     public bool CanvasHidden;
     private float _t;
+    private bool _canvasHideStarted;
     private void Update()
     {
         if (Player.Instance != null)
@@ -97,8 +98,9 @@ public class Menu : MonoBehaviour
             var k = (float)Math.Abs(Math.Sin(_t * 5) / 6) + 1f;
             PressAnyKeyText.transform.localScale = new Vector3(k, k);
         }
-        if (!CanvasHidden && (Input.anyKeyDown || Input.touchCount > 0))
+        if (!_canvasHideStarted && !CanvasHidden && (Input.anyKeyDown || Input.touchCount > 0))
         {
+            _canvasHideStarted = true;
             CameraScript.Instance.SwitchScene(() =>
             {
                 var p = Pattern.Instance; 
