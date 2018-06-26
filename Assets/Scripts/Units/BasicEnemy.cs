@@ -4,8 +4,22 @@ public class BasicEnemy : Unit
 {
     protected const int MovePeriod = 2;
     protected int MoveT = MovePeriod;
+    private bool _skipTurn, _skippedTurn;
     
     public static readonly Prefab Prefab = new Prefab("Enemies/SquareEnemy");
+
+    public bool SkipTurn
+    {
+        get { return _skipTurn; }
+        set
+        {
+            if (!value) _skipTurn = false;
+            if (_skippedTurn) return;
+            _skipTurn = true;
+            _skippedTurn = true;
+        }
+    }
+
     public override Prefab GetPrefab()
     {
         return Prefab;
@@ -32,6 +46,13 @@ public class BasicEnemy : Unit
         var dir = Player.Instance.Position.IntX() - Position.IntX();
         dir = dir > 0 ? 1 : -1;
 
+        if (_skipTurn)
+        {
+            _skipTurn = false;
+            MoveT = MovePeriod;
+            Scale = Vector3.one;
+            return true;
+        }
         if (!MoveOrAttack(dir)) return false;
         MoveT = MovePeriod;
         Scale = Vector3.one;

@@ -44,6 +44,22 @@ public class Unit : MonoBehaviour
             return true;
         }
         var atPos = Level.Instance.Get(pos);
+        if (Level.Updating && this is Player && atPos == null)
+        {
+            var newST = 1.0f * Level.Instance.AudioSource.timeSamples / 44100 + Level.Instance.BeatOffset;
+            var bt = Level.TickTime * 3;
+            if (newST - Math.Floor(newST / bt) * bt > bt / 4 * 3)
+            {
+                var nextPos = relDir * 2 + Position.IntX();
+                var atNextPos = Level.Instance.Get(nextPos);
+                if (atNextPos != null)
+                {
+                    Debug.LogWarning("Early hit");
+                    (atNextPos as BasicEnemy).SkipTurn = true;
+                }
+            }
+            
+        }
         if (atPos != null)
         {
             bool class1 = atPos is Player, class2 = this is Player;

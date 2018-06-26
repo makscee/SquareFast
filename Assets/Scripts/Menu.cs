@@ -188,7 +188,6 @@ public class Menu : MonoBehaviour
         {
             CameraScript.Instance.SwitchScene(Confirm);
         }, true);
-        Debug.Log(Player.Instance);
         if (Player.Instance == null && !Level.Tutorial)
         {
             Player.Prefab.Instantiate();

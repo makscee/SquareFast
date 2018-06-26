@@ -185,14 +185,15 @@ public class Level : MonoBehaviour
 	private void Update()
 	{
 		if (!_ticking) return;
-		var newST= 1.0f *AudioSource.timeSamples / 44100 + BeatOffset;
+		var newST= 1.0f * AudioSource.timeSamples / 44100 + BeatOffset;
 		if (Math.Floor(newST / TickTime) > Math.Floor(_sampleTime / TickTime))
 		{
 			TickUpdate();
 		}
 		_sampleTime = newST;
 	}
-	
+
+	public float SinceLastTick;
 	public void TickUpdate()
 	{
 		if (!Updating)
