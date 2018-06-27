@@ -44,22 +44,22 @@ public class Unit : MonoBehaviour
             return true;
         }
         var atPos = Level.Instance.Get(pos);
-        if (Level.Updating && this is Player && atPos == null)
-        {
-            var newST = 1.0f * Level.Instance.AudioSource.timeSamples / 44100 + Level.Instance.BeatOffset;
-            var bt = Level.TickTime * 3;
-            if (newST - Math.Floor(newST / bt) * bt > bt / 4 * 3)
-            {
-                var nextPos = relDir * 2 + Position.IntX();
-                var atNextPos = Level.Instance.Get(nextPos);
-                if (atNextPos != null)
-                {
-                    Debug.LogWarning("Early hit");
-                    (atNextPos as BasicEnemy).SkipTurn = true;
-                }
-            }
-            
-        }
+//        if (Level.Updating && this is Player && atPos == null)
+//        {
+//            var newST = 1.0f * Level.Instance.AudioSource.timeSamples / 44100 + Level.Instance.BeatOffset;
+//            var bt = Level.TickTime * 3;
+//            if (newST - Math.Floor(newST / bt) * bt > bt / 4 * 3)
+//            {
+//                var nextPos = relDir * 2 + Position.IntX();
+//                var atNextPos = Level.Instance.Get(nextPos);
+//                if (atNextPos != null)
+//                {
+//                    Debug.LogWarning("Early hit");
+//                    (atNextPos as BasicEnemy).SkipTurn = true;
+//                }
+//            }
+//            
+//        }
         if (atPos != null)
         {
             bool class1 = atPos is Player, class2 = this is Player;
@@ -144,6 +144,21 @@ public class Unit : MonoBehaviour
             this, false, awHalf);
         Utils.Animate(change, Vector3.zero, awHalf, v => transform.localScale += v,
             this, false, awHalf);
+        var p = this as Player;
+        if (p != null)
+        {
+            var vec = relDir > 0 ? new Vector3(0.5f, 0f) : new Vector3(-0.5f, 0f);
+            Utils.Animate(Vector3.zero, vec, AnimationWindow / 2, (v) =>
+            {
+                p.Spikes.transform.localPosition += v;
+                p.Spikes.transform.localScale += v * 5;
+            }, this);
+            Utils.Animate(vec, Vector3.zero, AnimationWindow / 2, (v) =>
+            {
+                p.Spikes.transform.localPosition += v;
+                p.Spikes.transform.localScale += v * 5;
+            }, this, false, AnimationWindow);
+        }
     }
 
     public void Move(int relDir, bool onlyAnim = false)
@@ -191,6 +206,21 @@ public class Unit : MonoBehaviour
         Utils.InvokeDelayed(() => Utils.Animate(change, Vector3.zero, AnimationWindow / 2,
             v => transform.localScale += v,
             this), AnimationWindow / 3 * 2, this);
+        var p = this as Player;
+        if (p != null)
+        {
+            var vec = relDir > 0 ? new Vector3(0.5f, 0f) : new Vector3(-0.5f, 0f);
+            Utils.Animate(Vector3.zero, vec, AnimationWindow / 2, (v) =>
+            {
+                p.Spikes.transform.localPosition += v;
+                p.Spikes.transform.localScale += v * 5;
+            }, this);
+            Utils.Animate(vec, Vector3.zero, AnimationWindow / 2, (v) =>
+            {
+                p.Spikes.transform.localPosition += v;
+                p.Spikes.transform.localScale += v * 5;
+            }, this, false, AnimationWindow);
+        }
 
         if (!onlyAnim) Level.Instance.Move(Position.IntX() + relDir, this);
         Position += new Vector3(relDir, 0, 0);

@@ -28,6 +28,8 @@ public class Level : MonoBehaviour
 	public Text ControlsText, BestTimeText;
 	public float MusicStart, MusicDelay, BeatOffset, LevelBridge;
 	public static bool Tutorial;
+	[NonSerialized] public static bool DebugSlowMo = false;
+	[NonSerialized] public static float DebugSlowMoVal = 0.5f;
 
 	public Level()
 	{
@@ -59,6 +61,16 @@ public class Level : MonoBehaviour
 
 	public void OnEnable()
 	{
+		if (DebugSlowMo)
+		{
+			Time.timeScale = 0.4f;
+			AudioSource.pitch = 0.4f;
+		}
+		else
+		{
+			Time.timeScale = 1f;
+			AudioSource.pitch = 1f;
+		}
 		Spawning = false;
 		Updating = true;
 		GameOver = false;
@@ -127,7 +139,7 @@ public class Level : MonoBehaviour
 	public void StartLevel()
 	{
 		Spawning = true;
-		var delay = NextLevelStart ?  0 : MusicDelay;
+		var delay = NextLevelStart || DebugSlowMo ? 0 : MusicDelay;
 
 		_ticking = false;
 		Utils.InvokeDelayed(() => _ticking = true, delay);

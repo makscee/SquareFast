@@ -13,6 +13,7 @@ public class Player : Unit
 	public bool HasTutorialHitChance = true;
 	public int TutorialHitChanceDir = 0;
 	private bool _tutSpawned;
+	public GameObject Spikes;
 
 	private void Awake()
 	{
@@ -27,12 +28,6 @@ public class Player : Unit
 		}
 		bool leftDown = Input.GetButtonDown("Left"),
 			rightDown = Input.GetButtonDown("Right");
-		if (Input.GetKeyDown(KeyCode.Escape))
-		{
-		    SceneManager.LoadScene(0);
-			UnitedTint.Tint = Color.white;
-			Time.timeScale = 1;
-		}
 		if (Input.GetKeyDown(KeyCode.R))
 		{
 			TakeDmg(this, 999);
@@ -41,20 +36,6 @@ public class Player : Unit
 		if (Input.GetKeyDown(KeyCode.G))
 		{
 			Godmode = !Godmode;
-		}
-		if (Input.GetKeyDown(KeyCode.T))
-		{
-			PlayerData.Instance = new PlayerData();
-			var pd = PlayerData.Instance;
-			for (var i = 0; i < pd.Scores.Length; i++)
-			{
-				PlayerPrefs.SetString("score" + i, "0");
-			}
-			UnitedTint.Tint = Color.white;
-			Saves.Save();
-			SceneManager.LoadScene(0);
-			Time.timeScale = 1;
-			UnitedTint.Multiplier = Color.white;
 		}
 		if (Input.touchCount > 0)
 		{
