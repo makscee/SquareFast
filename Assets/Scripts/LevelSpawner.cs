@@ -566,6 +566,13 @@ public class LevelSpawner
                     }
                     var cs = CameraScript.Instance;
                     Utils.Animate(cs.SwitchProgress, 1f, 0.1f, (v) => cs.SwitchProgress = v, null, true);
+                    if (Level.CurrentLevel == 0 && !_fLevelBordersExpanded)
+                    {
+                        _fLevelBordersExpanded = true;
+                        GridMarks.Instance.RemoveTint(-1);
+                        GridMarks.Instance.RemoveTint(1);
+                        GridMarks.Instance.SetBorders(-1, 1);
+                    }
                     var nextLevel = _cl >= _patterns.Count;
                     if (nextLevel)
                     {
@@ -634,4 +641,6 @@ public class LevelSpawner
             a();
         };
     }
+
+    private bool _fLevelBordersExpanded;
 }

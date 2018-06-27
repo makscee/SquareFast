@@ -38,8 +38,8 @@ public class GridMarks : MonoBehaviour
         border.transform.SetParent(transform);
     }
 
-    public void Set(string lText, string rText, int lPos, int rPos, int lSize, int rSize, Action lAction, Action rAction, bool lSolid = false,
-        bool rSolid = false)
+    public void Set(string lText, string rText, int lPos, int rPos, int lSize, int rSize,
+        Action lAction, Action rAction, bool lSolid = false, bool rSolid = false)
     {
         LeftText.text = lText;
         RightText.text = rText;
@@ -69,6 +69,11 @@ public class GridMarks : MonoBehaviour
     public void RemoveTint(int i)
     {
         _marks[i].GetComponent<UnitedTint>().OverrideColor = Color.white;
+    }
+
+    public void BringBackTint(int i)
+    {
+        _marks[i].GetComponent<UnitedTint>().OverrideColor = Color.black;
     }
 
     public void ShiftBorder(int dir)

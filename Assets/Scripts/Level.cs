@@ -75,7 +75,6 @@ public class Level : MonoBehaviour
 		Updating = true;
 		GameOver = false;
 		_started = false;
-		Debug.Log(PlayerData.Instance.Scores[CurrentLevel]);
 		if (PlayerData.Instance.Scores[CurrentLevel] != "0")
 		{
 			BT.gameObject.SetActive(true);
@@ -112,11 +111,18 @@ public class Level : MonoBehaviour
 		Action a = () =>
 		{
 		};
-		GridMarks.Instance.Set("", "", -1, 1, -offset, offset, a, a, true, true);
+		if (CurrentLevel == 0 && !Tutorial)
+		{
+			GridMarks.Instance.Set("", "", 0, 0, -offset, offset, a, a, true, true);
+		}
+		else
+		{
+			GridMarks.Instance.Set("", "", -1, 1, -offset, offset, a, a, true, true);
+			GridMarks.Instance.RemoveTint(-1);
+			GridMarks.Instance.RemoveTint(1);			
+		}
 		GridMarks.Instance.DisplayBorders(false);
 		GridMarks.Instance.RemoveTint(0);
-		GridMarks.Instance.RemoveTint(-1);
-		GridMarks.Instance.RemoveTint(1);
 		if (!IsFirstStart && Tutorial)
 		{
 			MusicDelay = 0.88f;

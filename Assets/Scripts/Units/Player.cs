@@ -115,6 +115,9 @@ public class Player : Unit
 					u2.DieEvent += () =>
 					{
 						Level.Instance.StartLevel();
+						GridMarks.Instance.BringBackTint(-1);
+						GridMarks.Instance.BringBackTint(1);
+						GridMarks.Instance.SetBorders(0, 0);
 					};
 				};
 				ud1.DieEvent += () =>
@@ -128,6 +131,9 @@ public class Player : Unit
 					u2.DieEvent += () =>
 					{
 						Level.Instance.StartLevel();
+						GridMarks.Instance.BringBackTint(-1);
+						GridMarks.Instance.BringBackTint(1);
+						GridMarks.Instance.SetBorders(0, 0);
 					};
 				};
 			};
@@ -202,6 +208,9 @@ public class Player : Unit
 				CameraScript.Instance.SwitchScene(() =>
 				{
 					Level.Instance.OnEnable();
+					GridMarks.Instance.BringBackTint(-1);
+					GridMarks.Instance.BringBackTint(1);
+					GridMarks.Instance.SetBorders(0, 0);
 					CounterScript.Instance.Text.text = "0.00";
 				});
 			}, 1f);
