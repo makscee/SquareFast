@@ -566,12 +566,23 @@ public class LevelSpawner
                     }
                     var cs = CameraScript.Instance;
                     Utils.Animate(cs.SwitchProgress, 1f, 0.1f, (v) => cs.SwitchProgress = v, null, true);
-                    if (Level.CurrentLevel == 0 && !_fLevelBordersExpanded)
+                    if (Level.CurrentLevel == 0)
                     {
-                        _fLevelBordersExpanded = true;
-                        GridMarks.Instance.RemoveTint(-1);
-                        GridMarks.Instance.RemoveTint(1);
-                        GridMarks.Instance.SetBorders(-1, 1);
+                        if (_cl == 1)
+                        {
+                            GridMarks.Instance.RemoveTint(-1);
+                            GridMarks.Instance.RemoveTint(1);
+                            GridMarks.Instance.SetBorders(-1, 1);
+                            GridMarks.Instance.DisplayBorders(true, false);
+                        } else if (_cl == 2)
+                        {
+                            GridMarks.Instance.DisplayBorders(false);
+                            GridMarks.Instance.LeftSolid = false;
+                            GridMarks.Instance.RightSolid = false;
+                            Action ad = () => Player.Instance.TakeDmg(Player.Instance, 999);
+                            GridMarks.Instance.HandlerLeft = ad;
+                            GridMarks.Instance.HandlerRight = ad;
+                        }
                     }
                     var nextLevel = _cl >= _patterns.Count;
                     if (nextLevel)

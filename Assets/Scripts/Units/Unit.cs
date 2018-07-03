@@ -146,14 +146,14 @@ public class Unit : MonoBehaviour
         }
 
         Move(relDir);
-        if (this is Player)
-        {
-            var atBehind = Level.Instance.Get(Position.IntX() - relDir * 2);
-            if (atBehind != null)
-            {
-                atBehind.Move(relDir);
-            }
-        }
+//        if (this is Player)
+//        {
+//            var atBehind = Level.Instance.Get(Position.IntX() - relDir * 2);
+//            if (atBehind != null)
+//            {
+//                atBehind.Move(relDir);
+//            }
+//        }
         return true;
     }
 

@@ -60,10 +60,20 @@ public class GridMarks : MonoBehaviour
         RightText.text = rText;
     }
 
-    public void DisplayBorders(bool v)
+    public void DisplayBorders(bool v, bool tinted = true)
     {
         LeftBorder.SetActive(v);
         RightBorder.SetActive(v);
+        if (!tinted)
+        {
+            LeftBorder.GetComponent<UnitedTint>().OverrideColor = Color.white;
+            RightBorder.GetComponent<UnitedTint>().OverrideColor = Color.white;
+        }
+        else
+        {
+            LeftBorder.GetComponent<UnitedTint>().OverrideColor = Color.black;
+            RightBorder.GetComponent<UnitedTint>().OverrideColor = Color.black;
+        }
     }
 
     public void RemoveTint(int i)
