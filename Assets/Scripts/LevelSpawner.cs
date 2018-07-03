@@ -607,9 +607,16 @@ public class LevelSpawner
                         {
                             return;
                         }
-                        UnitedTint.Tint = _switchColors[0];
-                        CameraScript.ChangeColorTinted(UnitedTint.Tint);
-                        _switchColors.RemoveAt(0);
+                        if (_switchColors.Count > 0)
+                        {
+                            UnitedTint.Tint = _switchColors[0];
+                            CameraScript.ChangeColorTinted(UnitedTint.Tint);
+                            _switchColors.RemoveAt(0);
+                        }
+                        else
+                        {
+                            Debug.LogError("Switch colors empty! " + _cl + " " + _ci);
+                        }
                         Pattern.Instance.NextLevel();
                     }, 0.2f);
                 }, Level.TickTime * 2);

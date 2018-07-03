@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>SquareFast</title>
+  <style>
+   body {
+	   background:url(img/tri_inner_rb.png) fixed no-repeat bottom right, 
+			url(img/tri_inner_rt.png) fixed no-repeat top right,
+			url(img/tri_inner_lt.png) fixed no-repeat top left,
+			url(img/tri_inner_lb.png) fixed no-repeat bottom left,
+			url(img/tri_outer_rb.png) fixed no-repeat bottom right, 
+			url(img/tri_outer_rt.png) fixed no-repeat top right,
+			url(img/tri_outer_lt.png) fixed no-repeat top left,
+			url(img/tri_outer_lb.png) fixed no-repeat bottom left;
+	   background-size: 150px 150px, 150px 150px, 150px 150px, 150px 150px, 300px 300px, 300px 300px, 300px 300px, 300px 300px;
+	   background-color: #362211;
+	}
+   @font-face {
+    font-family: fff;
+    src: url(fonts/fff.ttf);
+   }
+   P {
+    font-family: fff;
+   }
+   .button:link, .button:visited {
+		font-family: fff;
+		background-color: #B27037;
+		color: white;
+		padding: 14px 25px;
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+	}
+
+	.button:hover, .button:active {
+		background-color: #FFA14F;
+	}
+      
+  </style>
+ </head>
+ <body>
+  <div style="color: white;" align="center">
+		<a class="button" href='#' id="showWebglButton" onclick="document.getElementById('webglPlayer').innerHTML =  '&lt;iframe src=&quot;webgl_test/index.html&quot; style=&quot;border:0px #000000 none;&quot; name=&quot;SquareFast&quot; scrolling=&quot;no&quot; frameborder=&quot;1&quot; height=&quot;600px&quot; width=&quot;1000px&quot;&gt;&lt;/iframe&gt;';  document.getElementById('showWebglButton').style.display = 'none';" onmouseout="if (this.style.display === 'none') document.getElementById('webglPlayer').scrollIntoView(true);">Play</a>
+		<div id="webglPlayer"></div>
+  </div>
+
+  </body>
+</html>

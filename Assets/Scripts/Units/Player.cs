@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class Player : Unit
 {
 	public static Player Instance;
+	public int PushTicks = -1;
 	public static bool Godmode;
 	public static Prefab Prefab = new Prefab("Player");
 	public bool GameOverInstance = false;

@@ -37,6 +37,10 @@ public class Unit : MonoBehaviour
         {
             return true;
         }
+        if (Player.Instance.HP <= 0)
+        {
+            return true;
+        }
         var pos = relDir + Position.IntX();
         
         if (Math.Abs(pos) > Level.Size / 2)
@@ -94,7 +98,26 @@ public class Unit : MonoBehaviour
                     (this as CircleEnemy).Swallow();
                     return false;
                 }
-                
+                if (Player.Instance.PushTicks == Level.Ticks)
+                {
+                    return true;
+                }
+                var nextPos = relDir * 2 + Position.IntX();
+                var atNextPos = Level.Instance.Get(nextPos);
+                if (atNextPos == null)
+                {
+                    var gm = GridMarks.Instance;
+                    if (!(gm.RightBorder.transform.position.x < nextPos) &&
+                        !(gm.LeftBorder.transform.position.x > nextPos))
+                    {
+                        Player.Instance.Move(relDir, false, true);
+                        Player.Instance.PushTicks = Level.Ticks;
+                        Move(relDir);
+//                    AttackAnim(relDir);
+                        return true;
+                    }
+                }
+                if (atNextPos != null) atNextPos.AttackAnim(-relDir);
                 Time.timeScale = 0.1f;
                 Utils.Animate(0.1f, 1f, 0.5f, (v) => Time.timeScale = v, null, true);
                 var camSize = Camera.main.orthographicSize;
@@ -123,6 +146,14 @@ public class Unit : MonoBehaviour
         }
 
         Move(relDir);
+        if (this is Player)
+        {
+            var atBehind = Level.Instance.Get(Position.IntX() - relDir * 2);
+            if (atBehind != null)
+            {
+                atBehind.Move(relDir);
+            }
+        }
         return true;
     }
 
@@ -161,7 +192,7 @@ public class Unit : MonoBehaviour
         }
     }
 
-    public void Move(int relDir, bool onlyAnim = false)
+    public void Move(int relDir, bool onlyAnim = false, bool noSpikes = false)
     {
         if (this is Player)
         {
@@ -207,7 +238,7 @@ public class Unit : MonoBehaviour
             v => transform.localScale += v,
             this), AnimationWindow / 3 * 2, this);
         var p = this as Player;
-        if (p != null)
+        if (p != null && !noSpikes)
         {
             var vec = relDir > 0 ? new Vector3(0.5f, 0f) : new Vector3(-0.5f, 0f);
             Utils.Animate(Vector3.zero, vec, AnimationWindow / 2, (v) =>

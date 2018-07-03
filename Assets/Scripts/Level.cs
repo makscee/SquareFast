@@ -212,6 +212,7 @@ public class Level : MonoBehaviour
 	}
 
 	public float SinceLastTick;
+
 	public void TickUpdate()
 	{
 		if (!Updating)
@@ -239,27 +240,37 @@ public class Level : MonoBehaviour
 		if (Spawning) _levelSpawner.TickUpdate();
 		var units = _grid.GetAllUnits();
 		var ticked = false;
-		foreach (var unit in units)
+
+		var c = 0;
+		for (var i = 0; i < units.Count; i++)
 		{
+			var unit = units[i];
 			unit.TickAnimations();
-		}
-		while (true)
-		{
-			var filtered = new List<Unit>();
-			foreach (var unit in units)
+			if (unit.Position.IntX() == Player.Instance.Position.IntX() + 1
+			    || unit.Position.IntX() == Player.Instance.Position.IntX() - 1)
 			{
-				var result = unit.TickUpdate();
-				if (result)
-				{
-					ticked = true;
-					continue;
-				}
-				filtered.Add(unit);
+				units[i] = units[c];
+				units[c] = unit;
+				c++;
 			}
-			if (filtered.Count == 0 || !ticked) break;
-			ticked = false;
-			units = filtered;
 		}
+		var limit = 500;
+		while (limit > 0)
+		{
+			limit--;
+			ticked = false;
+			for (var i = 0; i < units.Count; i++)
+			{
+				var unit = units[i];
+				var result = unit.TickUpdate();
+				if (!result) continue;
+				ticked = true;
+				units.RemoveAt(i);
+				i--;
+			}
+			if (!ticked || units.Count == 0) break;
+		}
+		if (limit == 0) Debug.LogWarning("Tick update cycle limit reached");
 	}
 
 	public void InitPos(Unit unit)
