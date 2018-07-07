@@ -27,7 +27,7 @@ public class Level : MonoBehaviour
 	public Text BT;
 	public Text ControlsText, BestTimeText;
 	public float MusicStart, MusicDelay, BeatOffset, LevelBridge;
-	public static bool Tutorial;
+	public static bool Tutorial, JustFinishedTutorial;
 	[NonSerialized] public static bool DebugSlowMo = false;
 	[NonSerialized] public static float DebugSlowMoVal = 0.5f;
 
@@ -123,6 +123,14 @@ public class Level : MonoBehaviour
 			GridMarks.Instance.LeftSolid = false;
 			GridMarks.Instance.RightSolid = false;
 			GridMarks.Instance.DisplayBorders(false);
+		}
+		if (Tutorial)
+		{
+			GridMarks.Instance.HandlerLeft = a;
+			GridMarks.Instance.HandlerRight = a;
+			GridMarks.Instance.LeftSolid = true;
+			GridMarks.Instance.RightSolid = true;
+			GridMarks.Instance.DisplayBorders(true, false);
 		}
 		GridMarks.Instance.RemoveTint(0);
 		if (!IsFirstStart && Tutorial)
@@ -289,6 +297,7 @@ public class Level : MonoBehaviour
 	private const float GOAnimationTime = 1f;
 	public void EnterGameOver()
 	{
+		NextLevelStart = false;
 		GameOverStartAction();
 		var score = TimeText.text;
 		if (string.IsNullOrEmpty(PlayerData.Instance.Scores[StartedLevel]) || float.Parse(score) > float.Parse(PlayerData.Instance.Scores[StartedLevel]))
@@ -320,8 +329,10 @@ public class Level : MonoBehaviour
 		var ct = rtut.Color;
 		ct = new Color(ct.r, ct.g, ct.b, 0);
 		var tt = TimeText.color;
-		Utils.InvokeDelayed(() =>
+		Action killerEvent = () => { };
+		Action a = () => Utils.InvokeDelayed(() =>
 		{
+			JustFinishedTutorial = false;
 			gm.Set("< RESTART", "QUIT >", -3, 1, -3, 1, () =>
 			{
 				if (!GameOver) return;
@@ -338,6 +349,7 @@ public class Level : MonoBehaviour
 					Menu.Instance.RefreshItems(true);
 				});
 			});
+			gm.DisplayBorders(false);
 			
 			Utils.Animate(0f, 1f, GOAnimationTime / 4, (v) =>
 			{
@@ -353,10 +365,21 @@ public class Level : MonoBehaviour
 				BestTimeText.color = tt;
 			});
 		}, GOAnimationTime * 0.75f);
+
+		if (JustFinishedTutorial && Killer != null)
+		{
+			gm.Set("", "", -3, 1, -3, 1, () => { }, () => { }, true, true);
+			killerEvent = a;
+			gm.DisplayBorders(true);
+		}
+		else
+		{
+			a();
+		}
 		Utils.InvokeDelayed(() =>
 		{
 			RespawnGOUnits();
-			RespawnKiller();
+			RespawnKiller(killerEvent);
 			GameOverAction();
 		}, GOAnimationTime);
 	}
@@ -380,7 +403,7 @@ public class Level : MonoBehaviour
 //		InvokeRepeating("TickUpdate", 0f, TickTime);
 	}
 
-	private void RespawnKiller()
+	private void RespawnKiller(Action dieEvent = null)
 	{
 		if (!GameOver)
 		{
@@ -396,8 +419,9 @@ public class Level : MonoBehaviour
 		unit.HP = KillerHP;
 		unit.DieEvent += () =>
 		{
-			Utils.InvokeDelayed(RespawnKiller, 1f);
+			Utils.InvokeDelayed(() => RespawnKiller(), 1f);
 		};
+		unit.DieEvent += dieEvent;
 		go.transform.position = new Vector3(-2, 0, 0);
 		go.GetComponent<SpriteRenderer>().color = new Color(0.3f, 0.3f, 0.3f);
 	}
@@ -413,6 +437,7 @@ public class Level : MonoBehaviour
 		Enemies.Clear();
 		var ct = 1f;
 		var tt = TimeText.color;
+		Killer = null;
 		
 		Utils.Animate(1f, 0f, GOAnimationTime / 4, (v) =>
 		{

@@ -107,7 +107,7 @@ public class Unit : MonoBehaviour
                 if (atNextPos == null)
                 {
                     var gm = GridMarks.Instance;
-                    if (!(gm.RightBorder.transform.position.x < nextPos) &&
+                    if (!gm.LeftSolid || !(gm.RightBorder.transform.position.x < nextPos) &&
                         !(gm.LeftBorder.transform.position.x > nextPos))
                     {
                         Player.Instance.Move(relDir, false, true);
@@ -117,12 +117,19 @@ public class Unit : MonoBehaviour
                         return true;
                     }
                 }
+                if (Level.JustFinishedTutorial && Level.GameOver)
+                {
+                    return true;
+                }
                 if (atNextPos != null) atNextPos.AttackAnim(-relDir);
                 Time.timeScale = 0.1f;
                 Utils.Animate(0.1f, 1f, 0.5f, (v) => Time.timeScale = v, null, true);
                 var camSize = Camera.main.orthographicSize;
-                Utils.Animate(camSize, camSize / 1.5f, 0.07f, (v) => Camera.main.orthographicSize += v, null, false, 0f, InterpolationType.InvSquare);
-                Utils.InvokeDelayed(() => Utils.Animate(Camera.main.orthographicSize, camSize, 0.2f, (v) => Camera.main.orthographicSize += v), 0.5f);
+                Utils.Animate(camSize, camSize / 1.5f, 0.07f, (v) => Camera.main.orthographicSize += v, null, false, 0f,
+                    InterpolationType.InvSquare);
+                Utils.InvokeDelayed(
+                    () => Utils.Animate(Camera.main.orthographicSize, camSize, 0.2f,
+                        (v) => Camera.main.orthographicSize += v), 0.5f);
             }
             if (Player.Instance.TutorialHitChanceDir != 0)
             {
@@ -144,17 +151,61 @@ public class Unit : MonoBehaviour
             AttackAnim(relDir);
             return true;
         }
+        if (Level.Instance.Get(Position.IntX() + relDir * 2) is Player)
+        {
+            UpdateKiller(GetPrefab(), MaxHP);
+        }
 
         Move(relDir);
-//        if (this is Player)
-//        {
-//            var atBehind = Level.Instance.Get(Position.IntX() - relDir * 2);
-//            if (atBehind != null)
-//            {
-//                atBehind.Move(relDir);
-//            }
-//        }
+        if (!Level.Tutorial && this is Player)
+        {
+            var atBehind = Level.Instance.Get(Position.IntX() - relDir * 2);
+            if (atBehind != null)
+            {
+                atBehind.Move(relDir);
+            }
+        }
         return true;
+    }
+
+    private static Prefab[] killersPriorities = new []{
+        BasicEnemy.Prefab,
+        RhombusEnemy.Prefab,
+        CircleEnemy.Prefab,
+        TriangleEnemy.Prefab,
+        DownTriangleEnemy.Prefab
+    };
+
+    private static int _updateTicks = 0;
+    private static void UpdateKiller(Prefab p, int HP)
+    {
+        if (Level.Instance.Killer == null || (Level.Ticks - _updateTicks > 12 && (p != BasicEnemy.Prefab || HP > 1)))
+        {
+            Level.Instance.Killer = p;
+            Level.Instance.KillerHP = HP;
+            Debug.LogWarning("Killer = " + p + " " + Level.Instance.KillerHP );
+            _updateTicks = Level.Ticks;
+            return;
+        }
+        var k = false;
+        foreach (var prefab in killersPriorities)
+        {
+            if (Level.Instance.Killer == prefab)
+            {
+                k = true;
+            }
+            if (prefab == p)
+            {
+                if (k)
+                {
+                    Level.Instance.Killer = p;
+                    Level.Instance.KillerHP = Math.Max(HP, Level.Instance.KillerHP);
+                    Debug.LogWarning("Killer = " + p + " " + Level.Instance.KillerHP );
+                    _updateTicks = Level.Ticks;
+                }
+                return;
+            }
+        }
     }
 
     protected void AttackAnim(int relDir)
@@ -278,6 +329,7 @@ public class Unit : MonoBehaviour
             {
                 Level.Tutorial = false;
                 PlayerData.Instance.TutorialComplete = true;
+                Level.JustFinishedTutorial = true;
                 Saves.Save();
             }
             Die();

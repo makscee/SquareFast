@@ -192,6 +192,7 @@ public class Menu : MonoBehaviour
         {
             Player.Prefab.Instantiate();
         }
+        gm.DisplayBorders(false);
     }
 
     private List<MenuItem> getSecondList()

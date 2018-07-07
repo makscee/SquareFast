@@ -118,7 +118,9 @@ public class Player : Unit
 						Level.Instance.StartLevel();
 						GridMarks.Instance.BringBackTint(-1);
 						GridMarks.Instance.BringBackTint(1);
-						GridMarks.Instance.SetBorders(0, 0);
+//						GridMarks.Instance.SetBorders(0, 0);
+						GridMarks.Instance.ShiftBorder(1, false);
+						GridMarks.Instance.ShiftBorder(-1, false);
 					};
 				};
 				ud1.DieEvent += () =>
@@ -179,11 +181,12 @@ public class Player : Unit
 
 	public override bool TakeDmg(Unit source, int dmg = 1)
 	{
-		if (source != null)
-		{
-			Level.Instance.Killer = source.GetPrefab();
-			Level.Instance.KillerHP = source.MaxHP;
-		}
+		Level.JustFinishedTutorial = true;
+//		if (source != null)
+//		{
+//			Level.Instance.Killer = source.GetPrefab();
+//			Level.Instance.KillerHP = source.MaxHP;
+//		}
 		return base.TakeDmg(source, dmg);
 	}
 

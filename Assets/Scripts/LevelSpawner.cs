@@ -123,7 +123,7 @@ public class LevelSpawner
             v.x += v.x > 0 ? -centerOffset : centerOffset;
             next.transform.position = v;
             Unit u;
-            if (Level.Tutorial && _2hpTutorialSpawned < 2 && (u = next.GetComponent<Unit>()).HP == 2)
+            if (Level.Tutorial && _2hpTutorialSpawned < 1 && (u = next.GetComponent<Unit>()).HP == 2)
             {
                 _2hpTutorialSpawned++;
                 var uh = UnitHint.CreateUnitText("^\n2 HP", u);
@@ -177,8 +177,9 @@ public class LevelSpawner
                 {
                     new List<EnemyPattern>
                     {
-                        new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(Square).AddRight(Square)
-                            .AddLeft(Square, 2).AddRight(Square, 2),
+                        new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(Square).AddRight(Square).AddLeft(null)
+                            .AddRight(Square, 2),
+                        new EnemyPattern().AddLeft(Square).AddRight(Square).AddLeft(Square, 2).AddRight(Square).AddLeft(Square).AddRight(Square, 2),
                     },
                     new List<EnemyPattern>
                     {
@@ -327,7 +328,7 @@ public class LevelSpawner
                     }
                 };
                 Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L1;
-                Level.Instance.MusicStart = 9.7f;
+                Level.Instance.MusicStart = 0f;
                 Level.Instance.MusicDelay = 2f;
                 _nextLevel = 4;
                 
@@ -389,7 +390,7 @@ public class LevelSpawner
                     }
                 };
                 Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L2;
-                Level.Instance.MusicStart = 16.3f;
+                Level.Instance.MusicStart = 0f;
                 Level.Instance.MusicDelay = 2.5f;
                 Level.TickTime = 60f / 135 / 3f;
                 _nextLevel = 5;
@@ -452,7 +453,7 @@ public class LevelSpawner
                 if (!Level.NextLevelStart)
                 {
                     Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L3;
-                    Level.Instance.MusicStart = 16.3f;
+                    Level.Instance.MusicStart = 0f;
                     Level.Instance.MusicDelay = 2.5f;
                     Level.TickTime = 60f / 150 / 3f;
                 }
@@ -507,7 +508,7 @@ public class LevelSpawner
             case 6:
             {
                 Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L2;
-                Level.Instance.MusicStart = 16.3f;
+                Level.Instance.MusicStart = 0f;
                 Level.Instance.MusicDelay = 2.5f;
                 Level.TickTime = 60f / 160 / 3f;
                 _nextLevel = 6;
@@ -566,24 +567,6 @@ public class LevelSpawner
                     }
                     var cs = CameraScript.Instance;
                     Utils.Animate(cs.SwitchProgress, 1f, 0.1f, (v) => cs.SwitchProgress = v, null, true);
-                    if (Level.CurrentLevel == 0)
-                    {
-                        if (_cl == 1)
-                        {
-                            GridMarks.Instance.RemoveTint(-1);
-                            GridMarks.Instance.RemoveTint(1);
-                            GridMarks.Instance.SetBorders(-1, 1);
-                            GridMarks.Instance.DisplayBorders(true, false);
-                        } else if (_cl == 2)
-                        {
-                            GridMarks.Instance.DisplayBorders(false);
-                            GridMarks.Instance.LeftSolid = false;
-                            GridMarks.Instance.RightSolid = false;
-                            Action ad = () => Player.Instance.TakeDmg(Player.Instance, 999);
-                            GridMarks.Instance.HandlerLeft = ad;
-                            GridMarks.Instance.HandlerRight = ad;
-                        }
-                    }
                     var nextLevel = _cl >= _patterns.Count;
                     if (nextLevel)
                     {
@@ -614,6 +597,24 @@ public class LevelSpawner
                     Utils.InvokeDelayed(() =>
                     {
                         Utils.Animate(1f, 0f, 0.2f, (v) => cs.SwitchProgress = v, null, true);
+                        if (Level.CurrentLevel == 0)
+                        {
+                            if (_cl == 1)
+                            {
+                                GridMarks.Instance.RemoveTint(-1);
+                                GridMarks.Instance.RemoveTint(1);
+                                GridMarks.Instance.SetBorders(-1, 1);
+                                GridMarks.Instance.DisplayBorders(true, false);
+                            } else if (_cl == 2)
+                            {
+                                GridMarks.Instance.DisplayBorders(false);
+                                GridMarks.Instance.LeftSolid = false;
+                                GridMarks.Instance.RightSolid = false;
+                                Action ad = () => Player.Instance.TakeDmg(Player.Instance, 999);
+                                GridMarks.Instance.HandlerLeft = ad;
+                                GridMarks.Instance.HandlerRight = ad;
+                            }
+                        }
                         if (nextLevel)
                         {
                             return;
@@ -659,6 +660,4 @@ public class LevelSpawner
             a();
         };
     }
-
-    private bool _fLevelBordersExpanded;
 }

@@ -86,7 +86,7 @@ public class GridMarks : MonoBehaviour
         _marks[i].GetComponent<UnitedTint>().OverrideColor = Color.black;
     }
 
-    public void ShiftBorder(int dir)
+    public void ShiftBorder(int dir, bool resize = true)
     {
         if (dir == 1)
         {
@@ -95,11 +95,14 @@ public class GridMarks : MonoBehaviour
                 LeftBorder.transform.position += v;
                 LeftText.transform.position += v;
             });
-            for (var i = -MaxSize; i <= MaxSize; i++)
+            if (resize)
             {
-                if (!_marks[i].activeSelf) continue;
-                Deactivate(i);
-                break;
+                for (var i = -MaxSize; i <= MaxSize; i++)
+                {
+                    if (!_marks[i].activeSelf) continue;
+                    Deactivate(i);
+                    break;
+                }
             }
         }
         else
@@ -109,11 +112,14 @@ public class GridMarks : MonoBehaviour
                 RightBorder.transform.position -= v;
                 RightText.transform.position -= v;
             });
-            for (var i = MaxSize; i >= -MaxSize; i--)
+            if (resize)
             {
-                if (!_marks[i].activeSelf) continue;
-                Deactivate(i);
-                break;
+                for (var i = MaxSize; i >= -MaxSize; i--)
+                {
+                    if (!_marks[i].activeSelf) continue;
+                    Deactivate(i);
+                    break;
+                }
             }
         }
     }
