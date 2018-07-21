@@ -16,7 +16,7 @@ public class BeatBGEffect : MonoBehaviour
     private void Update()
     {
         _t += Time.deltaTime;
-        var st = Time.deltaTime * 10f;
+        var st = Utils.Interpolate(0f, 15f, _lifeTime, _t, InterpolationType.InvSquare);
         transform.localScale += new Vector3(st, st);
         var at = 1f - _t / _lifeTime;
         _ut.Color = _ut.Color.ChangeAlpha(at);

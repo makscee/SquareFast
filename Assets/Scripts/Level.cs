@@ -393,7 +393,7 @@ public class Level : MonoBehaviour
 		p.GameOverInstance = true;
 		p.DieEvent = () =>
 		{
-			if (GameOver) Utils.InvokeDelayed(RespawnGOUnits, 1f);
+			if (GameOver) Utils.InvokeDelayed(RespawnGOUnits, 0.5f);
 		};
 		Updating = true;
 		Spawning = false;
@@ -419,7 +419,7 @@ public class Level : MonoBehaviour
 		unit.HP = KillerHP;
 		unit.DieEvent += () =>
 		{
-			Utils.InvokeDelayed(() => RespawnKiller(), 1f);
+			Utils.InvokeDelayed(() => RespawnKiller(), 2f);
 		};
 		unit.DieEvent += dieEvent;
 		go.transform.position = new Vector3(-2, 0, 0);

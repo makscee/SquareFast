@@ -183,7 +183,7 @@ public class Unit : MonoBehaviour
         {
             Level.Instance.Killer = p;
             Level.Instance.KillerHP = HP;
-            Debug.LogWarning("Killer = " + p + " " + Level.Instance.KillerHP );
+//            Debug.LogWarning("Killer = " + p + " " + Level.Instance.KillerHP );
             _updateTicks = Level.Ticks;
             return;
         }
@@ -200,7 +200,7 @@ public class Unit : MonoBehaviour
                 {
                     Level.Instance.Killer = p;
                     Level.Instance.KillerHP = Math.Max(HP, Level.Instance.KillerHP);
-                    Debug.LogWarning("Killer = " + p + " " + Level.Instance.KillerHP );
+//                    Debug.LogWarning("Killer = " + p + " " + Level.Instance.KillerHP );
                     _updateTicks = Level.Ticks;
                 }
                 return;
