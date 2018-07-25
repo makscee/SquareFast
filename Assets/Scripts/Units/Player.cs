@@ -181,7 +181,7 @@ public class Player : Unit
 
 	public override bool TakeDmg(Unit source, int dmg = 1)
 	{
-		Level.JustFinishedTutorial = true;
+		Level.JustFinishedTutorial = Level.StartedLevel == 0;
 //		if (source != null)
 //		{
 //			Level.Instance.Killer = source.GetPrefab();

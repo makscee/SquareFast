@@ -297,6 +297,7 @@ public class Level : MonoBehaviour
 	private const float GOAnimationTime = 1f;
 	public void EnterGameOver()
 	{
+		ProgressLine.Instance.Updating = false;
 		NextLevelStart = false;
 		GameOverStartAction();
 		var score = TimeText.text;
@@ -432,6 +433,7 @@ public class Level : MonoBehaviour
 		Updating = true;
 		Spawning = true;
 		ExitGameOverAction();
+		ProgressLine.Instance.Reset();
 		Player.Instance.DieEvent = () => { };
 		KillEverything();
 		Enemies.Clear();

@@ -74,6 +74,7 @@ public class EnemyPattern
 public class LevelSpawner
 {
     public static int Distance = 8;
+    public const float SublevelTime = 15f;
 
     private static readonly Prefab Square = BasicEnemy.Prefab;
     private static readonly Prefab Triangle = TriangleEnemy.Prefab;
@@ -546,7 +547,6 @@ public class LevelSpawner
 
         _curPattern = _patterns[_cl][_ci];
         var distTime = Distance * Level.TickTime * 3;
-        const float sublevelTime = 15f;
         Action a = () =>
         {
             Utils.InvokeDelayed(() =>
@@ -570,6 +570,8 @@ public class LevelSpawner
                     var nextLevel = _cl >= _patterns.Count;
                     if (nextLevel)
                     {
+                        ProgressLine.Instance.Updating = false;
+                        Debug.LogWarning("STOP UPDATING");
                         Utils.InvokeDelayed(() =>
                         {                            
                             var p = Pattern.Instance;
@@ -592,6 +594,7 @@ public class LevelSpawner
                             Level.CurrentLevel = _nextLevel;
                             Level.NextLevelStart = true;
                             Level.Instance.OnEnable();
+                            ProgressLine.Instance.Reset();
                         }, Level.Instance.LevelBridge);
                     }
                     Utils.InvokeDelayed(() =>
@@ -615,10 +618,12 @@ public class LevelSpawner
                                 GridMarks.Instance.HandlerRight = ad;
                             }
                         }
+//                        ProgressLine.Create(-1f + (-0.2f * _cl));
                         if (nextLevel)
                         {
                             return;
                         }
+                        ProgressLine.Instance.StartNext();
                         if (_switchColors.Count > 0)
                         {
                             UnitedTint.Tint = _switchColors[0];
@@ -649,14 +654,15 @@ public class LevelSpawner
                 _curPattern = _patterns[_cl][_ci];
                 _spawning = false;
                 Utils.InvokeDelayed(() => _spawning = true, distTime / 2);
-            }, sublevelTime - distTime);
+            }, SublevelTime - distTime);
         };
         StartAction = () =>
         {
+            ProgressLine.Instance.StartNext();
             Utils.InvokeDelayed(() =>
             {
                 a();
-            }, sublevelTime, null, true);
+            }, SublevelTime, null, true);
             a();
         };
     }
