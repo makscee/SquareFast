@@ -162,7 +162,7 @@ public class Player : Unit
 		return base.MoveOrAttack(relDir);
 	}
 
-	public void HandleBoundries(bool left)
+	public void HandleBoundaries(bool left)
 	{
 		if (Level.GameOver && GameOverInstance)
 		{
@@ -203,6 +203,8 @@ public class Player : Unit
 		}
 		if (Level.Tutorial)
 		{
+			ProgressLine.Instance.Reset();
+			ProgressLine.Instance.Updating = false;
 			Utils.Animate(1f, 0f, 0.5f, (v) => Level.Instance.AudioSource.volume += v);
 			Level.Updating = false;
 			CounterScript.Instance.Updating = false;

@@ -38,6 +38,13 @@ public class ProgressLine : MonoBehaviour
     private float _t;
     private void Update()
     {
+        if (Player.Instance != null)
+        {
+            transform.position = new Vector3(
+                Player.Instance.transform.position.x,
+                transform.position.y,
+                transform.position.z);
+        }
         if (!Updating)
         {
             return;
