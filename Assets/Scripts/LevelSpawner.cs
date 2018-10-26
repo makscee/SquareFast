@@ -213,7 +213,7 @@ public class LevelSpawner
                     }
                 };
                 Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L2;
-//                Level.Instance.MusicStart = 13.8f;
+                Level.Instance.MusicStart = 0f;
                 Level.Instance.MusicDelay = 2.0f;
                 Level.Instance.LevelBridge = 2.5f;
                 Level.TickTime = 60f / 130 / 3f;
@@ -329,7 +329,7 @@ public class LevelSpawner
                     }
                 };
                 Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L1;
-                Level.Instance.MusicStart = 0f;
+                Level.Instance.MusicStart = 63.2f;
                 Level.Instance.MusicDelay = 2f;
                 _nextLevel = 4;
                 
@@ -391,9 +391,9 @@ public class LevelSpawner
                     }
                 };
                 Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L2;
-                Level.Instance.MusicStart = 0f;
-                Level.Instance.MusicDelay = 2.5f;
-                Level.TickTime = 60f / 135 / 3f;
+                Level.Instance.MusicStart = 62.8f;
+                Level.Instance.MusicDelay = 2f;
+                Level.TickTime = 60f / 130 / 3f;
                 _nextLevel = 5;
                 Distance = 5;
                 
@@ -450,13 +450,10 @@ public class LevelSpawner
                         BeatBGEffect.Create(2);
                     }
                 };
-                if (!Level.NextLevelStart)
-                {
-                    Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L3;
-                    Level.Instance.MusicStart = 0f;
-                    Level.Instance.MusicDelay = 2.5f;
-                    Level.TickTime = 60f / 150 / 3f;
-                }
+                Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L3;
+                Level.Instance.MusicStart = 0f;
+                Level.Instance.MusicDelay = 2f;
+                Level.TickTime = 60f / 150 / 3f;
                 _nextLevel = 6;
                 Distance = 5;
                 
