@@ -567,7 +567,6 @@ public class LevelSpawner
                     if (nextLevel)
                     {
                         ProgressLine.Instance.Updating = false;
-                        Debug.LogWarning("STOP UPDATING");
                         Utils.InvokeDelayed(() =>
                         {                            
                             var p = Pattern.Instance;

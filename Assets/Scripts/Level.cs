@@ -112,8 +112,10 @@ public class Level : MonoBehaviour
 		Action ad = () => Player.Instance.TakeDmg(Player.Instance, 999);
 		if (CurrentLevel == 0 && !Tutorial)
 		{
-			GridMarks.Instance.Set("", "", 0, 0, -offset, offset, a, a, true, true);
+			GridMarks.Instance.Set("", "", -1, 1, -offset, offset, a, a, true, true);
 			GridMarks.Instance.DisplayBorders(true, false);
+			GridMarks.Instance.RemoveTint(-1);
+			GridMarks.Instance.RemoveTint(1);
 		}
 		else
 		{
