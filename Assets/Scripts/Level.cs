@@ -23,9 +23,9 @@ public class Level : MonoBehaviour
 	private LevelSpawner _levelSpawner;
 	public AudioSource AudioSource;
 	public Text TimeText;
-	public AudioClip L1, L2, L3, Over;
+	public AudioClip L1, L2, L3, Over, NewBestTimeSound;
 	public Text BT;
-	public Text ControlsText, BestTimeText;
+	public Text ControlsText, BestTimeText, NewBestTimeText;
 	public float MusicStart, MusicDelay, BeatOffset, LevelBridge;
 	public static bool Tutorial, JustFinishedTutorial;
 	[NonSerialized] public static bool DebugSlowMo = false;
@@ -156,6 +156,7 @@ public class Level : MonoBehaviour
 
 	public void StartLevel()
 	{
+		NewBestTimeText.gameObject.SetActive(false);
 		Spawning = true;
 		var delay = NextLevelStart || DebugSlowMo ? 0 : MusicDelay;
 
@@ -303,11 +304,13 @@ public class Level : MonoBehaviour
 		NextLevelStart = false;
 		GameOverStartAction();
 		var score = TimeText.text;
+		var newHs = false;
 		if (string.IsNullOrEmpty(PlayerData.Instance.Scores[StartedLevel]) || float.Parse(score) > float.Parse(PlayerData.Instance.Scores[StartedLevel]))
 		{
 			PlayerData.Instance.Scores[StartedLevel] = score;
 			Saves.Save();
 			WebUtils.SendScore(StartedLevel);
+			newHs = true;
 		}
 		Updating = false;
 		GameOver = true;
@@ -316,9 +319,17 @@ public class Level : MonoBehaviour
 		float[] starts = {0f, 13f, 43f, 66f, 90f};
 		Utils.InvokeDelayed(() =>
 		{
-			AudioSource.clip = Over;
-			AudioSource.time = starts[UnityEngine.Random.Range(0, starts.Length)];
-			AudioSource.Play();
+			if (newHs)
+			{
+				NewBestTimeText.gameObject.SetActive(true);
+				var _as = CameraScript.Instance.GetComponent<AudioSource>();
+				_as.clip = NewBestTimeSound;
+				_as.Play();
+				AudioSource.clip = Over;
+				AudioSource.time = starts[UnityEngine.Random.Range(0, starts.Length)];
+				AudioSource.Play();
+			}
+
 			Utils.Animate(0f, 0.5f, 2f, (v) => AudioSource.volume += v);
 		}, 0.5f);
 //		CameraScript.Instance.GetComponent<SpritePainter>().Paint(new Color(0.43f, 0f, 0.01f), GOAnimationTime / 2, true);
@@ -366,6 +377,7 @@ public class Level : MonoBehaviour
 				TimeText.color = tt;
 				BT.color = tt;
 				BestTimeText.color = tt;
+				NewBestTimeText.color = tt;
 			});
 		}, GOAnimationTime * 0.75f);
 
@@ -442,7 +454,7 @@ public class Level : MonoBehaviour
 		var ct = 1f;
 		var tt = TimeText.color;
 		Killer = null;
-		
+
 		Utils.Animate(1f, 0f, GOAnimationTime / 4, (v) =>
 		{
 			CameraScript.Instance.InvProgress += v;
@@ -453,6 +465,7 @@ public class Level : MonoBehaviour
 			TimeText.color = tt;
 			BT.color = tt;
 			BestTimeText.color = tt;
+			NewBestTimeText.color = tt;
 
 		});
 //		CancelInvoke("TickUpdate");

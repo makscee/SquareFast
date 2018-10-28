@@ -17,6 +17,7 @@ public class CircleEnemy : BasicEnemy
 
     public void Swallow()
     {
+        AnimationSpeedUp = 3f;
         Scale = new Vector3(1.5f, 1.5f, 1f);
         var ut = GetComponent<UnitedTint>();
         ut.Color = ut.Color.ChangeAlpha(0.4f);
@@ -25,5 +26,6 @@ public class CircleEnemy : BasicEnemy
         _hasSwallowed = true;
         Position = Player.Instance.Position;
         _actPos = new Vector3(100, 0, 0);
+        HitEffect.Create(Player.Instance.transform.position, Player.Instance);
     }
 }

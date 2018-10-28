@@ -5,6 +5,7 @@ using Random = UnityEngine.Random;
 public class Unit : MonoBehaviour
 {
     public const float AnimationWindow = 0.1f;
+    public float AnimationSpeedUp = 1f;
     public int HP = 1;
     public int MaxHP;
     [NonSerialized]
@@ -171,12 +172,13 @@ public class Unit : MonoBehaviour
     private static Prefab[] killersPriorities = new []{
         BasicEnemy.Prefab,
         RhombusEnemy.Prefab,
-        CircleEnemy.Prefab,
         TriangleEnemy.Prefab,
+        CircleEnemy.Prefab,
         DownTriangleEnemy.Prefab
     };
 
     private static int _updateTicks = 0;
+
     private static void UpdateKiller(Prefab p, int HP)
     {
         if (Level.Instance.Killer == null || (Level.Ticks - _updateTicks > 12 && (p != BasicEnemy.Prefab || HP > 1)))
@@ -187,24 +189,20 @@ public class Unit : MonoBehaviour
             _updateTicks = Level.Ticks;
             return;
         }
-        var k = false;
+
+        var found = false;
         foreach (var prefab in killersPriorities)
         {
             if (Level.Instance.Killer == prefab)
             {
-                k = true;
+                found = true;
             }
-            if (prefab == p)
-            {
-                if (k)
-                {
-                    Level.Instance.Killer = p;
-                    Level.Instance.KillerHP = Math.Max(HP, Level.Instance.KillerHP);
-//                    Debug.LogWarning("Killer = " + p + " " + Level.Instance.KillerHP );
-                    _updateTicks = Level.Ticks;
-                }
-                return;
-            }
+            if (prefab != p) continue;
+            if (!found) break;
+            Level.Instance.KillerHP = Level.Instance.Killer == prefab ? Math.Max(HP, Level.Instance.KillerHP) : HP;
+            _updateTicks = Level.Ticks;
+            Level.Instance.Killer = p;
+            return;
         }
     }
 
@@ -366,7 +364,7 @@ public class Unit : MonoBehaviour
         get { return _actPos; }
         set
         {
-            Utils.Animate(_actPos, value, AnimationWindow, v =>
+            Utils.Animate(_actPos, value, AnimationWindow / AnimationSpeedUp, v =>
             {
                 transform.position += v;
                 var player = this as Player;
@@ -398,7 +396,7 @@ public class Unit : MonoBehaviour
         get { return _actScale; }
         set
         {
-            Utils.Animate(_actScale, value, AnimationWindow, v => transform.localScale += v, this);
+            Utils.Animate(_actScale, value, AnimationWindow / AnimationSpeedUp, v => transform.localScale += v, this);
             _actScale = value;
         }
     }
