@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class HighScores
 {
-    public static List<Dictionary<string,string>> Data;
+    private static readonly List<Dictionary<string,string>> Data;
 
     static HighScores()
     {
@@ -16,7 +16,7 @@ public class HighScores
     }
 
     private static readonly bool[] Fetched = new bool[Level.LevelsAmount];
-    public static Action[] WhenFetched = new Action[Level.LevelsAmount];
+    public static readonly Action[] WhenFetched = new Action[Level.LevelsAmount];
     public static void SaveFromJson(string json, int l)
     {
         if (string.IsNullOrEmpty(json))

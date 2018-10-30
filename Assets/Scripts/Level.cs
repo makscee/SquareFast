@@ -325,10 +325,10 @@ public class Level : MonoBehaviour
 				var _as = CameraScript.Instance.GetComponent<AudioSource>();
 				_as.clip = NewBestTimeSound;
 				_as.Play();
-				AudioSource.clip = Over;
-				AudioSource.time = starts[UnityEngine.Random.Range(0, starts.Length)];
-				AudioSource.Play();
 			}
+			AudioSource.clip = Over;
+			AudioSource.time = starts[UnityEngine.Random.Range(0, starts.Length)];
+			AudioSource.Play();
 
 			Utils.Animate(0f, 0.5f, 2f, (v) => AudioSource.volume += v);
 		}, 0.5f);

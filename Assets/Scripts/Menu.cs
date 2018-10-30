@@ -15,6 +15,7 @@ public class Menu : MonoBehaviour
     public AudioClip Click, Select;
     public GameObject LockIcon;
     private AudioSource _as;
+    private static bool _inHs = false;
 
     private class MenuItem
     {
@@ -184,7 +185,7 @@ public class Menu : MonoBehaviour
         Level.IsFirstStart = true;
         var gm = GridMarks.Instance;
         var dist = 1;
-        gm.Set("< NEXT", "CONFIRM >", -dist, dist, -dist, dist, NextItem, () =>
+        gm.Set("< NEXT", _inHs ? "BACK >" : "CONFIRM >", -dist, dist, -dist, dist, NextItem, () =>
         {
             CameraScript.Instance.SwitchScene(Confirm);
         }, true);
@@ -247,6 +248,8 @@ public class Menu : MonoBehaviour
 
     private List<MenuItem> getFirstList()
     {
+        _inHs = false;
+        Instance.LockIcon.SetActive(false);
         return new List<MenuItem>
         {
             new MenuItem("PLAY", () =>
@@ -255,25 +258,31 @@ public class Menu : MonoBehaviour
             }),
             new MenuItem("HIGH SCORES", () =>
             {
+                _inHs = true;
                 WebUtils.FetchScores();
                 var item0 = new MenuItem(HighScores.GetString(0), () => SwitchItems(getFirstList()), p0, 0.5f, false); 
                 var item1 = new MenuItem(HighScores.GetString(1), () => SwitchItems(getFirstList()), p1, 0.5f, false);
+                var item2 = new MenuItem(HighScores.GetString(2), () => SwitchItems(getFirstList()), p2, 0.5f, false);
                 var item3 = new MenuItem(HighScores.GetString(3), () => SwitchItems(getFirstList()), p3, 0.5f, false);
                 var item4 = new MenuItem(HighScores.GetString(4), () => SwitchItems(getFirstList()), p4, 0.5f, false);
+                var item5 = new MenuItem(HighScores.GetString(5), () => SwitchItems(getFirstList()), p5, 0.5f, false);
                 var item6 = new MenuItem(HighScores.GetString(6), () => SwitchItems(getFirstList()), p6, 0.5f, false);
                 HighScores.WhenFetched[0] = () => item0.Text.text = HighScores.GetString(0);
                 HighScores.WhenFetched[1] = () => item1.Text.text = HighScores.GetString(1);
-                HighScores.WhenFetched[3] = () => item1.Text.text = HighScores.GetString(3);
-                HighScores.WhenFetched[4] = () => item1.Text.text = HighScores.GetString(4);
-                HighScores.WhenFetched[6] = () => item1.Text.text = HighScores.GetString(6);
+                HighScores.WhenFetched[2] = () => item2.Text.text = HighScores.GetString(2);
+                HighScores.WhenFetched[3] = () => item3.Text.text = HighScores.GetString(3);
+                HighScores.WhenFetched[4] = () => item4.Text.text = HighScores.GetString(4);
+                HighScores.WhenFetched[5] = () => item5.Text.text = HighScores.GetString(5);
+                HighScores.WhenFetched[6] = () => item6.Text.text = HighScores.GetString(6);
                 SwitchItems(new List<MenuItem>
                 {
                     item0,
                     item1,
+                    item2,
                     item3,
                     item4,
+                    item5,
                     item6,
-                    new MenuItem("BACK", () => SwitchItems(getFirstList()), pReset, 1f, false)
                 });
             }),
             new MenuItem("RESET", () =>
@@ -378,6 +387,7 @@ public class Menu : MonoBehaviour
     {
         UnitedTint.Tint = new Color(0.57f, 0.57f, 0.57f);
         Instance.LockIcon.SetActive(true);
+        if (_inHs) return;
         var gm = GridMarks.Instance;
         gm.SetText("< NEXT", "");
         gm.SetBorderHandlers(Instance.NextItem, () => { });
@@ -388,6 +398,7 @@ public class Menu : MonoBehaviour
     {
         UnitedTint.Tint = c;
         Instance.LockIcon.SetActive(false);
+        if (_inHs) return;
         var gm = GridMarks.Instance;
         gm.SetText("< NEXT", "CONFIRM >");
         gm.SetBorderHandlers(Instance.NextItem, () =>

@@ -38,6 +38,11 @@ public class WebUtils
     public static void FetchScores() {
         CameraScript.Instance.StartCoroutine(DownloadScores(0));
         CameraScript.Instance.StartCoroutine(DownloadScores(1));
+        CameraScript.Instance.StartCoroutine(DownloadScores(2));
+        CameraScript.Instance.StartCoroutine(DownloadScores(3));
+        CameraScript.Instance.StartCoroutine(DownloadScores(4));
+        CameraScript.Instance.StartCoroutine(DownloadScores(5));
+        CameraScript.Instance.StartCoroutine(DownloadScores(6));
     }
  
     private static IEnumerator DownloadScores(int level) {
