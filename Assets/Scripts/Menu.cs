@@ -11,7 +11,7 @@ public class Menu : MonoBehaviour
     public Canvas WorldCanvas;
     public static Menu Instance;
     public GameObject HintCanvas;
-    public Text HintText, PressAnyKeyText;
+    public Text HintText, PressAnyKeyText, BestTimeText;
     public AudioClip Click, Select;
     public GameObject LockIcon;
     private AudioSource _as;
@@ -92,6 +92,8 @@ public class Menu : MonoBehaviour
         if (Player.Instance != null)
         {
             WorldCanvas.transform.position = Player.Instance.transform.position;
+            BestTimeText.transform.position =
+                BestTimeText.transform.position.SetX(Player.Instance.transform.position.x);
         }
         if (!CanvasHidden)
         {
@@ -198,6 +200,7 @@ public class Menu : MonoBehaviour
 
     private List<MenuItem> getSecondList()
     {
+        Instance.BestTimeText.gameObject.SetActive(true);
         return new List<MenuItem>
         {
             new MenuItem("LEVEL 1", () =>
@@ -248,6 +251,7 @@ public class Menu : MonoBehaviour
 
     private List<MenuItem> getFirstList()
     {
+        Instance.BestTimeText.gameObject.SetActive(false);
         _inHs = false;
         Instance.LockIcon.SetActive(false);
         return new List<MenuItem>
@@ -302,40 +306,44 @@ public class Menu : MonoBehaviour
         };
     }
 
+    private static void LevelSelect(int l, int patterns)
+    {
+        var p = Pattern.Instance;
+        p.SetPatterns(patterns);
+        p.Reset();
+        p.NextLevel(2);
+        if (float.Parse(PlayerData.Instance.Scores[l]) > 0f)
+        {
+            Instance.BestTimeText.text = PlayerData.Instance.Scores[l];
+        }
+        else
+        {
+            Instance.BestTimeText.text = "0.00";
+        }
+    }
+
     private Action p0 = () =>
         {
-            var p = Pattern.Instance;
-            p.SetPatterns(1);
-            p.Reset();
-            p.NextLevel(2);
+            LevelSelect(0, 1);
             UnlockLevel(new Color(1f, 0.63f, 0.31f));
             CameraScript.ChangeColorTinted(UnitedTint.Tint);
         },
         p1 = () =>
         {
-            var p = Pattern.Instance;
-            p.SetPatterns(2);
-            p.Reset();
-            p.NextLevel(2);
+            LevelSelect(1, 2);
             UnlockLevel(new Color(1f, 0.51f, 0.69f));
             CameraScript.ChangeColorTinted(UnitedTint.Tint);
         },
         p2 = () =>
         {
-            var p = Pattern.Instance;
-            p.SetPatterns(3);
-            p.Reset();
-            p.NextLevel(2);
+            LevelSelect(2, 3);
             UnlockLevel(new Color(1f, 0.9f, 0.54f));
             CameraScript.ChangeColorTinted(UnitedTint.Tint);
         },
         p3 = () =>
         {
             var locked = float.Parse(PlayerData.Instance.Scores[0]) < 60f;
-            var p = Pattern.Instance;
-            p.SetPatterns(1);
-            p.Reset();
-            p.NextLevel(2);
+            LevelSelect(3, 1);
             if (locked) LockLevel();
             else UnlockLevel(new Color(0.56f, 0.59f, 1f));
             CameraScript.ChangeColorTinted(UnitedTint.Tint);
@@ -343,10 +351,7 @@ public class Menu : MonoBehaviour
         p4 = () =>
         {
             var locked = float.Parse(PlayerData.Instance.Scores[1]) < 60f;
-            var p = Pattern.Instance;
-            p.SetPatterns(2);
-            p.Reset();
-            p.NextLevel(2);
+            LevelSelect(4, 2);
             if (locked) LockLevel();
             else UnlockLevel(new Color(0.46f, 1f, 0.69f));
             CameraScript.ChangeColorTinted(UnitedTint.Tint);
@@ -354,10 +359,7 @@ public class Menu : MonoBehaviour
         p5 = () =>
         {
             var locked = float.Parse(PlayerData.Instance.Scores[2]) < 60f;
-            var p = Pattern.Instance;
-            p.SetPatterns(3);
-            p.Reset();
-            p.NextLevel(2);
+            LevelSelect(5, 3);
             if (locked) LockLevel();
             else UnlockLevel(new Color(0.81f, 0.78f, 1f));
             CameraScript.ChangeColorTinted(UnitedTint.Tint);
@@ -365,9 +367,7 @@ public class Menu : MonoBehaviour
         p6 = () =>
         {
             var locked = float.Parse(PlayerData.Instance.Scores[5]) < 60f;
-            var p = Pattern.Instance;
-            p.SetPatterns(7);
-            p.Reset();
+            LevelSelect(6, 7);
             if (locked) LockLevel();
             else
             {
@@ -410,6 +410,7 @@ public class Menu : MonoBehaviour
     private void Awake()
     {
         _as = CameraScript.Instance.GetComponent<AudioSource>();
+        HintCanvas.SetActive(true);
         if (Application.platform == RuntimePlatform.Android)
         {
             HintText.text =

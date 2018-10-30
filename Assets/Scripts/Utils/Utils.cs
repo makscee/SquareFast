@@ -14,6 +14,16 @@ public static class Utils
         return (int)v.x;
     }
 
+    public static Vector3 SetX(this Vector3 v, float x)
+    {
+        return new Vector3(x, v.y, v.z);
+    }
+
+    public static Vector3 SetY(this Vector3 v, float y)
+    {
+        return new Vector3(v.x, y, v.z);
+    }
+
     public static float ToFloat(this string s)
     {
         if (string.IsNullOrEmpty(s)) return 0f;
