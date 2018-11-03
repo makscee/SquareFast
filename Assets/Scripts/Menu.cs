@@ -410,7 +410,7 @@ public class Menu : MonoBehaviour
     private void Awake()
     {
         _as = CameraScript.Instance.GetComponent<AudioSource>();
-        HintCanvas.SetActive(true);
+//        HintCanvas.SetActive(true);
         if (Application.platform == RuntimePlatform.Android)
         {
             HintText.text =

@@ -13,7 +13,7 @@ public class CameraScript : MonoBehaviour
     public Material ColorSwitch;
     public float InvProgress, SwitchProgress;
     public Color SwitchColor;
-    public GameObject SwitchFollow1, SwitchFollow2, UnitHintCanvas;
+    public GameObject SwitchFollow1, SwitchFollow2, UnitHintCanvas, ScreenCanvas;
     private float _zoom;
     public static float MenuZoomout = 0f;
 
@@ -56,6 +56,11 @@ public class CameraScript : MonoBehaviour
                 Level.Instance.AudioSource.Play();
             }
             Level.Updating = !Level.Updating;
+        }
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            ScreenFlyEffect.Create("TEST TEST");
         }
         if (Input.GetKeyDown(KeyCode.H))
         {

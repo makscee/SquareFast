@@ -145,7 +145,10 @@ public class Level : MonoBehaviour
 		{
 			var c = ControlsText.color;
 			c.a = 1;
+			ControlsText.color = c;
 			var ut = ControlsText.GetComponent<UnitedTint>();
+			c = ut.Color;
+			c.a = 1;
 			ut.Color = c;
 		}
 		else
@@ -311,6 +314,8 @@ public class Level : MonoBehaviour
 			Saves.Save();
 			WebUtils.SendScore(StartedLevel);
 			newHs = true;
+			Utils.InvokeDelayed(() => ScreenFlyEffect.Create("NEW BEST TIME"), 0.5f);
+			
 		}
 		Updating = false;
 		GameOver = true;
@@ -321,7 +326,7 @@ public class Level : MonoBehaviour
 		{
 			if (newHs)
 			{
-				NewBestTimeText.gameObject.SetActive(true);
+				Utils.InvokeDelayed(() => NewBestTimeText.gameObject.SetActive(true), 1.5f);
 				var _as = CameraScript.Instance.GetComponent<AudioSource>();
 				_as.clip = NewBestTimeSound;
 				_as.Play();
@@ -396,7 +401,7 @@ public class Level : MonoBehaviour
 			RespawnGOUnits();
 			RespawnKiller(killerEvent);
 			GameOverAction();
-		}, GOAnimationTime);
+		}, GOAnimationTime + (newHs ? 1.3f : 0f));
 	}
 
 	public void RespawnGOUnits()

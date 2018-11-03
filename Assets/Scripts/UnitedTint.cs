@@ -45,9 +45,8 @@ public class UnitedTint : MonoBehaviour
 
     private void Awake()
     {
-        _spriteRenderer = GetComponent<SpriteRenderer>();
         if (_initedColor) return;
-        if (_spriteRenderer)
+        if (_spriteRenderer = GetComponent<SpriteRenderer>())
         {
             Color = _spriteRenderer.color;
             _spriteRenderer.color = Color * Tint * Multiplier;
@@ -55,11 +54,14 @@ public class UnitedTint : MonoBehaviour
         {
             Color = _text.color;
             _text.color = Color * Tint * Multiplier;
+            UnityEngine.Debug.Log(Color);
+            UnityEngine.Debug.Log(gameObject.name);
         } else if (_image = GetComponent<RawImage>())
         {
             Color = _image.color;
             _image.color = Color * Tint * Multiplier;
         }
+        _initedColor = true;
     }
 
     private void Update()

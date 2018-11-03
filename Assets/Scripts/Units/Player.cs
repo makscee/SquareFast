@@ -78,6 +78,10 @@ public class Player : Unit
 		}
 		if (dir == 0) return;
 
+		Debug.Log(Level.Tutorial);
+		Debug.Log(!Level.Spawning);
+		Debug.Log(!_tutSpawned);
+		Debug.Log(!Menu.Instance.HintCanvas.activeSelf);
 		if (Menu.Instance.isActiveAndEnabled && !Level.Tutorial)
 		{
 			var gm = GridMarks.Instance;

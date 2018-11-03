@@ -313,7 +313,7 @@ public class LevelSpawner
                         new EnemyPattern().AddLeft(Circle).AddRight(Circle, 2).SetRepeats(2),
                         new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3),
                         new EnemyPattern().AddLeft(Rhombus, 3).AddRight(Rhombus, 2).SetRepeats(1),
-                        new EnemyPattern().AddLeft(Circle, 2).AddRight(null).AddRight(null).AddLeft(Square, 3),
+                        new EnemyPattern().AddLeft(Circle, 2).AddRight(null).AddRight(null).AddLeft(Square),
                         new EnemyPattern().AddLeft(null).AddRight(Circle, 2).AddLeft(null).AddRight(Rhombus, 2).SetRepeats(2),
                     }
                 };
@@ -648,7 +648,7 @@ public class LevelSpawner
                 }
                 _curPattern = _patterns[_cl][_ci];
                 _spawning = false;
-                Utils.InvokeDelayed(() => _spawning = true, distTime / 2);
+                Utils.InvokeDelayed(() => _spawning = true, Level.TickTime * 3 * 2);
             }, SublevelTime - distTime);
         };
         StartAction = () =>
