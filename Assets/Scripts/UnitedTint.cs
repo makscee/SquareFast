@@ -13,7 +13,6 @@ public class UnitedTint : MonoBehaviour
     private Color _color;
     private bool _initedColor;
     public Color OverrideColor = Color.black;
-    public bool Debug;
 
     public Color Color
     {
@@ -54,8 +53,6 @@ public class UnitedTint : MonoBehaviour
         {
             Color = _text.color;
             _text.color = Color * Tint * Multiplier;
-            UnityEngine.Debug.Log(Color);
-            UnityEngine.Debug.Log(gameObject.name);
         } else if (_image = GetComponent<RawImage>())
         {
             Color = _image.color;
@@ -76,10 +73,6 @@ public class UnitedTint : MonoBehaviour
         } else if (_image)
         {
             _image.color = c;
-        }
-        if (Debug)
-        {
-            UnityEngine.Debug.Log(c);
         }
     }
 }

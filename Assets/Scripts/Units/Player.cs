@@ -78,10 +78,6 @@ public class Player : Unit
 		}
 		if (dir == 0) return;
 
-		Debug.Log(Level.Tutorial);
-		Debug.Log(!Level.Spawning);
-		Debug.Log(!_tutSpawned);
-		Debug.Log(!Menu.Instance.HintCanvas.activeSelf);
 		if (Menu.Instance.isActiveAndEnabled && !Level.Tutorial)
 		{
 			var gm = GridMarks.Instance;
@@ -153,14 +149,14 @@ public class Player : Unit
 		if (Swallowed != null)
 		{
 			AttackAnim(relDir);
-			Utils.InvokeDelayed(() =>
-			{
-				if (Swallowed == null) return;
+//			Utils.InvokeDelayed(() =>
+//			{
+//				if (Swallowed == null) return;
 				if (Swallowed.TakeDmg(this, 1))
 				{
 					Swallowed = null;
 				}
-			}, AnimationWindow / 2);
+//			}, AnimationWindow / 2);
 			return true;
 		}
 		return base.MoveOrAttack(relDir);
