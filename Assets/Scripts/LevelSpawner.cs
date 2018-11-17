@@ -290,11 +290,11 @@ public class LevelSpawner
                 {
                     new List<EnemyPattern>
                     {
-                        
+//                        new EnemyPattern().AddLeft(Circle).AddLeft(Circle).AddRight(null).AddRight(null).AddRight(null).AddLeft(null),
                         new EnemyPattern().AddLeft(Square, 2).AddRight(Square).AddLeft(Square, 2).AddRight(Square)
                             .AddLeft(Square, 2).AddRight(Square, 2),
-                        new EnemyPattern().AddLeft(Rhombus, 3).AddRight(Square, 2).SetRepeats(2),
-                        new EnemyPattern().AddLeft(Square, 2).AddRight(Rhombus, 3).AddLeft(Rhombus, 2).AddRight(Square, 2),
+                        new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Square).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Square, 2).AddRight(Rhombus, 2).AddLeft(Square).AddRight(Square),
                         new EnemyPattern().AddLeft(Circle).AddRight(Circle),
                     },
                     new List<EnemyPattern>
@@ -304,7 +304,7 @@ public class LevelSpawner
                     },
                     new List<EnemyPattern>
                     {
-                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetRepeats(1),
                         new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Rhombus, 2).SetRepeats(2),
                         new EnemyPattern().AddLeft(Circle).AddRight(null).SetRepeats(2),
                     },
@@ -312,7 +312,7 @@ public class LevelSpawner
                     {
                         new EnemyPattern().AddLeft(Circle).AddRight(Circle).SetRepeats(1),
                         new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3),
-                        new EnemyPattern().AddLeft(Rhombus, 3).AddRight(Rhombus, 2).SetRepeats(1),
+                        new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Rhombus, 2).SetRepeats(1),
                         new EnemyPattern().AddLeft(Circle).AddRight(null).AddRight(null).AddLeft(Square),
                         new EnemyPattern().AddLeft(null).AddRight(Circle, 2).AddLeft(null).AddRight(Rhombus, 2).SetRepeats(2),
                     }
@@ -329,8 +329,8 @@ public class LevelSpawner
                     }
                 };
                 Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L1;
-                Level.Instance.MusicStart = 63.2f;
-                Level.Instance.MusicDelay = 2f;
+                Level.Instance.MusicStart = 63.6f;
+                Level.Instance.MusicDelay = 1.9f;
                 _nextLevel = 4;
                 
                 Level.TickTime = 60f / 100 / 3f;
@@ -451,7 +451,7 @@ public class LevelSpawner
                     }
                 };
                 Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L3;
-                Level.Instance.MusicStart = 0f;
+                Level.Instance.MusicStart = 62.2f;
                 Level.Instance.MusicDelay = 2f;
                 Level.TickTime = 60f / 150 / 3f;
                 _nextLevel = 6;

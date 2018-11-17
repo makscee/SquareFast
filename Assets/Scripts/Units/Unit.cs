@@ -108,8 +108,8 @@ public class Unit : MonoBehaviour
                 if (atNextPos == null)
                 {
                     var gm = GridMarks.Instance;
-                    if (!gm.LeftSolid || !(gm.RightBorder.transform.position.x < nextPos) &&
-                        !(gm.LeftBorder.transform.position.x > nextPos))
+                    if (Player.Instance.Swallowed == null && (!gm.LeftSolid || !(gm.RightBorder.transform.position.x < nextPos) &&
+                        !(gm.LeftBorder.transform.position.x > nextPos)))
                     {
                         Player.Instance.Move(relDir, false, true);
                         Player.Instance.PushTicks = Level.Ticks;

@@ -310,12 +310,26 @@ public class Level : MonoBehaviour
 		var newHs = false;
 		if (string.IsNullOrEmpty(PlayerData.Instance.Scores[StartedLevel]) || float.Parse(score) > float.Parse(PlayerData.Instance.Scores[StartedLevel]))
 		{
+			var _as = CameraScript.Instance.GetComponent<AudioSource>();
+			if (float.Parse(score) >= 60f && float.Parse(PlayerData.Instance.Scores[StartedLevel]) < 60f)
+			{
+				Utils.InvokeDelayed(() =>
+				{
+					ScreenFlyEffect.Create("NEW LEVEL UNLOCKED");
+					_as.clip = NewBestTimeSound;
+					_as.Play();
+				}, 2.2f);
+			}
+			Utils.InvokeDelayed(() =>
+			{
+				ScreenFlyEffect.Create("NEW BEST TIME");
+				_as.clip = NewBestTimeSound;
+				_as.Play();
+			}, 0.5f);
 			PlayerData.Instance.Scores[StartedLevel] = score;
 			Saves.Save();
 			WebUtils.SendScore(StartedLevel);
 			newHs = true;
-			Utils.InvokeDelayed(() => ScreenFlyEffect.Create("NEW BEST TIME"), 0.5f);
-			
 		}
 		Updating = false;
 		GameOver = true;
@@ -327,9 +341,6 @@ public class Level : MonoBehaviour
 			if (newHs)
 			{
 				Utils.InvokeDelayed(() => NewBestTimeText.gameObject.SetActive(true), 1.5f);
-				var _as = CameraScript.Instance.GetComponent<AudioSource>();
-				_as.clip = NewBestTimeSound;
-				_as.Play();
 			}
 			AudioSource.clip = Over;
 			AudioSource.time = starts[UnityEngine.Random.Range(0, starts.Length)];
@@ -401,7 +412,7 @@ public class Level : MonoBehaviour
 			RespawnGOUnits();
 			RespawnKiller(killerEvent);
 			GameOverAction();
-		}, GOAnimationTime + (newHs ? 1.3f : 0f));
+		}, GOAnimationTime + (newHs ? 1.8f : 0f));
 	}
 
 	public void RespawnGOUnits()
