@@ -161,7 +161,7 @@ public class Level : MonoBehaviour
 	{
 		NewBestTimeText.gameObject.SetActive(false);
 		Spawning = true;
-		var delay = NextLevelStart || DebugSlowMo ? 0 : MusicDelay;
+		var delay = NextLevelStart && StartedLevel == CurrentLevel - 3 || DebugSlowMo ? 0 : MusicDelay;
 
 		_ticking = false;
 		Utils.InvokeDelayed(() => _ticking = true, delay);
@@ -180,7 +180,7 @@ public class Level : MonoBehaviour
 			Utils.InvokeDelayed(() => ControlsText.gameObject.SetActive(false), 2f);
 		}
 		
-		if (NextLevelStart) return;
+		if (NextLevelStart && StartedLevel == CurrentLevel - 3) return;
 		AudioSource.volume = 0f;
 		Utils.Animate(0f, 1f, 0.9f, (v) => AudioSource.volume += v);
 		AudioSource.time = MusicStart;

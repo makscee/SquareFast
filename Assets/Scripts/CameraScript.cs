@@ -60,7 +60,12 @@ public class CameraScript : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.C))
         {
-            ScreenFlyEffect.Create("TEST TEST");
+            Time.timeScale = 10f;
+            Level.Instance.AudioSource.pitch = 10f;
+        } else if (Input.GetKeyUp(KeyCode.C))
+        {
+            Time.timeScale = 1f;
+            Level.Instance.AudioSource.pitch = 1f;
         }
         if (Input.GetKeyDown(KeyCode.H))
         {

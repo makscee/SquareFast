@@ -538,6 +538,7 @@ public class LevelSpawner
         {
             UnitedTint.Tint = _switchColors[0];
             CameraScript.ChangeColorTinted(UnitedTint.Tint);
+            Debug.Log("Get color");
             _switchColors.RemoveAt(0);
         }
 
@@ -624,6 +625,7 @@ public class LevelSpawner
                             UnitedTint.Tint = _switchColors[0];
                             CameraScript.ChangeColorTinted(UnitedTint.Tint);
                             _switchColors.RemoveAt(0);
+                            Debug.Log("Get color2");
                         }
                         else
                         {
