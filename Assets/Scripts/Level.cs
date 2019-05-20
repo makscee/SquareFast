@@ -23,7 +23,7 @@ public class Level : MonoBehaviour
 	private LevelSpawner _levelSpawner;
 	public AudioSource AudioSource;
 	public Text TimeText;
-	public AudioClip L1, L2, L3, Over, NewBestTimeSound;
+	public AudioClip L1, L2, L3, L4, Over, NewBestTimeSound;
 	public Text BT;
 	public Text ControlsText, BestTimeText, NewBestTimeText;
 	public float MusicStart, MusicDelay, BeatOffset, LevelBridge;
@@ -180,7 +180,7 @@ public class Level : MonoBehaviour
 			Utils.InvokeDelayed(() => ControlsText.gameObject.SetActive(false), 2f);
 		}
 		
-		if (NextLevelStart && StartedLevel == CurrentLevel - 3) return;
+		if (NextLevelStart && (StartedLevel == CurrentLevel - 3 || CurrentLevel == 6)) return;
 		AudioSource.volume = 0f;
 		Utils.Animate(0f, 1f, 0.9f, (v) => AudioSource.volume += v);
 		AudioSource.time = MusicStart;

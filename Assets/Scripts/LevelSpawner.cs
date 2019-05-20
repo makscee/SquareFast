@@ -453,6 +453,7 @@ public class LevelSpawner
                 Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L3;
                 Level.Instance.MusicStart = 62.2f;
                 Level.Instance.MusicDelay = 2f;
+                Level.Instance.LevelBridge = 11f;
                 Level.TickTime = 60f / 150 / 3f;
                 _nextLevel = 6;
                 Distance = 5;
@@ -504,8 +505,8 @@ public class LevelSpawner
             }
             case 6:
             {
-                Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L2;
-                Level.Instance.MusicStart = 0f;
+                Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L4;
+                Level.Instance.MusicStart = 8f;
                 Level.Instance.MusicDelay = 2.5f;
                 Level.TickTime = 60f / 160 / 3f;
                 _nextLevel = 6;
@@ -567,7 +568,13 @@ public class LevelSpawner
                     var nextLevel = _cl >= _patterns.Count;
                     if (nextLevel)
                     {
-                        ProgressLine.Instance.Updating = false;
+                        ProgressLine.Instance.Updating = false; // todo finish line and then stop
+//                        if (_nextLevel == 6)
+//                        {
+//                            Level.Instance.AudioSource.clip = Level.Instance.L4;
+//                            Level.Instance.MusicStart = 8f;
+//                            Level.Instance.MusicDelay = 2.5f;
+//                        }
                         Utils.InvokeDelayed(() =>
                         {                            
                             var p = Pattern.Instance;
