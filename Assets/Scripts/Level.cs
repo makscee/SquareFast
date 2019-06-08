@@ -311,7 +311,7 @@ public class Level : MonoBehaviour
 		if (string.IsNullOrEmpty(PlayerData.Instance.Scores[StartedLevel]) || float.Parse(score) > float.Parse(PlayerData.Instance.Scores[StartedLevel]))
 		{
 			var _as = CameraScript.Instance.GetComponent<AudioSource>();
-			if (float.Parse(score) >= 60f && float.Parse(PlayerData.Instance.Scores[StartedLevel]) < 60f)
+			if (float.Parse(score) >= 60f && float.Parse(PlayerData.Instance.Scores[StartedLevel]) < 60f && (StartedLevel == 1 || StartedLevel == 2 || StartedLevel == 3))
 			{
 				Utils.InvokeDelayed(() =>
 				{

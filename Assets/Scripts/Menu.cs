@@ -381,6 +381,7 @@ public class Menu : MonoBehaviour
             p.Reset();
             UnlockLevel(Color.white);
             Camera.main.backgroundColor = Color.black;
+            Instance.BestTimeText.text = "";
         };
 
     private static void LockLevel()

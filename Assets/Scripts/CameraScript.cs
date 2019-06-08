@@ -60,8 +60,8 @@ public class CameraScript : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.C))
         {
-            Time.timeScale = 10f;
-            Level.Instance.AudioSource.pitch = 10f;
+            Time.timeScale = 15f;
+            Level.Instance.AudioSource.pitch = 15f;
         } else if (Input.GetKeyUp(KeyCode.C))
         {
             Time.timeScale = 1f;

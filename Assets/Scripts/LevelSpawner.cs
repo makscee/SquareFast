@@ -421,17 +421,17 @@ public class LevelSpawner
                     new List<EnemyPattern>
                     {
                         new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetRepeats(2),
-                        new EnemyPattern().AddLeft(Rhombus, 3).AddRight(Rhombus, 2).SetRepeats(2),
-                        new EnemyPattern().AddLeft(DownTriangle).AddRight(Rhombus, 3).SetRepeats(2),
-                        new EnemyPattern().AddLeft(Triangle, 2).AddRight(Rhombus, 3).AddRight(null).AddLeft(Square, 3),
+                        new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Rhombus, 2).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Rhombus, 3).AddRight(DownTriangle).SetRepeats(1),
+                        new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Rhombus, 3).AddRight(null).AddLeft(Square, 3),
                     },
                     new List<EnemyPattern>
                     {
                         new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3),
-                        new EnemyPattern().AddLeft(Rhombus, 3).AddRight(Rhombus, 3).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Rhombus, 3).AddRight(Rhombus, 3).SetRepeats(1),
                         new EnemyPattern().AddLeft(DownTriangle).AddRight(Square, 3),
-                        new EnemyPattern().AddLeft(Triangle, 2).AddRight(Rhombus, 2).AddRight(null).AddLeft(Square, 3),
-                        new EnemyPattern().AddLeft(DownTriangle).AddRight(Triangle, 2).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Triangle, 2).AddRight(DownTriangle).AddRight(null).AddLeft(Square, 2),
+                        new EnemyPattern().AddLeft(DownTriangle).AddRight(Rhombus, 2).SetRepeats(2),
                         new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Square, 2).SetRepeats(2),
                     }
                 };
@@ -453,7 +453,7 @@ public class LevelSpawner
                 Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L3;
                 Level.Instance.MusicStart = 62.2f;
                 Level.Instance.MusicDelay = 2f;
-                Level.Instance.LevelBridge = 11f;
+                Level.Instance.LevelBridge = 9f;
                 Level.TickTime = 60f / 150 / 3f;
                 _nextLevel = 6;
                 Distance = 5;
@@ -469,7 +469,7 @@ public class LevelSpawner
                     new List<EnemyPattern>
                     {
                         new EnemyPattern().AddLeft(Square, 2).AddRight(Square).AddLeft(Square, 2).AddRight(Square),
-                        new EnemyPattern().AddLeft(Rhombus, 3).AddRight(Square, 2).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Rhombus, 3).AddRight(Square, 2).SetRepeats(1),
                         new EnemyPattern().AddLeft(Square, 2).AddRight(Rhombus, 2).AddLeft(Rhombus, 2).AddRight(Square, 2),
                     },
                     new List<EnemyPattern>
@@ -481,20 +481,18 @@ public class LevelSpawner
                     },
                     new List<EnemyPattern>
                     {
-                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3).SetRepeats(2),
-                        new EnemyPattern().AddLeft(Rhombus, 3).AddRight(Rhombus, 2).SetRepeats(2),
-                        new EnemyPattern().AddLeft(DownTriangle).AddRight(Rhombus, 3).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 2).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Rhombus, 3).AddRight(Rhombus, 2).SetRepeats(1),
+                        new EnemyPattern().AddLeft(DownTriangle).AddRight(Rhombus, 2).SetRepeats(2),
                         new EnemyPattern().AddLeft(null).AddRight(Triangle, 2).AddLeft(null).AddRight(Square).SetRepeats(1),
-                        new EnemyPattern().AddLeft(Triangle, 2).AddRight(null).AddRight(Rhombus, 3).AddLeft(Square, 3),
                     },
                     new List<EnemyPattern>
                     {
                         new EnemyPattern().AddLeft(Square, 3).AddRight(Square, 3),
-                        new EnemyPattern().AddLeft(Rhombus, 3).AddRight(Rhombus, 3).SetRepeats(2),
+                        new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Rhombus, 2).SetRepeats(2),
                         new EnemyPattern().AddLeft(DownTriangle).AddRight(Square, 3),
-                        new EnemyPattern().AddLeft(Triangle, 2).AddRight(null).AddLeft(Square, 3).AddRight(Square),
-                        new EnemyPattern().AddLeft(DownTriangle).AddRight(Triangle, 2).SetRepeats(2),
-                        new EnemyPattern().AddLeft(Square).AddRight(Triangle, 2).AddLeft(null).AddRight(Square).SetRepeats(1),
+                        new EnemyPattern().AddLeft(Rhombus, 3).AddRight(null).AddLeft(Square, 3).AddRight(Square),
+                        new EnemyPattern().AddLeft(Square, 2).AddRight(Rhombus, 3).SetRepeats(2),
                     }
                 };
                 var p = Pattern.Instance;
@@ -505,13 +503,16 @@ public class LevelSpawner
             }
             case 6:
             {
-                Level.Instance.GetComponent<AudioSource>().clip = Level.Instance.L4;
-                Level.Instance.MusicStart = 8f;
-                Level.Instance.MusicDelay = 2.5f;
-                Level.TickTime = 60f / 160 / 3f;
+                Level.TickTime = 60f / 175 / 3f;
                 _nextLevel = 6;
                 Distance = 3;
-                
+                if (!Level.NextLevelStart)
+                {
+                    Level.Instance.AudioSource.clip = Level.Instance.L4;
+                    Level.Instance.MusicStart = 9.5f;
+                    Level.Instance.MusicDelay = 2f;
+                }
+
                 UnitedTint.Tint = Color.white;
                 Camera.main.backgroundColor = Color.black;
 
@@ -519,10 +520,10 @@ public class LevelSpawner
                 {
                     new List<EnemyPattern>
                     {
-                        new EnemyPattern().AddLeft(Square, 2).AddRight(Rhombus, 3),
+                        new EnemyPattern().AddLeft(Square, 2).AddRight(Rhombus, 2),
                         new EnemyPattern().AddLeft(DownTriangle, 1).AddRight(Square, 3),
-                        new EnemyPattern().AddLeft(Circle, 2).AddRight(Square, 2),
-                        new EnemyPattern().AddLeft(Rhombus, 3).AddRight(Rhombus, 2),
+                        new EnemyPattern().AddLeft(Square, 2).AddRight(Square, 2),
+                        new EnemyPattern().AddLeft(Rhombus, 2).AddRight(Rhombus, 2),
                     },
                 };
                 var p = Pattern.Instance;
@@ -569,12 +570,6 @@ public class LevelSpawner
                     if (nextLevel)
                     {
                         ProgressLine.Instance.Updating = false; // todo finish line and then stop
-//                        if (_nextLevel == 6)
-//                        {
-//                            Level.Instance.AudioSource.clip = Level.Instance.L4;
-//                            Level.Instance.MusicStart = 8f;
-//                            Level.Instance.MusicDelay = 2.5f;
-//                        }
                         Utils.InvokeDelayed(() =>
                         {                            
                             var p = Pattern.Instance;
@@ -591,6 +586,10 @@ public class LevelSpawner
                         {    
                             var p = Pattern.Instance;
                             p.Reset();
+                            if (_nextLevel == 6)
+                            {
+                                Utils.Animate(1f, 0f, Level.Instance.LevelBridge / 4, (v) => Level.Instance.AudioSource.volume += v);
+                            }
                         }, Level.Instance.LevelBridge / 4 * 3);
                         Utils.InvokeDelayed(() =>
                         {
@@ -598,6 +597,17 @@ public class LevelSpawner
                             Level.NextLevelStart = true;
                             Level.Instance.OnEnable();
                             ProgressLine.Instance.Reset();
+                            
+                            if (_nextLevel == 6)
+                            {
+                                Level.Instance.AudioSource.clip = Level.Instance.L4;
+                                Level.Instance.MusicStart = 9.5f;
+                                Level.Instance.MusicDelay = 2f;
+                                Level.Instance.AudioSource.volume = 0f;
+                                Utils.Animate(0f, 1f, 0.9f, (v) => Level.Instance.AudioSource.volume += v);
+                                Level.Instance.AudioSource.time = Level.Instance.MusicStart;
+                                Level.Instance.AudioSource.Play();
+                            }
                         }, Level.Instance.LevelBridge);
                     }
                     Utils.InvokeDelayed(() =>
