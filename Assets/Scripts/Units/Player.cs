@@ -34,10 +34,10 @@ public class Player : Unit
 			TakeDmg(this, 999);
 			return;
 		}
-		if (Input.GetKeyDown(KeyCode.G))
-		{
-			Godmode = !Godmode;
-		}
+//		if (Input.GetKeyDown(KeyCode.G))
+//		{
+//			Godmode = !Godmode;
+//		}
 		if (Input.touchCount > 0)
 		{
 			for (var i = 0; i < Input.touchCount; ++i)

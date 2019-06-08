@@ -45,50 +45,50 @@ public class CameraScript : MonoBehaviour
             UnitedTint.Tint = Color.white;
             Time.timeScale = 1;
         }
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            if (Level.Updating)
-            {
-                Level.Instance.AudioSource.Pause();
-            }
-            else
-            {
-                Level.Instance.AudioSource.Play();
-            }
-            Level.Updating = !Level.Updating;
-        }
-
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            Time.timeScale = 15f;
-            Level.Instance.AudioSource.pitch = 15f;
-        } else if (Input.GetKeyUp(KeyCode.C))
-        {
-            Time.timeScale = 1f;
-            Level.Instance.AudioSource.pitch = 1f;
-        }
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            Level.DebugSlowMo = !Level.DebugSlowMo;
-        }
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            Level.DebugSlowMoVal /= 2;
-        }
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            PlayerData.Instance = new PlayerData();
-            var pd = PlayerData.Instance;
-            for (var i = 0; i < pd.Scores.Length; i++)
-            {
-                PlayerPrefs.SetString("score" + i, "0");
-            }
-            UnitedTint.Tint = Color.white;
-            Saves.Save();
-            SceneManager.LoadScene(0);
-            Time.timeScale = 1;
-            UnitedTint.Multiplier = Color.white;
-        }
+//        if (Input.GetKeyDown(KeyCode.P))
+//        {
+//            if (Level.Updating)
+//            {
+//                Level.Instance.AudioSource.Pause();
+//            }
+//            else
+//            {
+//                Level.Instance.AudioSource.Play();
+//            }
+//            Level.Updating = !Level.Updating;
+//        }
+//
+//        if (Input.GetKeyDown(KeyCode.C))
+//        {
+//            Time.timeScale = 15f;
+//            Level.Instance.AudioSource.pitch = 15f;
+//        } else if (Input.GetKeyUp(KeyCode.C))
+//        {
+//            Time.timeScale = 1f;
+//            Level.Instance.AudioSource.pitch = 1f;
+//        }
+//        if (Input.GetKeyDown(KeyCode.H))
+//        {
+//            Level.DebugSlowMo = !Level.DebugSlowMo;
+//        }
+//        if (Input.GetKeyDown(KeyCode.J))
+//        {
+//            Level.DebugSlowMoVal /= 2;
+//        }
+//        if (Input.GetKeyDown(KeyCode.T))
+//        {
+//            PlayerData.Instance = new PlayerData();
+//            var pd = PlayerData.Instance;
+//            for (var i = 0; i < pd.Scores.Length; i++)
+//            {
+//                PlayerPrefs.SetString("score" + i, "0");
+//            }
+//            UnitedTint.Tint = Color.white;
+//            Saves.Save();
+//            SceneManager.LoadScene(0);
+//            Time.timeScale = 1;
+//            UnitedTint.Multiplier = Color.white;
+//        }
         if (Player.Instance == null) return;
         if (SwitchFollow1 != null || SwitchFollow2 != null)
         {
